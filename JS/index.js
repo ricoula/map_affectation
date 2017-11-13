@@ -1,17 +1,8 @@
 $(function(){
-    function openNav() {
-        document.getElementById("mySidenav").style.width = "250px";
-    }
-  
-    function closeNav() {
-        document.getElementById("mySidenav").style.width = "0";
-    }
 
-    $("#closeSlidebar").click(function(){
-        closeNav();
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
     });
 
-    $(".open").click(function(){
-        openNav();
-    });
 });
