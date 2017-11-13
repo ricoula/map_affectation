@@ -1,6 +1,24 @@
-html, body, .container-fluid, #map {
+html, body, #map,#map_content {
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
+}
+body
+{
+    display:flex;
+}
+#test
+{
+    width:300px;
+    z-index:200;
+}
+#glyph
+{
+    position:absolute;
+    z-index:2000;
+}
+h3, h5{
+    font-weight: bold;
+    text-align: center;
 }
