@@ -8,8 +8,7 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYvU3R9-LA0yn0B9UWY256WE0iTwWLBCw&callback=initMap">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYvU3R9-LA0yn0B9UWY256WE0iTwWLBCw&callback=initMap">
     </script>
     <script>
         function initMap() {
