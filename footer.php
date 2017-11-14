@@ -12,14 +12,33 @@
     </script>
     <script>
         function initMap() {
-        var uluru = {lat: -25.363, lng: 131.044};
+          var infoWindow = new google.maps.InfoWindow({
+                content: '<div class="container info_poi_modal" >'+
+                            '<h2 id="win_info_numero_oeie">BOU705566</h2>' +
+                            '<div class="list-group">' +
+                              '<a href="#" class="list-group-item" id="win_info_affecter_a">Affecter à</a>' +
+                              '<a href="#" class="list-group-item" id="win_info_liens">Calculer les liens <span class="glyphicon glyphicon-refresh pull-right"></span></a>' +
+                              '<a href="#" class="list-group-item" id="win_info_affecter_auto">Affecter auto. <span class="label label-info pull-right">RICOU Damien</span></a>' +
+                            '</div>' +
+                          '</div>'
+              
+            });
+        var uluru = {lat:45.6930369, lng: 4.9989082};
         var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 4,
+          zoom: 10,
           center: uluru
         });
         var marker = new google.maps.Marker({
           position: uluru,
           map: map
+        });
+        marker.addListener('rightclick',function(){
+          infoWindow.open(map, marker);
+          $("#win_info_liens").click(function(){
+
+        $("#win_info_liens").children().addClass("gly-spin")
+  
+    });
         });
       }
       </script>
