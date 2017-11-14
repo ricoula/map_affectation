@@ -23,14 +23,22 @@
                           '</div>'
               
             });
+      
         var uluru = {lat:45.6930369, lng: 4.9989082};
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 10,
           center: uluru
         });
-        var marker = new google.maps.Marker({
-          position: uluru,
-          map: map
+        $.getJSON('API/getPoiNA.php',function(data){
+          data.forEach(function(poi){
+            var marker = new google.maps.Marker({
+          position: {lat: Number(poi.ft_longitude), lng: Number(poi.ft_latitude)},
+          map: map,
+          poi_id: poi.id,
+          title: poi.ft_numero_oeie
+    
+
+
         });
         marker.addListener('rightclick',function(){
           infoWindow.open(map, marker);
@@ -40,6 +48,11 @@
   
     });
         });
+          });
+          
+        });
+        
+        
       }
       </script>
     <script src="JS/header.js"></script>
