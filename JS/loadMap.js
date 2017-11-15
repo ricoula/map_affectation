@@ -21,7 +21,7 @@ window.onload = function() {
                                  '<h2 id="win_info_numero_oeie">'+marker.title+'</h2>' +
                                 '<div class="list-group">' +
                                    '<a href="#" class="list-group-item" id="win_info_affecter_a">Affecter à</a>' +
-                                   '<a data-target="#infos" class="list-group-item testClass" id="win_info_liens">POI en lien <span class="badge" id="badgeNbPoi"></span></a>' +
+                                   '<a data-target="#modaleListeCaffsLienPoi" class="list-group-item testClass" id="win_info_liens" style="cursor: pointer">POI en lien <span class="badge" id="badgeNbPoi"></span></a>' +
                                    '<a href="#" class="list-group-item" id="win_info_affecter_auto">Affecter auto. <span class="label label-info pull-right">RICOU Damien</span></a>' +
                                '</div>' +
                             '</div>');
@@ -29,7 +29,7 @@ window.onload = function() {
 
 
             //FONCTIONS
-            $.post("API/getNbPoiEnLien.php", {commune: poi.ft_libelle_commune, voie: poi.ft_libelle_de_voie, titulaire: poi.ft_titulaire_client}, function(data){
+            $.post("API/getNbPoiEnLien.php", {commune: poi.ft_libelle_commune, voie: poi.ft_libelle_de_voie, titulaire: poi.ft_titulaire_client, ui: poi.atr_ui}, function(data){
                 var nbPoi = JSON.parse(data);
                 $("#badgeNbPoi").text(nbPoi);
             });

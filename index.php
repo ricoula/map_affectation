@@ -19,7 +19,7 @@
          <div id="map"></div>
     </div>
 
-    <div class="modal fade" id="infos">
+    <div class="modal fade" id="modaleListeCaffsLienPoi">
         <div class="modal-dialog modal-lg"> 
           <div class="modal-content" id="divListeCaffsLienPoi"></div>  
         </div> 

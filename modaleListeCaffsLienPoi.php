@@ -2,7 +2,7 @@
     include("API/fonctions.php");
     $poi = json_decode(getPoiById($_GET["poi"]));
     $liensClient = json_decode(getCaffsEnLienAvecPoiByTitulaire($poi->ft_titulaire_client, $poi->atr_ui));
-    $liensVoie = json_decode(getCaffsEnLienAvecPoiByVoie($poi->ft_numero_de_voie, $poi->ft_libelle_commune, $poi->atr_ui));
+    $liensVoie = json_decode(getCaffsEnLienAvecPoiByVoie($poi->ft_libelle_de_voie, $poi->ft_libelle_commune, $poi->atr_ui));
     $liensCommune = json_decode(getCaffsEnLienAvecPoiByCommune($poi->ft_libelle_commune, $poi->atr_ui));
 ?>
 
@@ -46,11 +46,11 @@
     </div>
     <div class="form-group">
     <?php
-    if($poi->ft_numero_de_voie != null && $poi->ft_numero_de_voie != '')
+    if($poi->ft_libelle_de_voie != null && $poi->ft_libelle_de_voie != '')
     {
         ?>
         <div class="list-group">
-            <h3>Liens avec <?php echo $poi->ft_numero_de_voie ?></h3>
+            <h3>Liens avec <?php echo $poi->ft_libelle_de_voie ?></h3>
             <?php
             if(sizeof($liensVoie) > 0)
             {
