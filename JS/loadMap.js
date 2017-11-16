@@ -66,6 +66,16 @@
   
   
           });
+          google.maps.event.addListener(marker, 'spider_click', function(e) {  // 'spider_rightclick', not plain 'click'
+
+          $("#side_bar").animate({left:'0px'},500);
+          $("#glyph").animate({left:'500px'},500);
+          $("#side_bar").load('slide-home.php');
+          $(".glyph_div").removeClass("active");
+          $("#slide-home").addClass("active");
+    
+            });
+
           oms.addMarker(marker);
             });
             
