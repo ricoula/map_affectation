@@ -30,7 +30,7 @@
           if($caff->site == $closestSite->libelle)
           {
             ?>
-            <a href="#infosCaff.php?id=<?php echo $caff->id ?>" id="caffClosestSite_<?php echo $caff->id ?>" class="list-group-item"><?php echo $caff->name_related ?></a>
+            <a href="#" id="caffClosestSite_<?php echo $caff->id ?>" class="list-group-item caffAffectation"><?php echo $caff->name_related ?><input type="hidden" class="caffjson" value="<?php echo urlencode(json_encode($caff)) ?>" /></a>
             <?php
           }
         }
@@ -61,7 +61,7 @@
                 if($caff->site == $site->libelle)
                 {
                   ?>
-                  <a href="#infosCaff.php?id=<?php echo $caff->id ?>" class="list-group-item"><?php echo $caff->name_related ?></a>
+                  <a href="#" class="list-group-item caffAffectation" id="caffSiteUi_<?php echo $caff->id ?>"><?php echo $caff->name_related ?><input type="hidden" class="caffjson" value="<?php echo urlencode(json_encode($caff)) ?>" /></a>
                   <?php
                 }
               }
@@ -84,7 +84,7 @@
         foreach($caffs as $caff)
         {
           ?>
-          <a href="#infosCaff.php?id=<?php echo $caff->id ?>" class="list-group-item"><?php echo $caff->name_related ?><span class="badge"><?php echo $caff->site ?></span></a>
+          <a href="#" class="list-group-item caffAffectation" id="caffAll_<?php echo $caff->id ?>"><?php echo $caff->name_related ?><span class="badge"><?php echo $caff->site ?></span><input type="hidden" class="caffjson" value="<?php echo urlencode(json_encode($caff)) ?>" /></a>
           <?php
         }
         ?>
@@ -93,4 +93,13 @@
 
   </div>
 </div>
+<script>
+  $(".caffAffectation").click(function(){
+      var caff = $(this).children(".caffjson").first().val();
+      //console.log($(this).children(".caffjson").first().val());
+      $("#divInfosCaffAffectation").load("modaleInfosCaffAffectation.php?caff=" + caff, function(){
+          $('#modaleInfosCaffAffectation').modal('show');
+      });
+  });
+</script>
 
