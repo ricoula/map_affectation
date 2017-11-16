@@ -371,15 +371,19 @@
 			$req2->execute(array($data["ag_site_id"]));
 			while($data2 = $req2->fetch())
 			{
+				$caff = (object) array();
+				$caff->id = $data["atr_caff_traitant_id"];
+				$caff->name = $data["name_related"];
+				$caff->nb_poi = $data["nb"];
+				$caff->site_id = $data["ag_site_id"];
 				if($data2["ft_zone"] == $ui)
 				{
-					$caff = (object) array();
-					$caff->id = $data["atr_caff_traitant_id"];
-					$caff->name = $data["name_related"];
-					$caff->nb_poi = $data["nb"];
-					$caff->site_id = $data["ag_site_id"];
-					array_push($listeCaffs, $caff);
+					$caff->entraide = false;
 				}
+				else{
+					$caff->entraide = true;
+				}
+				array_push($listeCaffs, $caff);
 			}
 		}
 		
@@ -419,15 +423,19 @@
 			$req2->execute(array($data["ag_site_id"]));
 			while($data2 = $req2->fetch())
 			{
+				$caff = (object) array();
+				$caff->id = $data["atr_caff_traitant_id"];
+				$caff->name = $data["name_related"];
+				$caff->nb_poi = $data["nb"];
+				$caff->site_id = $data["ag_site_id"];
 				if($data2["ft_zone"] == $ui)
 				{
-					$caff = (object) array();
-					$caff->id = $data["atr_caff_traitant_id"];
-					$caff->name = $data["name_related"];
-					$caff->nb_poi = $data["nb"];
-					$caff->site_id = $data["ag_site_id"];
-					array_push($listeCaffs, $caff);
+					$caff->entraide = false;
 				}
+				else{
+					$caff->entraide = true;
+				}
+				array_push($listeCaffs, $caff);
 			}
 		}
 		
@@ -464,18 +472,70 @@
 			$req2->execute(array($data["ag_site_id"]));
 			while($data2 = $req2->fetch())
 			{
+				$caff = (object) array();
+				$caff->id = $data["atr_caff_traitant_id"];
+				$caff->name = $data["name_related"];
+				$caff->nb_poi = $data["nb"];
+				$caff->site_id = $data["ag_site_id"];
 				if($data2["ft_zone"] == $ui)
 				{
-					$caff = (object) array();
-					$caff->id = $data["atr_caff_traitant_id"];
-					$caff->name = $data["name_related"];
-					$caff->nb_poi = $data["nb"];
-					$caff->site_id = $data["ag_site_id"];
-					array_push($listeCaffs, $caff);
+					$caff->entraide = false;
 				}
+				else{
+					$caff->entraide = true;
+				}
+				array_push($listeCaffs, $caff);
 			}
 		}
 		
 		return json_encode($listeCaffs);
+	}
+	
+	function getListePoiByCaffByTitulaire($idCaff, $titulaire)
+	{
+		include("connexionBddErp.php");
+		
+		$listePoi = array();
+		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_titulaire_client = ? AND ft_titulaire_client != '' AND ft_titulaire_client IS NOT NULL ORDER BY ft_oeie_dre");
+		$req->execute(array($idCaff, $titulaire));
+		while($data = $req->fetch())
+		{
+			$poi = json_decode(getPoiById($data["id"]));
+			array_push($listePoi, $poi);
+		}
+		
+		return json_encode($listePoi);
+	}
+	
+	function getListePoiByCaffByVoie($idCaff, $voie, $commune)
+	{
+		include("connexionBddErp.php");
+		
+		$listePoi = array();
+		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune = ? AND ft_libelle_de_voie != '' AND ft_libelle_de_voie IS NOT NULL AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL ORDER BY ft_oeie_dre");
+		$req->execute(array($idCaff, $voie, $commune));
+		while($data = $req->fetch())
+		{
+			$poi = json_decode(getPoiById($data["id"]));
+			array_push($listePoi, $poi);
+		}
+		
+		return json_encode($listePoi);
+	}
+	
+	function getListePoiByCaffByCommune($idCaff, $commune)
+	{
+		include("connexionBddErp.php");
+		
+		$listePoi = array();
+		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL ORDER BY ft_oeie_dre");
+		$req->execute(array($idCaff, $commune));
+		while($data = $req->fetch())
+		{
+			$poi = json_decode(getPoiById($data["id"]));
+			array_push($listePoi, $poi);
+		}
+		
+		return json_encode($listePoi);
 	}
 ?>
