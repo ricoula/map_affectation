@@ -96,10 +96,43 @@
 <script>
   $(".caffAffectation").click(function(){
       var caff = $(this).children(".caffjson").first().val();
-      //console.log($(this).children(".caffjson").first().val());
       $("#divInfosCaffAffectation").load("modaleInfosCaffAffectation.php?caff=" + caff, function(){
           $('#modaleInfosCaffAffectation').modal('show');
       });
+  });
+
+  /*objetAC = [];
+  $.post("API/getSites.php", function(data){
+    var sites = JSON.parse(data);
+    var i = 0;
+    sites.forEach(function(site){
+      i++;
+      $.post("API/getCaffsBySite.php", {site: site}, function(data2){
+        var caffs = JSON.parse(data2);
+        var listeNomsCaffs = [];
+        caffs.forEach(function(caff){
+          listeNomsCaffs.push(caff.name_related);
+        });
+        objetAC[site] = listeNomsCaffs;
+      });
+    });
+  });*/
+  $.post("API/getInfosCaff.php", function(data){
+    var caffs = JSON.parse(data);
+    var options = {
+    data: caffs,
+    getValue: "name_related",
+    list: {
+      onChooseEvent: function() {
+      var caff = encodeURI(JSON.stringify($("#searchCaff").getSelectedItemData()));
+      $("#divInfosCaffAffectation").load("modaleInfosCaffAffectation.php?caff=" + caff, function(){
+          $('#modaleInfosCaffAffectation').modal('show');
+      });
+		}	
+	}
+};
+
+$("#searchCaff").easyAutocomplete(options);
   });
 </script>
 

@@ -542,4 +542,24 @@
 		
 		return json_encode($listePoi);
 	}
+	
+	function getSites()
+	{
+		include("connexionBdd.php");
+		$sites = array();
+		$req = $bdd->query("SELECT distinct site FROM cds_transco_ui_site ORDER BY site");
+		while($data = $req->fetch())
+		{
+			array_push($sites, $data["site"]);
+		}
+		return json_encode($sites);
+	}
+	
+	function getIdCaffByName($name)
+	{
+		include("connexionBddErp.php");
+		$idCaff = null;
+		$req = $bddErp->prepare("SELECT id FROM hr_employee WHERE name_related = ?");
+		$req->execute(array($name));
+	}
 ?>
