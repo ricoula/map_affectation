@@ -24,7 +24,9 @@
                 foreach($liensClient as $caff)
                 {
                     ?>
-                    <a href="#" class="list-group-item"><?php echo $caff->name ?> <span class="badge"><?php echo $caff->nb_poi ?></span></a>
+                    <a href="#" data-target="#modaleListePoiLienByCaff" class="list-group-item lienTitulaire idcaff_<?php echo $caff->id ?> namecaff_<?php echo $caff->name ?>">
+                        <?php echo $caff->name ?> <?php if($caff->entraide){ ?><label class="label label-primary">Entraide</label><?php } ?> <span class="badge"><?php echo $caff->nb_poi ?></span>
+                    </a>
                     <?php
                 }
             }
@@ -57,7 +59,9 @@
                 foreach($liensVoie as $caff)
                 {
                     ?>
-                    <a href="#" class="list-group-item"><?php echo $caff->name ?> <span class="badge"><?php echo $caff->nb_poi ?></span></a>
+                    <a href="#" class="list-group-item lienVoie idcaff_<?php echo $caff->id ?> namecaff_<?php echo $caff->name ?>">
+                        <?php echo $caff->name ?> <?php if($caff->entraide){ ?><label class="label label-primary">Entraide</label><?php } ?> <span class="badge"><?php echo $caff->nb_poi ?></span>
+                    </a>
                     <?php
                 }
             }
@@ -90,7 +94,9 @@
                 foreach($liensCommune as $caff)
                 {
                     ?>
-                    <a href="#" class="list-group-item"><?php echo $caff->name ?> <span class="badge"><?php echo $caff->nb_poi ?></span></a>
+                    <a href="#" class="list-group-item lienCommune  idcaff_<?php echo $caff->id ?> namecaff_<?php echo $caff->name ?>">
+                        <?php echo $caff->name ?> <?php if($caff->entraide){ ?><label class="label label-primary">Entraide</label><?php } ?> <span class="badge"><?php echo $caff->nb_poi ?></span>
+                    </a>
                     <?php
                 }
             }
@@ -111,3 +117,87 @@
     ?>
     </div>
 </div>
+
+<input type="hidden" name="titulaire" id="titulaire" value="<?php echo urlencode($poi->ft_titulaire_client) ?>" />
+<input type="hidden" name="voie" id="voie" value="<?php echo urlencode($poi->ft_libelle_de_voie) ?>" />
+<input type="hidden" name="commune" id="commune" value="<?php echo urlencode($poi->ft_libelle_commune) ?>" />
+
+<script>
+    var titulaire = $("#titulaire").val();
+    var voie = $("#voie").val();
+    var commune = $("#commune").val();
+
+    $(".lienTitulaire").click(function(){
+        var liaisonName = "titulaire";
+        
+        var listeClasse = this.classList;
+        var idCaff = 0;
+        var nameCaff = "";
+        listeClasse.forEach(function(classe){
+            if(classe.split("_").length > 1)
+            {
+                if(classe.split("_")[0] == "idcaff")
+                {
+                    idCaff = classe.split("_")[1];
+                }
+                if(classe.split("_")[0] == "namecaff")
+                {
+                    nameCaff = classe.split("_")[1];
+                }
+            }
+        });
+        var url = "modaleListePoiCaff.php?liaison_name=" + liaisonName + "&caff_name=" + nameCaff + "&caff_id=" + idCaff + "&titulaire=" + titulaire + "&voie=" + voie + "&commune=" + commune;
+        $("#divListePoiLienByCaff").load(url, function(){
+            $('#modaleListePoiLienByCaff').modal('show');
+        });
+    });
+
+    $(".lienVoie").click(function(){
+        var liaisonName = "voie";
+        var listeClasse = this.classList;
+        var idCaff = 0;
+        var nameCaff = "";
+        listeClasse.forEach(function(classe){
+            if(classe.split("_").length > 1)
+            {
+                if(classe.split("_")[0] == "idcaff")
+                {
+                    idCaff = classe.split("_")[1];
+                }
+                if(classe.split("_")[0] == "namecaff")
+                {
+                    nameCaff = classe.split("_")[1];
+                }
+            }
+        });
+        var url = "modaleListePoiCaff.php?liaison_name=" + liaisonName + "&caff_name=" + nameCaff + "&caff_id=" + idCaff + "&titulaire=" + titulaire + "&voie=" + voie + "&commune=" + commune;
+        $("#divListePoiLienByCaff").load(url, function(){
+            $('#modaleListePoiLienByCaff').modal('show');
+        });
+    });
+
+    $(".lienCommune").click(function(){
+        var liaisonName = "commune";
+        var listeClasse = this.classList;
+        var idCaff = 0;
+        var nameCaff = "";
+        listeClasse.forEach(function(classe){
+            if(classe.split("_").length > 1)
+            {
+                if(classe.split("_")[0] == "idcaff")
+                {
+                    idCaff = classe.split("_")[1];
+                }
+                if(classe.split("_")[0] == "namecaff")
+                {
+                    nameCaff = classe.split("_")[1];
+                }
+            }
+        });
+        var url = "modaleListePoiCaff.php?liaison_name=" + liaisonName + "&caff_name=" + nameCaff + "&caff_id=" + idCaff + "&titulaire=" + titulaire + "&voie=" + voie + "&commune=" + commune;
+        $("#divListePoiLienByCaff").load(url, function(){
+            $('#modaleListePoiLienByCaff').modal('show');
+        });
+    });
+</script>
+
