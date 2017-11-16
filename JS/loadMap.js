@@ -49,7 +49,7 @@
         '<h2 id="win_info_numero_oeie">'+marker.title+'</h2>' +
        '<div class="list-group">' +
           '<a href="#" class="list-group-item" id="win_info_affecter_a">Affecter à</a>' +
-          '<a data-target="#modaleListeCaffsLienPoi" class="list-group-item testClass" id="win_info_liens" style="cursor: pointer">POI en lien <span class="badge" id="badgeNbPoi"></span></a>' +
+          '<a class="list-group-item testClass" id="win_info_liens" style="cursor: pointer">POI en lien <span class="badge" id="badgeNbPoi"></span></a>' +
           '<a href="#" class="list-group-item" id="win_info_affecter_auto">Affecter auto. <span class="label label-info pull-right">RICOU Damien</span></a>' +
       '</div>' +
    '</div>');

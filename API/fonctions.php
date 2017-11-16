@@ -325,7 +325,7 @@
 		include("connexionBddErp.php");
 		$nbPoi = 0;
 		
-		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE ((ft_titulaire_client = ? AND ft_titulaire_client != '' AND ft_titulaire_client IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL AND ft_etat = '1') OR (ft_libelle_commune = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune != '' AND ft_libelle_de_voie != '' AND ft_libelle_commune IS NOT NULL AND ft_libelle_de_voie IS NOT NULL AND ft_etat = '1')) AND (atr_ui = ? AND atr_ui != '' AND atr_ui IS NOT NULL) AND atr_caff_traitant_id IN( select test2.employee_id from res_users  
+		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE ((ft_titulaire_client = ? AND ft_titulaire_client != '' AND ft_titulaire_client IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune != '' AND ft_libelle_de_voie != '' AND ft_libelle_commune IS NOT NULL AND ft_libelle_de_voie IS NOT NULL)) AND (atr_ui = ? AND atr_ui != '' AND atr_ui IS NOT NULL) AND atr_caff_traitant_id IN( select test2.employee_id from res_users  
 				left join (select hr_job.name as job,ag_site.name as site,hr_employee.id as employee_id,hr_employee.name_related as employee_name,test.name_related as mana_name from hr_employee
 				left join ag_site on hr_employee.ag_site_id = ag_site.id
 				left join hr_job on hr_employee.job_id = hr_job.id
@@ -402,8 +402,7 @@
 		ON p.atr_caff_traitant_id = e.id 
 		WHERE p.ft_libelle_de_voie = ?
 		AND p.ft_libelle_de_voie != ''
-		AND p.ft_libelle_de_voie IS NOT NULL  
-		AND ft_etat = '1'
+		AND p.ft_libelle_de_voie IS NOT NULL
 		AND p.ft_libelle_commune = ?
 		AND p.ft_libelle_commune != ''
 		AND p.ft_libelle_commune IS NOT NULL
@@ -455,7 +454,6 @@
 		ON p.atr_caff_traitant_id = e.id 
 		WHERE p.ft_libelle_commune = ?
 		AND p.ft_libelle_commune != ''
-		AND ft_etat = '1'
 		AND p.ft_libelle_commune IS NOT NULL
 		AND p.atr_caff_traitant_id IN( select test2.employee_id from res_users  
 				left join (select hr_job.name as job,ag_site.name as site,hr_employee.id as employee_id,hr_employee.name_related as employee_name,test.name_related as mana_name from hr_employee
@@ -514,7 +512,7 @@
 		include("connexionBddErp.php");
 		
 		$listePoi = array();
-		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune = ? AND ft_libelle_de_voie != '' AND ft_libelle_de_voie IS NOT NULL AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL AND ft_etat = '1' ORDER BY ft_oeie_dre");
+		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune = ? AND ft_libelle_de_voie != '' AND ft_libelle_de_voie IS NOT NULL AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL ORDER BY ft_oeie_dre");
 		$req->execute(array($idCaff, $voie, $commune));
 		while($data = $req->fetch())
 		{
@@ -530,7 +528,7 @@
 		include("connexionBddErp.php");
 		
 		$listePoi = array();
-		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL AND ft_etat = '1' ORDER BY ft_oeie_dre");
+		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL ORDER BY ft_oeie_dre");
 		$req->execute(array($idCaff, $commune));
 		while($data = $req->fetch())
 		{
@@ -539,5 +537,19 @@
 		}
 		
 		return json_encode($listePoi);
+	}
+	
+	function getCaffsByUiAndAll($ui)
+	{
+		include("connexionBdd.php");
+		include("connexionErp.php");
+		
+		$listeCaffs = array();
+		$req = $bdd->prepare("SELECT erp_site_id WHERE ft_zone = ?");
+		$req->execute(array($ui));
+		while($data = $req->fetch())
+		{
+			$listeCaffs = json_decode(getCaffsBySite($data["erp_site_id"]));
+		}
 	}
 ?>
