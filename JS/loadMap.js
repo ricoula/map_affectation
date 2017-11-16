@@ -60,7 +60,7 @@
               });
               $("#win_info_liens").click(function(){
                   $("#divListeCaffsLienPoi").load("modaleListeCaffsLienPoi.php?poi=" + poi.id, function(){
-                      $('.modal').modal('show');
+                      $('#modaleListeCaffsLienPoi').modal('show');
                   });
               });
   
@@ -70,5 +70,6 @@
             });
             
           });
-  
+
     }
+    

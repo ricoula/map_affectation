@@ -325,7 +325,7 @@
 		include("connexionBddErp.php");
 		$nbPoi = 0;
 		
-		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE ((ft_titulaire_client = ? AND ft_titulaire_client != '' AND ft_titulaire_client IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune != '' AND ft_libelle_de_voie != '' AND ft_libelle_commune IS NOT NULL AND ft_libelle_de_voie IS NOT NULL)) AND (atr_ui = ? AND atr_ui != '' AND atr_ui IS NOT NULL) AND atr_caff_traitant_id IN( select test2.employee_id from res_users  
+		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE ((ft_titulaire_client = ? AND ft_titulaire_client != '' AND ft_titulaire_client IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL AND ft_etat = '1') OR (ft_libelle_commune = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune != '' AND ft_libelle_de_voie != '' AND ft_libelle_commune IS NOT NULL AND ft_libelle_de_voie IS NOT NULL AND ft_etat = '1')) AND (atr_ui = ? AND atr_ui != '' AND atr_ui IS NOT NULL) AND atr_caff_traitant_id IN( select test2.employee_id from res_users  
 				left join (select hr_job.name as job,ag_site.name as site,hr_employee.id as employee_id,hr_employee.name_related as employee_name,test.name_related as mana_name from hr_employee
 				left join ag_site on hr_employee.ag_site_id = ag_site.id
 				left join hr_job on hr_employee.job_id = hr_job.id
@@ -371,15 +371,19 @@
 			$req2->execute(array($data["ag_site_id"]));
 			while($data2 = $req2->fetch())
 			{
+				$caff = (object) array();
+				$caff->id = $data["atr_caff_traitant_id"];
+				$caff->name = $data["name_related"];
+				$caff->nb_poi = $data["nb"];
+				$caff->site_id = $data["ag_site_id"];
 				if($data2["ft_zone"] == $ui)
 				{
-					$caff = (object) array();
-					$caff->id = $data["atr_caff_traitant_id"];
-					$caff->name = $data["name_related"];
-					$caff->nb_poi = $data["nb"];
-					$caff->site_id = $data["ag_site_id"];
-					array_push($listeCaffs, $caff);
+					$caff->entraide = false;
 				}
+				else{
+					$caff->entraide = true;
+				}
+				array_push($listeCaffs, $caff);
 			}
 		}
 		
@@ -398,7 +402,8 @@
 		ON p.atr_caff_traitant_id = e.id 
 		WHERE p.ft_libelle_de_voie = ?
 		AND p.ft_libelle_de_voie != ''
-		AND p.ft_libelle_de_voie IS NOT NULL
+		AND p.ft_libelle_de_voie IS NOT NULL  
+		AND ft_etat = '1'
 		AND p.ft_libelle_commune = ?
 		AND p.ft_libelle_commune != ''
 		AND p.ft_libelle_commune IS NOT NULL
@@ -419,15 +424,19 @@
 			$req2->execute(array($data["ag_site_id"]));
 			while($data2 = $req2->fetch())
 			{
+				$caff = (object) array();
+				$caff->id = $data["atr_caff_traitant_id"];
+				$caff->name = $data["name_related"];
+				$caff->nb_poi = $data["nb"];
+				$caff->site_id = $data["ag_site_id"];
 				if($data2["ft_zone"] == $ui)
 				{
-					$caff = (object) array();
-					$caff->id = $data["atr_caff_traitant_id"];
-					$caff->name = $data["name_related"];
-					$caff->nb_poi = $data["nb"];
-					$caff->site_id = $data["ag_site_id"];
-					array_push($listeCaffs, $caff);
+					$caff->entraide = false;
 				}
+				else{
+					$caff->entraide = true;
+				}
+				array_push($listeCaffs, $caff);
 			}
 		}
 		
@@ -446,6 +455,7 @@
 		ON p.atr_caff_traitant_id = e.id 
 		WHERE p.ft_libelle_commune = ?
 		AND p.ft_libelle_commune != ''
+		AND ft_etat = '1'
 		AND p.ft_libelle_commune IS NOT NULL
 		AND p.atr_caff_traitant_id IN( select test2.employee_id from res_users  
 				left join (select hr_job.name as job,ag_site.name as site,hr_employee.id as employee_id,hr_employee.name_related as employee_name,test.name_related as mana_name from hr_employee
@@ -464,18 +474,70 @@
 			$req2->execute(array($data["ag_site_id"]));
 			while($data2 = $req2->fetch())
 			{
+				$caff = (object) array();
+				$caff->id = $data["atr_caff_traitant_id"];
+				$caff->name = $data["name_related"];
+				$caff->nb_poi = $data["nb"];
+				$caff->site_id = $data["ag_site_id"];
 				if($data2["ft_zone"] == $ui)
 				{
-					$caff = (object) array();
-					$caff->id = $data["atr_caff_traitant_id"];
-					$caff->name = $data["name_related"];
-					$caff->nb_poi = $data["nb"];
-					$caff->site_id = $data["ag_site_id"];
-					array_push($listeCaffs, $caff);
+					$caff->entraide = false;
 				}
+				else{
+					$caff->entraide = true;
+				}
+				array_push($listeCaffs, $caff);
 			}
 		}
 		
 		return json_encode($listeCaffs);
+	}
+	
+	function getListePoiByCaffByTitulaire($idCaff, $titulaire)
+	{
+		include("connexionBddErp.php");
+		
+		$listePoi = array();
+		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_titulaire_client = ? AND ft_titulaire_client != '' AND ft_titulaire_client IS NOT NULL ORDER BY ft_oeie_dre");
+		$req->execute(array($idCaff, $titulaire));
+		while($data = $req->fetch())
+		{
+			$poi = json_decode(getPoiById($data["id"]));
+			array_push($listePoi, $poi);
+		}
+		
+		return json_encode($listePoi);
+	}
+	
+	function getListePoiByCaffByVoie($idCaff, $voie, $commune)
+	{
+		include("connexionBddErp.php");
+		
+		$listePoi = array();
+		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune = ? AND ft_libelle_de_voie != '' AND ft_libelle_de_voie IS NOT NULL AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL AND ft_etat = '1' ORDER BY ft_oeie_dre");
+		$req->execute(array($idCaff, $voie, $commune));
+		while($data = $req->fetch())
+		{
+			$poi = json_decode(getPoiById($data["id"]));
+			array_push($listePoi, $poi);
+		}
+		
+		return json_encode($listePoi);
+	}
+	
+	function getListePoiByCaffByCommune($idCaff, $commune)
+	{
+		include("connexionBddErp.php");
+		
+		$listePoi = array();
+		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL AND ft_etat = '1' ORDER BY ft_oeie_dre");
+		$req->execute(array($idCaff, $commune));
+		while($data = $req->fetch())
+		{
+			$poi = json_decode(getPoiById($data["id"]));
+			array_push($listePoi, $poi);
+		}
+		
+		return json_encode($listePoi);
 	}
 ?>
