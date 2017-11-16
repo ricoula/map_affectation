@@ -18,6 +18,12 @@
     </div>
          <div id="map"></div>
     </div>
+
+    <div class="modal fade" id="modaleListeCaffsLienPoi">
+        <div class="modal-dialog modal-lg"> 
+          <div class="modal-content" id="divListeCaffsLienPoi"></div>  
+        </div> 
+    </div>
     
   <?php include("footer.php") ?>
   </body>
