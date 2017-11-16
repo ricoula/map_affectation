@@ -26,7 +26,7 @@ body
     position:absolute;
     top:10%;
     z-index:20;
-    box-shadow:3px 1px 5px 1px #00000078;
+    box-shadow:4px 1px 5px 1px #00000078;
 }
 .glyph_div
 {
@@ -145,11 +145,11 @@ body
   }
 .active
 {
-  background-color:#ececec;
+  background-color:#f1f1f1;
 }
 .active:hover
 {
-  background-color:#ececec;
+  background-color:#f1f1f1;
 }
 .active span
 {
@@ -158,7 +158,13 @@ body
 #slide-close
 {
   font-size:25px;
-  
+  color:#848484;
+  cursor:pointer;
+}
+#slide-close:hover
+{
+  font-size:25px;
+  color:#000000;
   cursor:pointer;
 }
 #home-domaine
@@ -174,4 +180,35 @@ body
 .list-group-item
 {
     padding:7px;
+}
+#basic-addon1
+{
+
+  background-image: url("../img/greper.png");
+  background-size: 100px 100px;
+  width:100px;
+  height:100px;
+
+}
+#basic-addon2
+{
+
+  background-image: url("../img/phihub.png");
+  background-size: 100px 100px;
+  width:100px;
+  height:100px;
+
+}
+.users-card-caff
+{
+  background-color:white;
+  margin-top:5px;
+  box-shadow:0px 0px 1px 1px #0000003b inset;
+  border-radius: 5px;
+  width:100%;
+}
+.users-card-info
+{
+  padding-left:10px;
+  padding-right:10px;
 }
