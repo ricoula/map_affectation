@@ -176,6 +176,7 @@
 			hr_employee.name_related,
 			ag_poi.ft_titulaire_client,
 			ag_poi.ft_numero_de_voie,
+			ag_poi.ft_libelle_de_voie,
 			ag_poi.ft_libelle_commune,
 			ag_poi.insee_code,
 			ag_poi.ft_latitude,
@@ -207,6 +208,7 @@
 			$poi->employee_name = $data["name_related"];
 			$poi->ft_titulaire_client = $data["ft_titulaire_client"];
 			$poi->ft_numero_de_voie = $data["ft_numero_de_voie"];
+			$poi->ft_libelle_de_voie = $data["ft_libelle_de_voie"];
 			$poi->ft_libelle_commune = $data["ft_libelle_commune"];
 			$poi->insee_code = $data["insee_code"];
 			$poi->ft_latitude = $data["ft_latitude"];
@@ -316,5 +318,164 @@
 		}
 		
 		return json_encode($liste);
+	}
+	
+	function getNbPoiEnLien($commune, $voie, $titulaire, $ui)
+	{
+		include("connexionBddErp.php");
+		$nbPoi = 0;
+		
+		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE ((ft_titulaire_client = ? AND ft_titulaire_client != '' AND ft_titulaire_client IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune != '' AND ft_libelle_de_voie != '' AND ft_libelle_commune IS NOT NULL AND ft_libelle_de_voie IS NOT NULL)) AND (atr_ui = ? AND atr_ui != '' AND atr_ui IS NOT NULL) AND atr_caff_traitant_id IN( select test2.employee_id from res_users  
+				left join (select hr_job.name as job,ag_site.name as site,hr_employee.id as employee_id,hr_employee.name_related as employee_name,test.name_related as mana_name from hr_employee
+				left join ag_site on hr_employee.ag_site_id = ag_site.id
+				left join hr_job on hr_employee.job_id = hr_job.id
+			   left join (select id,name_related,parent_id from hr_employee) test on hr_employee.parent_id = test.id
+			   order by test.name_related)test2 on res_users.ag_employee_id = test2.employee_id
+			   where active is true and login not in ('admin','import_portefeuille','CONGES') and job in ('CAFF FT','CAFF MIXTE')
+		)");
+		$req->execute(array($titulaire, $commune, $commune, $voie, $ui));
+		if($data = $req->fetch())
+		{
+			$nbPoi = $data["nb"];
+		}
+		return json_encode($nbPoi);
+	}
+	
+	function getCaffsEnLienAvecPoiByTitulaire($titulaire, $ui)
+	{
+		include("connexionBddErp.php");
+		include("connexionBdd.php");
+		$listeCaffs = array();
+		
+		$req = $bddErp->prepare("SELECT p.atr_caff_traitant_id, e.name_related, COUNT(p.atr_caff_traitant_id) nb, e.ag_site_id 
+		FROM ag_poi p 
+		JOIN hr_employee e 
+		ON p.atr_caff_traitant_id = e.id 
+		WHERE p.ft_titulaire_client = ?
+		AND p.ft_titulaire_client != ''
+		AND p.ft_titulaire_client IS NOT NULL
+		AND p.atr_caff_traitant_id IN( select test2.employee_id from res_users  
+				left join (select hr_job.name as job,ag_site.name as site,hr_employee.id as employee_id,hr_employee.name_related as employee_name,test.name_related as mana_name from hr_employee
+				left join ag_site on hr_employee.ag_site_id = ag_site.id
+				left join hr_job on hr_employee.job_id = hr_job.id
+			   left join (select id,name_related,parent_id from hr_employee) test on hr_employee.parent_id = test.id
+			   order by test.name_related)test2 on res_users.ag_employee_id = test2.employee_id
+			   where active is true and login not in ('admin','import_portefeuille','CONGES') and job in ('CAFF FT','CAFF MIXTE')
+		)
+		GROUP BY p.atr_caff_traitant_id, e.name_related, e.ag_site_id
+		ORDER BY nb DESC");
+		$req->execute(array($titulaire));
+		while($data = $req->fetch())
+		{
+			$req2 = $bdd->prepare("SELECT ft_zone FROM cds_transco_ui_site WHERE erp_site_id = ?");
+			$req2->execute(array($data["ag_site_id"]));
+			while($data2 = $req2->fetch())
+			{
+				if($data2["ft_zone"] == $ui)
+				{
+					$caff = (object) array();
+					$caff->id = $data["atr_caff_traitant_id"];
+					$caff->name = $data["name_related"];
+					$caff->nb_poi = $data["nb"];
+					$caff->site_id = $data["ag_site_id"];
+					array_push($listeCaffs, $caff);
+				}
+			}
+		}
+		
+		return json_encode($listeCaffs);
+	}
+	
+	function getCaffsEnLienAvecPoiByVoie($voie, $commune, $ui)
+	{
+		include("connexionBddErp.php");
+		include("connexionBdd.php");
+		$listeCaffs = array();
+		
+		$req = $bddErp->prepare("SELECT p.atr_caff_traitant_id, e.name_related, COUNT(p.ft_libelle_de_voie) nb, e.ag_site_id 
+		FROM ag_poi p 
+		JOIN hr_employee e 
+		ON p.atr_caff_traitant_id = e.id 
+		WHERE p.ft_libelle_de_voie = ?
+		AND p.ft_libelle_de_voie != ''
+		AND p.ft_libelle_de_voie IS NOT NULL
+		AND p.ft_libelle_commune = ?
+		AND p.ft_libelle_commune != ''
+		AND p.ft_libelle_commune IS NOT NULL
+		AND p.atr_caff_traitant_id IN( select test2.employee_id from res_users  
+				left join (select hr_job.name as job,ag_site.name as site,hr_employee.id as employee_id,hr_employee.name_related as employee_name,test.name_related as mana_name from hr_employee
+				left join ag_site on hr_employee.ag_site_id = ag_site.id
+				left join hr_job on hr_employee.job_id = hr_job.id
+			   left join (select id,name_related,parent_id from hr_employee) test on hr_employee.parent_id = test.id
+			   order by test.name_related)test2 on res_users.ag_employee_id = test2.employee_id
+			   where active is true and login not in ('admin','import_portefeuille','CONGES') and job in ('CAFF FT','CAFF MIXTE')
+		)
+		GROUP BY p.atr_caff_traitant_id, e.name_related, e.ag_site_id
+		ORDER BY nb DESC");
+		$req->execute(array($voie, $commune));
+		while($data = $req->fetch())
+		{
+			$req2 = $bdd->prepare("SELECT ft_zone FROM cds_transco_ui_site WHERE erp_site_id = ?");
+			$req2->execute(array($data["ag_site_id"]));
+			while($data2 = $req2->fetch())
+			{
+				if($data2["ft_zone"] == $ui)
+				{
+					$caff = (object) array();
+					$caff->id = $data["atr_caff_traitant_id"];
+					$caff->name = $data["name_related"];
+					$caff->nb_poi = $data["nb"];
+					$caff->site_id = $data["ag_site_id"];
+					array_push($listeCaffs, $caff);
+				}
+			}
+		}
+		
+		return json_encode($listeCaffs);
+	}
+	
+	function getCaffsEnLienAvecPoiByCommune($commune, $ui)
+	{
+		include("connexionBddErp.php");
+		include("connexionBdd.php");
+		$listeCaffs = array();
+		
+		$req = $bddErp->prepare("SELECT p.atr_caff_traitant_id, e.name_related, COUNT(p.ft_libelle_commune) nb, e.ag_site_id 
+		FROM ag_poi p 
+		JOIN hr_employee e 
+		ON p.atr_caff_traitant_id = e.id 
+		WHERE p.ft_libelle_commune = ?
+		AND p.ft_libelle_commune != ''
+		AND p.ft_libelle_commune IS NOT NULL
+		AND p.atr_caff_traitant_id IN( select test2.employee_id from res_users  
+				left join (select hr_job.name as job,ag_site.name as site,hr_employee.id as employee_id,hr_employee.name_related as employee_name,test.name_related as mana_name from hr_employee
+				left join ag_site on hr_employee.ag_site_id = ag_site.id
+				left join hr_job on hr_employee.job_id = hr_job.id
+			   left join (select id,name_related,parent_id from hr_employee) test on hr_employee.parent_id = test.id
+			   order by test.name_related)test2 on res_users.ag_employee_id = test2.employee_id
+			   where active is true and login not in ('admin','import_portefeuille','CONGES') and job in ('CAFF FT','CAFF MIXTE')
+		)
+		GROUP BY p.atr_caff_traitant_id, e.name_related, e.ag_site_id
+		ORDER BY nb DESC");
+		$req->execute(array($commune));
+		while($data = $req->fetch())
+		{
+			$req2 = $bdd->prepare("SELECT ft_zone FROM cds_transco_ui_site WHERE erp_site_id = ?");
+			$req2->execute(array($data["ag_site_id"]));
+			while($data2 = $req2->fetch())
+			{
+				if($data2["ft_zone"] == $ui)
+				{
+					$caff = (object) array();
+					$caff->id = $data["atr_caff_traitant_id"];
+					$caff->name = $data["name_related"];
+					$caff->nb_poi = $data["nb"];
+					$caff->site_id = $data["ag_site_id"];
+					array_push($listeCaffs, $caff);
+				}
+			}
+		}
+		
+		return json_encode($listeCaffs);
 	}
 ?>
