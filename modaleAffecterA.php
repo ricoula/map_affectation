@@ -3,14 +3,94 @@
     $poi = json_decode(getPoiById($_GET["poi_id"]));
     $closestSite = json_decode(getClosestSite($poi->id));
     $sitesUi = json_decode(getSitesByUi($poi->atr_ui));
-    
+    $caffs = json_decode(getInfosCaff());
 ?>
 
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal">&times;</button>
-  <h1>Caffs en lien avec la POI: <?php echo $poi->ft_numero_oeie ?></h1>
+  <h1>Affectation de la POI: <?php echo $poi->ft_numero_oeie ?></h1>
 </div>
 <div class="modal-body">
-    
+  <div>
+    <input type="search" id="searchCaff" placeholder="Rechercher..." class="form-control" /><br/>
+  </div>
+  <ul class="nav nav-pills nav-justified">
+    <li class="active"><a href="#tabClosestSite" data-toggle="tab">Site le plus proche</a></li>
+    <li><a href="#tabSitesUi" data-toggle="tab">Sites de <?php echo $poi->atr_ui ?></a></li>
+    <li><a href="#tabAllCaff" data-toggle="tab">Tous les caffs</a></li>
+  </ul>
+  <div class="tab-content">
+
+    <div class="tab-pane active" id="tabClosestSite">
+      <h3 style="text-align: center"><?php echo $closestSite->libelle ?></h3>
+      <div class="list-group">
+        <?php
+        foreach($caffs as $caff)
+        {
+          if($caff->site == $closestSite->libelle)
+          {
+            ?>
+            <a href="#infosCaff.php?id=<?php echo $caff->id ?>" id="caffClosestSite_<?php echo $caff->id ?>" class="list-group-item"><?php echo $caff->name_related ?></a>
+            <?php
+          }
+        }
+        ?>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tabSitesUi"  style="background-color: white">
+    <br/>
+      <div id="listeSitesUi" class="panel-group">
+
+        <?php
+        foreach($sitesUi as $site)
+        {
+          ?>
+          <div class="panel panel-default">
+            <div class="panel-heading"> 
+              <h3 class="panel-title">
+                <a href="#<?php echo urlencode($site->libelle) ?>" data-parent="#listeSitesUi" data-toggle="collapse"> <?php echo $site->libelle ?> </a> 
+              </h3>
+            </div>
+            <div id="<?php echo urlencode($site->libelle) ?>" class="panel-collapse collapse">
+              <div class="panel-body">
+              <div class="list-group">
+              <?php
+              foreach($caffs as $caff)
+              {
+                if($caff->site == $site->libelle)
+                {
+                  ?>
+                  <a href="#infosCaff.php?id=<?php echo $caff->id ?>" class="list-group-item"><?php echo $caff->name_related ?></a>
+                  <?php
+                }
+              }
+              ?>
+              </div>
+              
+              </div>
+            </div>
+          </div>
+          <?php
+        }
+        ?>
+
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tabAllCaff">
+      <div class="list-group">
+        <?php
+        foreach($caffs as $caff)
+        {
+          ?>
+          <a href="#infosCaff.php?id=<?php echo $caff->id ?>" class="list-group-item"><?php echo $caff->name_related ?><span class="badge"><?php echo $caff->site ?></span></a>
+          <?php
+        }
+        ?>
+      </div>
+    </div>
+
+  </div>
 </div>
 

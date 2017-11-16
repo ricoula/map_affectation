@@ -63,7 +63,11 @@
                       $('#modaleListeCaffsLienPoi').modal('show');
                   });
               });
-  
+              $("#win_info_affecter_a").click(function(){
+                $("#divAffecterA").load("modaleAffecterA.php?poi_id=" + poi.id, function(){
+                    $('#modaleAffecterA').modal('show');
+                });
+            });
   
           });
           google.maps.event.addListener(marker, 'spider_click', function(e) {  // 'spider_rightclick', not plain 'click'
