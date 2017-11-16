@@ -270,7 +270,7 @@
 			array_push($destinations, $site->longitude . "," . $site->latitude);
 		}
 		$destinations = implode("|", $destinations);
-		$url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=".$origins."&destinations=".$destinations."&key=".$key;
+		$url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=".$origins."&destinations=".$destinations."&key=".$key;
 		$listeDistances = json_decode(file_get_contents($url));
 		$duree = null;
 		$nb = 0;
@@ -280,6 +280,8 @@
 			if($duree == null)
 			{
 				$duree = $distance->duration->value;
+				$listeSite[$nb]->duree = $distance->duration->text;
+				$listeSite[$nb]->distance = $distance->distance->text;
 			}
 			else{
 				if($distance->duration->value < $duree)
@@ -287,6 +289,8 @@
 					$duree = $distance->duration->value;
 					
 					$nb = $i;
+					$listeSite[$nb]->duree = $distance->duration->text;
+					$listeSite[$nb]->distance = $distance->distance->text;
 				}
 			}
 			
@@ -537,19 +541,5 @@
 		}
 		
 		return json_encode($listePoi);
-	}
-	
-	function getCaffsByUiAndAll($ui)
-	{
-		include("connexionBdd.php");
-		include("connexionErp.php");
-		
-		$listeCaffs = array();
-		$req = $bdd->prepare("SELECT erp_site_id WHERE ft_zone = ?");
-		$req->execute(array($ui));
-		while($data = $req->fetch())
-		{
-			$listeCaffs = json_decode(getCaffsBySite($data["erp_site_id"]));
-		}
 	}
 ?>
