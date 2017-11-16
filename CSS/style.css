@@ -11,11 +11,15 @@ body
 }
 #side_bar
 {
-
-    width:0px;
+    position:absolute;
+    width:500px;
+    left:-500px;
+    height:100%;
     z-index:2;
     background-color:#f1f1f1;
-      box-shadow:3px 1px 20px 1px #00000078;
+    box-shadow:3px 1px 20px 1px #00000078;
+    padding:10px;
+    overflow:auto;
 }
 #glyph
 {
@@ -139,3 +143,35 @@ body
     -o-transform: scale(1, -1);
     transform: scale(1, -1);
   }
+.active
+{
+  background-color:#ececec;
+}
+.active:hover
+{
+  background-color:#ececec;
+}
+.active span
+{
+  color:black
+}
+#slide-close
+{
+  font-size:25px;
+  
+  cursor:pointer;
+}
+#home-domaine
+{
+  font-size:32px;
+
+}
+.home-result
+{
+  font-weight:100;
+  font-size:14px;
+}
+.list-group-item
+{
+    padding:7px;
+}

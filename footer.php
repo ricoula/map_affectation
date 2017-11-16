@@ -11,7 +11,6 @@
 
     <script async defer src="https://maps.google.com/maps/api/js?v=3&callback=mapLibReadyHandler&key=AIzaSyAYvU3R9-LA0yn0B9UWY256WE0iTwWLBCw"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OverlappingMarkerSpiderfier/1.0.3/oms.min.js"></script>
-    </script>
     <script src="JS/loadMap.js"></script>
     <script src="JS/header.js"></script>
     <script src="JS/index.js"></script>
