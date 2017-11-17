@@ -22,6 +22,8 @@
         {
             ?>
             <div class="card well card-<?php echo $poi->atr_ui ?>">
+                <input type="hidden" class="longitude" value="<?php echo $poi->ft_longitude ?>" />
+                <input type="hidden" class="latitude" value="<?php echo $poi->ft_latitude ?>" />
                 <div class="card-block">
                     <span class="label label-danger"><?php if($poi->ft_latitude != null && $poi->ft_latitude != '' && $poi->ft_longitude != null && $poi->ft_longitude != ''){ echo "lat: ".$poi->ft_latitude." | lon: ".$poi->ft_longitude; }else{ echo "Pas de référence GPS"; } ?></span><span class="label label-warning pull-right">Non affectée</span>
                     <h4 class="card-title"><?php echo $poi->ft_numero_oeie ?><span class="label label-primary pull-right"><?php echo $poi->domaine ?></span></h4>
@@ -45,6 +47,17 @@
         else{
             $(".card-" +idBtn).hide();
         }
+    });
+
+    var marker = new google.maps.Marker({ map: map, optimized: false,
+      zIndex:99999999, icon: "img_map/epingle.png"
+         });
+    $(".card").click(function(){
+        var longitude = $(this).children(".longitude").first().val();
+        var latitude = $(this).children(".latitude").first().val();
+        myLatlng = new google.maps.LatLng(Number(longitude),Number(latitude));
+        marker.setPosition(myLatlng);
+        marker.setZIndex(1000);
     });
 
     $("#slide-close").click(function(){

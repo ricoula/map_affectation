@@ -1,16 +1,21 @@
 <html>
     <body>
+    <?php
+    include("API/fonctions.php");
+    $caffs = json_decode(getInfosCaff());
+    $listeUi = json_decode(getUi());
+    ?>
         <span id="slide-close" class="glyphicon glyphicon-remove pull-right"></span><br/>
         <h1 id="home-poi" class="well">Information Caff</h1>
         <div class="btn-group" role="group" aria-label="Basic example" id="users-group">
-            <button type="button" class="btn btn-default">BFC</button>
-            <button type="button" class="btn btn-default">ALP</button>
-            <button type="button" class="btn btn-default">RD</button>
-            <button type="button" class="btn btn-default">ALS</button>
-            <button type="button" class="btn btn-default">PCA</button>
-            <button type="button" class="btn btn-default">MPY</button>
-            <button type="button" class="btn btn-default">LYO</button>
-            <button type="button" class="btn btn-default">AUV</button>
+            <?php
+            foreach($listeUi as $ui)
+            {
+                ?>
+                <button type="button" class="btn btn-default btn-primary btnUI" id="<?php echo $ui->ft_zone ?>" ><?php echo $ui->diminutif ?></button>
+                <?php
+            }
+            ?>
         </div>
         <div class="input-group users-card-caff">
         <label class="input-group-addon" id="basic-addon1"></label>
@@ -30,7 +35,18 @@
     </div>
     </body>
 </html>
-<script>   
+<script>
+        $(".btnUI").click(function(){
+            $(this).toggleClass("btn-primary");
+            var idBtn = $(this).attr("id");
+            if($(this).hasClass("btn-primary"))
+            {
+                $(".card-" +idBtn).show();
+            }
+            else{
+                $(".card-" +idBtn).hide();
+            }
+        });
         $("#slide-close").click(function(){
         $("#side_bar").animate({left:'-500px'},500);
         $("#glyph").animate({left:'0px'},500);
