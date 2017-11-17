@@ -82,7 +82,7 @@
 		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
 		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name) t2
 		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name ) t3
-		where name_related is not null");
+		where name_related is not null ORDER BY name_related");
 		while($data = $req->fetch())
 		{
 			$caff = (object) array();
@@ -270,7 +270,7 @@
 			array_push($destinations, $site->longitude . "," . $site->latitude);
 		}
 		$destinations = implode("|", $destinations);
-		$url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=".$origins."&destinations=".$destinations."&key=".$key;
+		$url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=".$origins."&destinations=".$destinations."&key=".$key;
 		$listeDistances = json_decode(file_get_contents($url));
 		$duree = null;
 		$nb = 0;
@@ -280,6 +280,8 @@
 			if($duree == null)
 			{
 				$duree = $distance->duration->value;
+				$listeSite[$nb]->duree = $distance->duration->text;
+				$listeSite[$nb]->distance = $distance->distance->text;
 			}
 			else{
 				if($distance->duration->value < $duree)
@@ -287,6 +289,8 @@
 					$duree = $distance->duration->value;
 					
 					$nb = $i;
+					$listeSite[$nb]->duree = $distance->duration->text;
+					$listeSite[$nb]->distance = $distance->distance->text;
 				}
 			}
 			
@@ -325,7 +329,7 @@
 		include("connexionBddErp.php");
 		$nbPoi = 0;
 		
-		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE ((ft_titulaire_client = ? AND ft_titulaire_client != '' AND ft_titulaire_client IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL AND ft_etat = '1') OR (ft_libelle_commune = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune != '' AND ft_libelle_de_voie != '' AND ft_libelle_commune IS NOT NULL AND ft_libelle_de_voie IS NOT NULL AND ft_etat = '1')) AND (atr_ui = ? AND atr_ui != '' AND atr_ui IS NOT NULL) AND atr_caff_traitant_id IN( select test2.employee_id from res_users  
+		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE ((ft_titulaire_client = ? AND ft_titulaire_client != '' AND ft_titulaire_client IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune != '' AND ft_libelle_de_voie != '' AND ft_libelle_commune IS NOT NULL AND ft_libelle_de_voie IS NOT NULL)) AND (atr_ui = ? AND atr_ui != '' AND atr_ui IS NOT NULL) AND atr_caff_traitant_id IN( select test2.employee_id from res_users  
 				left join (select hr_job.name as job,ag_site.name as site,hr_employee.id as employee_id,hr_employee.name_related as employee_name,test.name_related as mana_name from hr_employee
 				left join ag_site on hr_employee.ag_site_id = ag_site.id
 				left join hr_job on hr_employee.job_id = hr_job.id
@@ -402,8 +406,7 @@
 		ON p.atr_caff_traitant_id = e.id 
 		WHERE p.ft_libelle_de_voie = ?
 		AND p.ft_libelle_de_voie != ''
-		AND p.ft_libelle_de_voie IS NOT NULL  
-		AND ft_etat = '1'
+		AND p.ft_libelle_de_voie IS NOT NULL
 		AND p.ft_libelle_commune = ?
 		AND p.ft_libelle_commune != ''
 		AND p.ft_libelle_commune IS NOT NULL
@@ -455,7 +458,6 @@
 		ON p.atr_caff_traitant_id = e.id 
 		WHERE p.ft_libelle_commune = ?
 		AND p.ft_libelle_commune != ''
-		AND ft_etat = '1'
 		AND p.ft_libelle_commune IS NOT NULL
 		AND p.atr_caff_traitant_id IN( select test2.employee_id from res_users  
 				left join (select hr_job.name as job,ag_site.name as site,hr_employee.id as employee_id,hr_employee.name_related as employee_name,test.name_related as mana_name from hr_employee
@@ -514,7 +516,7 @@
 		include("connexionBddErp.php");
 		
 		$listePoi = array();
-		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune = ? AND ft_libelle_de_voie != '' AND ft_libelle_de_voie IS NOT NULL AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL AND ft_etat = '1' ORDER BY ft_oeie_dre");
+		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune = ? AND ft_libelle_de_voie != '' AND ft_libelle_de_voie IS NOT NULL AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL ORDER BY ft_oeie_dre");
 		$req->execute(array($idCaff, $voie, $commune));
 		while($data = $req->fetch())
 		{
@@ -530,7 +532,7 @@
 		include("connexionBddErp.php");
 		
 		$listePoi = array();
-		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL AND ft_etat = '1' ORDER BY ft_oeie_dre");
+		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL ORDER BY ft_oeie_dre");
 		$req->execute(array($idCaff, $commune));
 		while($data = $req->fetch())
 		{
@@ -539,5 +541,25 @@
 		}
 		
 		return json_encode($listePoi);
+	}
+	
+	function getSites()
+	{
+		include("connexionBdd.php");
+		$sites = array();
+		$req = $bdd->query("SELECT distinct site FROM cds_transco_ui_site ORDER BY site");
+		while($data = $req->fetch())
+		{
+			array_push($sites, $data["site"]);
+		}
+		return json_encode($sites);
+	}
+	
+	function getIdCaffByName($name)
+	{
+		include("connexionBddErp.php");
+		$idCaff = null;
+		$req = $bddErp->prepare("SELECT id FROM hr_employee WHERE name_related = ?");
+		$req->execute(array($name));
 	}
 ?>

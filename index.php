@@ -29,6 +29,16 @@
           <div class="modal-content" id="divListePoiLienByCaff"></div>  
         </div> 
     </div>
+    <div class="modal fade" id="modaleAffecterA">
+        <div class="modal-dialog modal-lg"> 
+          <div class="modal-content" id="divAffecterA"></div>  
+        </div> 
+    </div>
+    <div class="modal fade" id="modaleInfosCaffAffectation">
+        <div class="modal-dialog modal-lg"> 
+          <div class="modal-content" id="divInfosCaffAffectation"></div>  
+        </div> 
+    </div>
     
   <?php include("footer.php") ?>
   </body>
