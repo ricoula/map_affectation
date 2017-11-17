@@ -562,4 +562,37 @@
 		$req = $bddErp->prepare("SELECT id FROM hr_employee WHERE name_related = ?");
 		$req->execute(array($name));
 	}
+	
+	function getUi()
+	{
+		include("connexionBddErp.php");
+		include("connexionBdd.php");
+		$listeUi = array();
+		$req = $bddErp->query("SELECT DISTINCT atr_ui FROM ag_poi WHERE atr_ui IS NOT NULL AND atr_ui != ''");
+		while($data = $req->fetch())
+		{
+			$ui = (object) array();
+			$ui->ft_zone = $data["atr_ui"];
+			
+			$req2 = $bdd->prepare("SELECT ui FROM cds_transco_ui_site WHERE ft_zone = ?");
+			$req2->execute(array($data["atr_ui"]));
+			if($data2 = $req2->fetch())
+			{
+				$ui->libelle = substr($data2["ui"], 3);
+				if($ui->libelle == "Provence Cote D'Azur")
+				{
+					$ui->diminutif = "PCA";
+				}
+				elseif($ui->libelle == "Midi Pyrennees")
+				{
+					$ui->diminutif = "MPY";
+				}
+				else{
+					$ui->diminutif = strtoupper(substr($ui->libelle, 0, 3));
+				}
+			}
+			array_push($listeUi, $ui);
+		}
+		return json_encode($listeUi);
+	}
 ?>
