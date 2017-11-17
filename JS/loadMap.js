@@ -71,9 +71,16 @@
   
           });
           google.maps.event.addListener(marker, 'spider_click', function(e) {  // 'spider_rightclick', not plain 'click'
+          var myUrl = window.location.href;
+          myUrl = myUrl.split("?")[0];
+          var newUrl = myUrl + "?poi=" + marker.poi_id;
+          console.log(newUrl);
+          history.pushState(null, null, newUrl);
+          
           console.log(marker.poi_id);
           $("#side_bar").animate({left:'0px'},500);
           $("#glyph").animate({left:'500px'},500);
+          
           $("#side_bar").load('slide-home.php?poi_id=' + marker.poi_id);
           $(".glyph_div").removeClass("active");
           $("#slide-home").addClass("active");
