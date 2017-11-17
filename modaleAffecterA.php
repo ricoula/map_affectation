@@ -49,10 +49,10 @@
           <div class="panel panel-default">
             <div class="panel-heading"> 
               <h3 class="panel-title">
-                <a href="#<?php echo urlencode($site->libelle) ?>" data-parent="#listeSitesUi" data-toggle="collapse"> <?php echo $site->libelle ?> </a> 
+                <a href="#<?php echo str_replace(" ", "_", htmlspecialchars($site->libelle)) ?>" data-parent="#listeSitesUi" data-toggle="collapse"> <?php echo $site->libelle ?> </a> 
               </h3>
             </div>
-            <div id="<?php echo urlencode($site->libelle) ?>" class="panel-collapse collapse">
+            <div id="<?php echo str_replace(" ", "_", htmlspecialchars($site->libelle)) ?>" class="panel-collapse collapse">
               <div class="panel-body">
               <div class="list-group">
               <?php
