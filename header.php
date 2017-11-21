@@ -8,6 +8,8 @@
     <meta name="author" content="">
     <!-- Bootstrap Core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="plugins/colorpicker/color.css">
     
     <link href="plugins/chosen/chosen.min.css" rel="stylesheet">
   </head>

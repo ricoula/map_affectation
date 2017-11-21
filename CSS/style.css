@@ -1,185 +1,185 @@
 html, body, #map,#map_content {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body
 {
-    display:flex;
+  display:flex;
 }
 #side_bar
 {
-    position:absolute;
-    width:500px;
-    left:-500px;
-    height:100%;
-    z-index:2;
-    background-color:#f1f1f1;
-    box-shadow:3px 1px 20px 1px #00000078;
-    padding:10px;
-    overflow:auto;
+  position:absolute;
+  width:500px;
+  left:-500px;
+  height:100%;
+  z-index:2;
+  background-color:#f1f1f1;
+  box-shadow:3px 1px 20px 1px #00000078;
+  padding:10px;
+  overflow:auto;
 }
 #glyph
 {
-    position:absolute;
-    top:10%;
-    z-index:20;
-    box-shadow:4px 1px 5px 1px #00000078;
+  position:absolute;
+  top:10%;
+  z-index:20;
+  box-shadow:4px 1px 5px 1px #00000078;
 }
 .glyph_div
 {
-    width:50px;
-    height:50px;
-    background-color:#171717;
-    text-align:center;
+  width:50px;
+  height:50px;
+  background-color:#171717;
+  text-align:center;
 
 }
 .glyph_div_border
 {
-    border-bottom:solid 1px #636363;
+  border-bottom:solid 1px #636363;
 }
 .glyph_div:hover
 {
-    width:50px;
-    height:50px;
-    background-color:#3a3a3a;
-    text-align:center;
-    cursor:pointer;
+  width:50px;
+  height:50px;
+  background-color:#3a3a3a;
+  text-align:center;
+  cursor:pointer;
 }
 .font-glyph
 {
-    font-size:30px;
-    top:10px;
-    color:#ececec;
+  font-size:30px;
+  top:10px;
+  color:#ececec;
 }
 .info_poi_modal
 {
-    width:300px;
+  width:300px;
 }
 #win_info_numero_oeie
 {
-    text-align:center;
+  text-align:center;
 
 }
 .gly-spin {
-    -webkit-animation: spin 2s infinite linear;
-    -moz-animation: spin 2s infinite linear;
-    -o-animation: spin 2s infinite linear;
-    animation: spin 2s infinite linear;
+  -webkit-animation: spin 2s infinite linear;
+  -moz-animation: spin 2s infinite linear;
+  -o-animation: spin 2s infinite linear;
+  animation: spin 2s infinite linear;
+}
+@-moz-keyframes spin {
+  0% {
+    -moz-transform: rotate(0deg);
   }
-  @-moz-keyframes spin {
-    0% {
-      -moz-transform: rotate(0deg);
-    }
-    100% {
-      -moz-transform: rotate(359deg);
-    }
+  100% {
+    -moz-transform: rotate(359deg);
   }
-  @-webkit-keyframes spin {
-    0% {
-      -webkit-transform: rotate(0deg);
-    }
-    100% {
-      -webkit-transform: rotate(359deg);
-    }
+}
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
   }
-  @-o-keyframes spin {
-    0% {
-      -o-transform: rotate(0deg);
-    }
-    100% {
-      -o-transform: rotate(359deg);
-    }
+  100% {
+    -webkit-transform: rotate(359deg);
   }
-  @keyframes spin {
-    0% {
-      -webkit-transform: rotate(0deg);
-      transform: rotate(0deg);
-    }
-    100% {
-      -webkit-transform: rotate(359deg);
-      transform: rotate(359deg);
-    }
+}
+@-o-keyframes spin {
+  0% {
+    -o-transform: rotate(0deg);
   }
-  .gly-rotate-90 {
-    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
-    -webkit-transform: rotate(90deg);
-    -moz-transform: rotate(90deg);
-    -ms-transform: rotate(90deg);
-    -o-transform: rotate(90deg);
-    transform: rotate(90deg);
+  100% {
+    -o-transform: rotate(359deg);
   }
-  .gly-rotate-180 {
-    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
-    -webkit-transform: rotate(180deg);
-    -moz-transform: rotate(180deg);
-    -ms-transform: rotate(180deg);
-    -o-transform: rotate(180deg);
-    transform: rotate(180deg);
+}
+@keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
   }
-  .gly-rotate-270 {
-    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
-    -webkit-transform: rotate(270deg);
-    -moz-transform: rotate(270deg);
-    -ms-transform: rotate(270deg);
-    -o-transform: rotate(270deg);
-    transform: rotate(270deg);
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
   }
-  .gly-flip-horizontal {
-    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1);
-    -webkit-transform: scale(-1, 1);
-    -moz-transform: scale(-1, 1);
-    -ms-transform: scale(-1, 1);
-    -o-transform: scale(-1, 1);
-    transform: scale(-1, 1);
-  }
-  .gly-flip-vertical {
-    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1);
-    -webkit-transform: scale(1, -1);
-    -moz-transform: scale(1, -1);
-    -ms-transform: scale(1, -1);
-    -o-transform: scale(1, -1);
-    transform: scale(1, -1);
-  }
+}
+.gly-rotate-90 {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+.gly-rotate-180 {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+.gly-rotate-270 {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  transform: rotate(270deg);
+}
+.gly-flip-horizontal {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1);
+  -webkit-transform: scale(-1, 1);
+  -moz-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+  -o-transform: scale(-1, 1);
+  transform: scale(-1, 1);
+}
+.gly-flip-vertical {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1);
+  -webkit-transform: scale(1, -1);
+  -moz-transform: scale(1, -1);
+  -ms-transform: scale(1, -1);
+  -o-transform: scale(1, -1);
+  transform: scale(1, -1);
+}
 .active
 {
-  background-color:#f1f1f1;
+background-color:#f1f1f1;
 }
 .active:hover
 {
-  background-color:#f1f1f1;
+background-color:#f1f1f1;
 }
 .active span
 {
-  color:black
+color:black
 }
 #slide-close
 {
-  font-size:25px;
-  color:#848484;
-  cursor:pointer;
+font-size:25px;
+color:#848484;
+cursor:pointer;
 }
 #slide-close:hover
 {
-  font-size:25px;
-  color:#000000;
-  cursor:pointer;
+font-size:25px;
+color:#000000;
+cursor:pointer;
 }
 #home-domaine
 {
-  font-size:32px;
+font-size:32px;
 
 }
 .home-result
 {
-  font-weight:100;
-  font-size:14px;
+font-weight:100;
+font-size:14px;
 }
 .list-group-item
 {
-    padding:7px;
+  padding:7px;
 }
 /*#basic-addon1
 {
@@ -189,23 +189,32 @@ body
 }*/
 #basic-addon2
 {
-
-  background-image: url("../img/phihub.png");
-  background-size: 100px 100px;
-  width:100px;
-  height:100px;
-
+background-image: url("../img/phihub.png");
+background-size: 100px 100px;
+width:100px;
+height:100px;
 }
 .users-card-caff
 {
-  background-color:white;
-  margin-top:5px;
-  box-shadow:0px 0px 1px 1px #0000003b inset;
-  border-radius: 5px;
-  width:100%;
+background-color:white;
+margin-top:5px;
+box-shadow:0px 0px 1px 1px #0000003b inset;
+border-radius: 5px;
+width:100%;
 }
 .users-card-info
 {
-  padding-left:10px;
-  padding-right:10px;
+padding-left:10px;
+padding-right:10px;
+}
+#filter-dre
+{
+display:inline-block;
+width:70px;
+}
+
+.colorpicker {
+  border: solid thin black;
+  width: 20px;
+  height: 20px;
 }
