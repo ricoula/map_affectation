@@ -5,7 +5,6 @@
     <title></title>
     <link rel="stylesheet" type="text/css" href="CSS/style.css">
 
-
   </head>
   <body>
   <div id="side_bar"></div>
