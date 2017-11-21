@@ -38,7 +38,7 @@
           <div class="modal-content" id="divInfosCaffAffectation"></div>  
         </div> 
     </div>
-    
+
   <?php include("footer.php") ?>
   </body>
 </html>

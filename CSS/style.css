@@ -181,14 +181,12 @@ font-size:14px;
 {
   padding:7px;
 }
-#basic-addon1
+/*#basic-addon1
 {
 
-background-image: url("../img/greper.png");
-background-size: 100px 100px;
-width:100px;
-height:100px;
-}
+  background-image: url("../img/greper.png"); background-size: 100px 100px; width:100px; height:100px;
+
+}*/
 #basic-addon2
 {
 background-image: url("../img/phihub.png");

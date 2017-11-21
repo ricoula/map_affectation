@@ -562,4 +562,78 @@
 		$req = $bddErp->prepare("SELECT id FROM hr_employee WHERE name_related = ?");
 		$req->execute(array($name));
 	}
+	
+	function getUi()
+	{
+		include("connexionBddErp.php");
+		include("connexionBdd.php");
+		$listeUi = array();
+		$req = $bddErp->query("SELECT DISTINCT atr_ui FROM ag_poi WHERE atr_ui IS NOT NULL AND atr_ui != ''");
+		while($data = $req->fetch())
+		{
+			$ui = (object) array();
+			$ui->ft_zone = $data["atr_ui"];
+			
+			$req2 = $bdd->prepare("SELECT ui FROM cds_transco_ui_site WHERE ft_zone = ?");
+			$req2->execute(array($data["atr_ui"]));
+			if($data2 = $req2->fetch())
+			{
+				$ui->libelle = substr($data2["ui"], 3);
+				if($ui->libelle == "Provence Cote D'Azur")
+				{
+					$ui->diminutif = "PCA";
+				}
+				elseif($ui->libelle == "Midi Pyrennees")
+				{
+					$ui->diminutif = "MPY";
+				}
+				else{
+					$ui->diminutif = strtoupper(substr($ui->libelle, 0, 3));
+				}
+			}
+			array_push($listeUi, $ui);
+		}
+		return json_encode($listeUi);
+	}
+	
+	function getListIdEmployesConges()
+	{
+		include("connexionBddErp.php");
+		$listeEmployes = array();
+		
+		$req = $bddErp->query("SELECT employee_id FROM hr_holidays WHERE date_to >= NOW() AND date_from <= NOW()");
+		while($data = $req->fetch())
+		{
+			array_push($listeEmployes, $data["employee_id"]);
+		}
+		return json_encode($listeEmployes);
+	}
+	
+	function getUiBySite($site)
+	{
+		include("connexionBdd.php");
+		$ui = null;
+		$req = $bdd->prepare("SELECT ui, ft_zone FROM cds_transco_ui_site WHERE site = ?");
+		$req->execute(array($site));
+		if($data = $req->fetch())
+		{
+			$ui = (object) array();
+			$ui->libelle = $data["ui"];
+			$ui->ft_zone = $data["ft_zone"];
+		}
+		return json_encode($ui);
+	}
+	
+	function getImageByCaff($idCaff)
+	{
+		include("connexionBddErp.php");
+		$image = null;
+		$req = $bddErp->prepare("SELECT image FROM hr_employee WHERE id = ?");
+		$req->execute(array($idCaff));
+		if($data = $req->fetch())
+		{
+			$image = "data:image/jpeg;base64, ".stream_get_contents($data['image']);
+		}
+		return json_encode($image);
+	}
 ?>
