@@ -1,7 +1,10 @@
 
  window.onload = function() {
   var mapElement = document.getElementById('map');
-  var map = new google.maps.Map(mapElement, { center: new google.maps.LatLng(45.6930369, 4.9989082), zoom: 8 });
+  map = new google.maps.Map(mapElement, { center: new google.maps.LatLng(45.6930369, 4.9989082), zoom: 8 });
+  //document.getElementById("mapJson").value = JSON.stringify(map);
+  //console.log(document.getElementById("mapJson").value);
+  //$("#mapJson").val(JSON.stringify(map));
   var iw = new google.maps.InfoWindow();
   
   var oms = new OverlappingMarkerSpiderfier(map, {

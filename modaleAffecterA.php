@@ -12,7 +12,29 @@
 </div>
 <div class="modal-body">
   <div>
-    <input type="search" id="searchCaff" placeholder="Rechercher..." class="form-control" /><br/>
+    <select type="search" id="searchCaff" class="form-control" >
+      <option>Rechercher un caff</option>
+      <?php
+      $listeSites = json_decode(getSites());
+      foreach($listeSites as $site)
+      {
+        ?>
+        <optgroup label="<?php echo $site ?>">
+          <?php
+          $listeCaffs = json_decode(getCaffsBySite($site));
+          foreach($listeCaffs as $caff)
+          {
+            ?>
+            <option value="<?php echo urlencode(json_encode($caff)) ?>"><?php echo $caff->name_related ?></option>
+            <?php
+          }
+          ?>
+        </optgroup>
+        <?php
+      }
+      ?>
+    </select>
+    <br/><br/>
   </div>
   <ul class="nav nav-pills nav-justified">
     <li class="active"><a href="#tabClosestSite" data-toggle="tab">Site le plus proche</a></li>
@@ -49,10 +71,10 @@
           <div class="panel panel-default">
             <div class="panel-heading"> 
               <h3 class="panel-title">
-                <a href="#<?php echo urlencode($site->libelle) ?>" data-parent="#listeSitesUi" data-toggle="collapse"> <?php echo $site->libelle ?> </a> 
+                <a href="#<?php echo str_replace(" ", "_", htmlspecialchars($site->libelle)) ?>" data-parent="#listeSitesUi" data-toggle="collapse"> <?php echo $site->libelle ?> </a> 
               </h3>
             </div>
-            <div id="<?php echo urlencode($site->libelle) ?>" class="panel-collapse collapse">
+            <div id="<?php echo str_replace(" ", "_", htmlspecialchars($site->libelle)) ?>" class="panel-collapse collapse">
               <div class="panel-body">
               <div class="list-group">
               <?php
@@ -101,6 +123,16 @@
       });
   });
 
+  $("#searchCaff").chosen({width: "inherit", width: "100%",placeholder_text_multiple:"Tous contrats", placeholder_text_single: "Rechercher..."});
+  $('#searchCaff').on('change', function(evt, params) {
+    if($("#searchCaff").val() != "search")
+    {
+      $("#divInfosCaffAffectation").load("modaleInfosCaffAffectation.php?caff=" + $("#searchCaff").val(), function(){
+          $('#modaleInfosCaffAffectation').modal('show');
+      });
+    }
+  });
+
   /*objetAC = [];
   $.post("API/getSites.php", function(data){
     var sites = JSON.parse(data);
@@ -117,7 +149,7 @@
       });
     });
   });*/
-  $.post("API/getInfosCaff.php", function(data){
+  /*$.post("API/getInfosCaff.php", function(data){
     var caffs = JSON.parse(data);
     var options = {
     data: caffs,
@@ -133,6 +165,6 @@
 };
 
 $("#searchCaff").easyAutocomplete(options);
-  });
+  });*/
 </script>
 
