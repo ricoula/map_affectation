@@ -636,4 +636,20 @@
 		}
 		return json_encode($image);
 	}
+
+	function getConfigById($id){
+		include("connexionBdd.php");
+		$req = $bdd->prepare("SELECT * FROM cds_config WHERE caff_id = ?");
+		$req->execute(array($id));
+		if($data = $req->fetch())
+		{
+			$config = $data["config"];
+		}
+		return json_encode($config);
+	}
+	function addConfigById($id,$json_code){
+		include("connexionBdd.php");
+		$req = $bdd->prepare("UPDATE cds_config SET config = ? WHERE caff_id = ?");
+		$req->execute(array($json_code,$id));
+	}
 ?>
