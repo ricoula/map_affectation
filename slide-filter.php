@@ -147,6 +147,7 @@ else
 </script>
 <script>
 $(".color-picker").spectrum({
+    preferredFormat: "hex",
     change: function(color) {
         var filter_id = $(this).attr('id');
         $("#"+filter_id).val(color)
