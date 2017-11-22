@@ -91,6 +91,7 @@
 
         var json_param = JSON.stringify(param);
         $.post("API/addConfigById.php",{id : 1, config: json_param});
+        location.reload();
     });
 </script>
 <script>
@@ -115,7 +116,15 @@ $('.filter-add-sj').on('input',function(e){
     {
         
         if (($("#label-"+sj+"-"+ui).length == 0)){
-            $("#filter-sj-list-"+ui).append('<label class="filter-sj-badge" id="label-'+sj+'-'+ui+'">'+sj+' <span class="glyphicon glyphicon-remove filter-remove-sj" ui="'+ui+'" sj="'+sj+'"></span></label>');
+            var $el = $("#filter-add-sj-txt-"+ui),
+                x = 500,
+                originalColor = $el.css("background");
+
+            $el.css("background", "lightgreen");
+            setTimeout(function(){
+            $el.css("background", originalColor);
+            }, x);
+            $("#filter-sj-list-"+ui).append('<label class="filter-sj-badge" id="label-'+sj+'-'+ui+'">'+sj+' <span class="glyphicon glyphicon-cog gly-spin" ui="'+ui+'" sj="'+sj+'"></span></label>');
 }
 else
 {
@@ -141,7 +150,10 @@ else
         sj = sj.split("-")[1]
         $("#filter-sj-list-"+ui).append('<label class="filter-sj-badge" id="label-'+sj+'-'+ui+'">'+sj+' <span class="glyphicon glyphicon-remove filter-remove-sj" ui="'+ui+'" sj="'+sj+'"></span></label>');
     })
-
+    $(".filter-remove-sj").click(function(){
+     var labeltoremove = "label-"+$(this).attr('sj')+"-"+$(this).attr('ui');
+     $("#"+labeltoremove).remove();
+})
     })
    
 </script>
@@ -153,4 +165,7 @@ $(".color-picker").spectrum({
         $("#"+filter_id).val(color)
     }
 });
+</script>
+<script>
+
 </script>
