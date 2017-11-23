@@ -7,7 +7,7 @@
 ?>
     <body>
     <span id="slide-close" class="glyphicon glyphicon-remove pull-right"></span></br>
-        <h1 class="well">Filtre</h1>
+        <h1 class="well">Paramètres</h1>
         <h4>Urgence</h4>
         <div class="form-group">
             <div class="list-group">

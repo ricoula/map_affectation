@@ -23,15 +23,31 @@
               var strokecolorpoi = 'black';
               var strokeweightpoi = 2;
               var scalepoi = 7;
+              var d = new Date();
+              var date_now = Number(d.getFullYear() +''+ (d.getMonth() + 1) +''+ d.getDate());
+              var date_dre = Number(poi.ft_oeie_dre.split('-')[0] + poi.ft_oeie_dre.split('-')[1] + poi.ft_oeie_dre.split('-')[2]);
+              if(date_dre <= (date_now + Number(config.filterdre))){
+                strokecolorpoi = config.filtercolorurgent;
+                strokeweightpoi = 4;
+                scalepoi = 8;
+              }
               config.filtersj.forEach(function(sj){
-             
+               
                 var sj_oeie = sj.split("-")[1];
                 var ui_oeie = sj.split("-")[2];
                 
-                if(poi.ft_sous_justification_oeie == sj_oeie && poi.atr_ui == ui_oeie){
+
+                if((poi.ft_sous_justification_oeie == sj_oeie && poi.atr_ui == ui_oeie)){
                   strokecolorpoi = config.filtercolorurgent;
                   strokeweightpoi = 4;
-                  scalepoi = 7;
+                  if(scalepoi == 8){
+                    scalepoi = 11;
+                    strokeweightpoi = 5;
+                  }
+                  else{
+                    scalepoi = 8;
+                  }
+                 
                 }
                   
               });

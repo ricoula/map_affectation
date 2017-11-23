@@ -280,7 +280,10 @@
 		{
 			if($duree == null)
 			{
+				// $listeSite[$nb]->i = $i;
 				$duree = $distance->duration->value;
+				// $listeSite[$nb]->poilatlng = $destinations;
+				// $listeSite[$nb]->sitelatlng = $origins;
 				$listeSite[$nb]->duree = $distance->duration->text;
 				$listeSite[$nb]->distance = $distance->distance->text;
 			}
@@ -288,8 +291,10 @@
 				if($distance->duration->value < $duree)
 				{
 					$duree = $distance->duration->value;
-					
 					$nb = $i;
+					// $listeSite[$nb]->i = $i;
+					// $listeSite[$nb]->poilatlong = $destinations;
+					// $listeSite[$nb]->duree = $origins;
 					$listeSite[$nb]->duree = $distance->duration->text;
 					$listeSite[$nb]->distance = $distance->distance->text;
 				}

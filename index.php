@@ -11,9 +11,9 @@
     <div id="map_content">
       <div id="glyph">
         <div id="slide-home" class="glyph_div glyph_div_border"><span  class="glyphicon glyphicon-home font-glyph" aria-hidden="true"></span></div>
-        <div id="slide-filter" class="glyph_div glyph_div_border"><span class="glyphicon glyphicon-filter font-glyph" aria-hidden="true"></span></div>
+        <div id="slide-box" class="glyph_div glyph_div glyph_div_border"><span class="glyphicon glyphicon-inbox font-glyph" aria-hidden="true"></span></div>
         <div id="slide-users" class="glyph_div glyph_div_border"><span class="glyphicon glyphicon-user font-glyph" aria-hidden="true"></span></div>
-        <div id="slide-box" class="glyph_div"><span class="glyphicon glyphicon-inbox font-glyph" aria-hidden="true"></span></div>
+        <div id="slide-filter" class="glyph_div"><span class="glyphicon glyphicon-cog font-glyph" aria-hidden="true"></span></div>
      </div>
          <div id="map"></div>
     </div>
