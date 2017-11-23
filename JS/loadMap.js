@@ -28,8 +28,8 @@
               var date_dre = Number(poi.ft_oeie_dre.split('-')[0] + poi.ft_oeie_dre.split('-')[1] + poi.ft_oeie_dre.split('-')[2]);
               if(date_dre <= (date_now + Number(config.filterdre))){
                 strokecolorpoi = config.filtercolorurgent;
-                strokeweightpoi = 4;
-                scalepoi = 8;
+                strokeweightpoi = 3;
+                scalepoi = 7;
               }
               config.filtersj.forEach(function(sj){
                
@@ -38,15 +38,13 @@
                 
 
                 if((poi.ft_sous_justification_oeie == sj_oeie && poi.atr_ui == ui_oeie)){
-                  strokecolorpoi = config.filtercolorurgent;
-                  strokeweightpoi = 4;
-                  if(scalepoi == 8){
+                  // strokecolorpoi = config.filtercolorurgent;
+
+                 
                     scalepoi = 11;
-                    strokeweightpoi = 5;
-                  }
-                  else{
-                    scalepoi = 8;
-                  }
+                    strokeweightpoi = 4;
+                  
+                  
                  
                 }
                   
