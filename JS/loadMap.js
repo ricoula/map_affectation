@@ -39,13 +39,8 @@
 
                 if((poi.ft_sous_justification_oeie == sj_oeie && poi.atr_ui == ui_oeie)){
                   // strokecolorpoi = config.filtercolorurgent;
-
-                 
                     scalepoi = 11;
                     strokeweightpoi = 4;
-                  
-                  
-                 
                 }
                   
               });

@@ -12,7 +12,7 @@
         <div class="form-group">
             <div class="list-group">
                 
-                <div class="list-group-item"><label>Date de retour étude inférieur à J+</label><input type="number" class="form-control" id="filter-dre" value="<?php echo $config_default->{"filterdre"}; ?>"></input></div>
+                <div class="list-group-item"><label>Date de retour étude inférieur à J+</label><input type="number" class="form-control" id="filter-dre" value="<?php echo $config_default->{"filterdre"}; ?>"></input><div class="pull-right"><input type='text' class="color-picker" id="filter-color-urgent" value="<?php echo $config_default->{"filtercolorurgent"}; ?>"></div></div>
                 <div class="list-group-item"><div class="panel panel-default">
       <div class="panel-heading"> 
             <h3 class="panel-title">
@@ -41,7 +41,7 @@
       
     </div></div>
     
-    <div class="list-group-item"><label>Couleur des urgences</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-urgent" value="<?php echo $config_default->{"filtercolorurgent"}; ?>"></div></div>
+  
             </div>
             
         </div>

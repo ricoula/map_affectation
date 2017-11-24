@@ -50,14 +50,27 @@
     });
 
     var marker = new google.maps.Marker({ map: map, optimized: false,
-      zIndex:99999999, icon: "img_map/epingle.png"
+      zIndex:99999999, icon: {
+                    path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+                    fillColor: "green",
+                    fillOpacity: 0.8,
+                    strokeColor: "black",
+                    strokeWeight: 2,
+                    scale: 7,
+                  }
          });
     $(".card").click(function(){
         var longitude = $(this).children(".longitude").first().val();
         var latitude = $(this).children(".latitude").first().val();
         myLatlng = new google.maps.LatLng(Number(longitude),Number(latitude));
+        marker.setMap(map);
         marker.setPosition(myLatlng);
         marker.setZIndex(1000);
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+       
+        google.maps.event.addListener(marker, 'click', function(event) {
+    this.setMap(null);
+  });
     });
 
     $("#slide-close").click(function(){
