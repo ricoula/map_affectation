@@ -1,4 +1,5 @@
 $(function(){
+    $("#div-slide-home").load('slide-home.php');
     $("#div-slide-box").load('slide-box.php');
     $("#div-slide-users").load('slide-users.php');
     $("#div-slide-filter").load('slide-filter.php?utilisateur_id=' + $("#user_id").val());
@@ -23,7 +24,6 @@ $(function(){
         var poi = getUrlParameter('poi');
         $("#side_bar").animate({left:'0px'},500);
         $("#glyph").animate({left:'500px'},500);
-        $("#div-slide-home").load('slide-home.php');
         $(".slide").hide();
         $("#div-slide-home").show();
         $(".glyph_div").removeClass("active");
