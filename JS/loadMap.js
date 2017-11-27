@@ -84,7 +84,9 @@
           $("#side_bar").animate({left:'0px'},500);
           $("#glyph").animate({left:'500px'},500);
           
-          $("#side_bar").load('slide-home.php?poi_id=' + marker.poi_id);
+          $("#div-slide-home").load('slide-home.php?poi_id=' + marker.poi_id);
+          $(".slide").hide();
+          $("#div-slide-home").show();
           $(".glyph_div").removeClass("active");
           $("#slide-home").addClass("active");
           
