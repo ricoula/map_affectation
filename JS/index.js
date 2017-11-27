@@ -1,5 +1,4 @@
 $(function(){
-
     $("#slide-box").click(function(){
         $("#side_bar").animate({left:'0px'},500);
         $("#glyph").animate({left:'500px'},500);

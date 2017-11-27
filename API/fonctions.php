@@ -5,7 +5,7 @@
 		
 		$listePoi = array();
 		
-		$req = $bddErp->query("select ag_poi.id, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.ft_titulaire_client, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
+		$req = $bddErp->query("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.ft_titulaire_client, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
 		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
 		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1'");
@@ -20,6 +20,7 @@
 			$poi->ft_libelle_commune = $data["ft_libelle_commune"];
 			$poi->ft_libelle_de_voie = $data["ft_libelle_de_voie"];
 			$poi->ft_pg = $data["ft_pg"];
+			$poi->ft_sous_justification_oeie = $data["ft_sous_justification_oeie"];
 			$poi->ft_oeie_dre = $data["ft_oeie_dre"];
 			$poi->ft_latitude = $data["ft_latitude"];
 			$poi->insee_code = $data["insee_code"];
@@ -279,7 +280,10 @@
 		{
 			if($duree == null)
 			{
+				// $listeSite[$nb]->i = $i;
 				$duree = $distance->duration->value;
+				// $listeSite[$nb]->poilatlng = $destinations;
+				// $listeSite[$nb]->sitelatlng = $origins;
 				$listeSite[$nb]->duree = $distance->duration->text;
 				$listeSite[$nb]->distance = $distance->distance->text;
 			}
@@ -287,8 +291,10 @@
 				if($distance->duration->value < $duree)
 				{
 					$duree = $distance->duration->value;
-					
 					$nb = $i;
+					// $listeSite[$nb]->i = $i;
+					// $listeSite[$nb]->poilatlong = $destinations;
+					// $listeSite[$nb]->duree = $origins;
 					$listeSite[$nb]->duree = $distance->duration->text;
 					$listeSite[$nb]->distance = $distance->distance->text;
 				}
@@ -635,5 +641,21 @@
 			$image = "data:image/jpeg;base64, ".stream_get_contents($data['image']);
 		}
 		return json_encode($image);
+	}
+
+	function getConfigById($id){
+		include("connexionBdd.php");
+		$req = $bdd->prepare("SELECT * FROM cds_config WHERE caff_id = ?");
+		$req->execute(array($id));
+		if($data = $req->fetch())
+		{
+			$config = $data["config"];
+		}
+		return json_encode($config);
+	}
+	function addConfigById($id,$json_code){
+		include("connexionBdd.php");
+		$req = $bdd->prepare("UPDATE cds_config SET config = ? WHERE caff_id = ?");
+		$req->execute(array($json_code,$id));
 	}
 ?>

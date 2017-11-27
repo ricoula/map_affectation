@@ -30,7 +30,7 @@
                     <div class="card-block users-card-info" id="">
                         <h4 class="users-name"><?php echo $caff->name_related ?><?php if(in_array($caff->id, $listeCaffsConges)){ ?><span class="label label-warning pull-right users-state">Congé</span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
                         <h6 class="users-site"><?php echo $caff->site ?></h6>
-                        <h6 class="users-charge">Charge: <span class="label label-danger users-charge-count">123</span><button class="btn btn-info btn-xs pull-right">Afficher POI</button></h6>
+                        <h6 class="users-charge">Charge: <span class="label label-danger users-charge-count">123</span><button class="btn btn-info btn-xs pull-right users-button-poi" caff_id="<?php echo $caff->id ?>">Afficher POI</button></h6>
                     </div>
                 </div>
                 <?php
@@ -61,7 +61,6 @@
     $(".imageCaff").each(function(){
         var elt = $(this);
         var idCaff = $(this).attr("id").split("-")[1];
-        console.log(idCaff);
         $.post("API/getImageByCaff.php", {caff_id: idCaff}, function(data){
             var image = JSON.parse(data);
             if(image != null && image != '')
@@ -70,4 +69,28 @@
             }
         });
     });
+</script>
+<script>
+$(".users-button-poi").click(function(){
+    var caff_id = $(this).attr("caff_id");
+    if($(this).hasClass("btn btn-info")){
+        $(this).removeClass("btn btn-info");
+        $(this).addClass("btn btn-default");
+        $(this).text("Cacher POI");
+        // var myLatLng = new google.maps.LatLng(28.617161,77.208111);
+        // var marker = new google.maps.Marker({
+        //   position:  myLatLng,
+        //   map: map,
+        //   title: 'Hello World!'
+        // });
+    }
+    else
+    {
+        $(this).removeClass("btn btn-default");
+        $(this).addClass("btn btn-info");
+        $(this).text("Afficher POI");
+    }
+    console.log(caff_id);
+    $.getJSON("get")
+});
 </script>

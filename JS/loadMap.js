@@ -1,5 +1,6 @@
 
  window.onload = function() {
+
   var mapElement = document.getElementById('map');
   map = new google.maps.Map(mapElement, { center: new google.maps.LatLng(45.6930369, 4.9989082), zoom: 8 });
   //document.getElementById("mapJson").value = JSON.stringify(map);
@@ -11,35 +12,66 @@
     markersWontMove: true,
     markersWontHide: true
   });
-                        
+  $.getJSON('API/getConfigById',function(data){
+    config = JSON.parse(data);
+  });
   $.getJSON('API/getPoiNA.php',function(data){
+            
+   
             data.forEach(function(poi){
-              var color = 'white';
+             
+              var strokecolorpoi = 'black';
+              var strokeweightpoi = 2;
+              var scalepoi = 7;
+              var d = new Date();
+              var date_now = Number(d.getFullYear() +''+ (d.getMonth() + 1) +''+ d.getDate());
+              var date_dre = Number(poi.ft_oeie_dre.split('-')[0] + poi.ft_oeie_dre.split('-')[1] + poi.ft_oeie_dre.split('-')[2]);
+              if(date_dre <= (date_now + Number(config.filterdre))){
+                strokecolorpoi = config.filtercolorurgent;
+                strokeweightpoi = 3;
+                scalepoi = 7;
+              }
+              config.filtersj.forEach(function(sj){
+               
+                var sj_oeie = sj.split("-")[1];
+                var ui_oeie = sj.split("-")[2];
+                
+
+                if((poi.ft_sous_justification_oeie == sj_oeie && poi.atr_ui == ui_oeie)){
+                  // strokecolorpoi = config.filtercolorurgent;
+                    scalepoi = 11;
+                    strokeweightpoi = 4;
+                }
+                  
+              });
+              
               if(poi.domaine == 'Client'){
-                color = 'orange'
+                color = config.filtercolorclient
               }
               if(poi.domaine == 'Immo'){
-                color = 'yellow'
+                color = config.filtercolorimmo
               }
               if(poi.domaine == 'Dissi'){
-                color = 'green'
+                color = config.filtercolordissi
               }
               if(poi.domaine == 'FO & CU'){
-                color = 'blue'
+                color = config.filtercolorfocu
               }
               if(poi.domaine == 'Coordi'){
-                color = 'purple'
+                color = config.filtercolorcoord
               }
+              
               var marker = new google.maps.Marker({
+                
             position: {lat: Number(poi.ft_longitude), lng: Number(poi.ft_latitude)},
             map: map,
             icon: {
                     path: google.maps.SymbolPath.CIRCLE,
                     fillColor: color,
                     fillOpacity: 1,
-                    strokeColor: '#000',
-                    strokeWeight: 2,
-                    scale: 7,
+                    strokeColor: strokecolorpoi,
+                    strokeWeight: strokeweightpoi,
+                    scale: scalepoi,
                   },
             poi_id: poi.id,
             title: poi.ft_numero_oeie

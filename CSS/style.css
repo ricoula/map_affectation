@@ -161,6 +161,7 @@ font-size:25px;
 color:#848484;
 cursor:pointer;
 }
+
 #slide-close:hover
 {
 font-size:25px;
@@ -217,4 +218,32 @@ width:70px;
   border: solid thin black;
   width: 20px;
   height: 20px;
+}
+.glyphicon-remove
+{
+ color:#8a7f7f;
+}
+.glyphicon-remove:hover
+{
+ color:#000000;
+ cursor:pointer;
+}
+.filter-add-sj
+{
+  width: 40px;
+  border: 1px solid grey;
+  border-radius: 4px;
+}
+.filter-sj-badge
+{
+  border: 1px grey solid;
+}
+.filter-sj-badge
+{
+  padding-left: 5px;
+  padding-right: 5px;
+  border-radius:3px;
+  margin-left:5px;
+  background-color:#ffffff;
+  box-shadow:0px 0px 0px 1px #0000000a inset;
 }
