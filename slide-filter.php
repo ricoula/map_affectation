@@ -1,12 +1,21 @@
 <html>
     <body>
+    <?php
+    require_once("API/fonctions.php");
+    $filtresUser = json_decode(getFiltresByUtilisateurId($_GET["user_id"]));
+    if($filtresUser != null)
+    {
+        $filtresUser = json_decode($filtresUser);
+        var_dump($filtresUser);
+    }
+    ?>
     <span id="slide-close" class="glyphicon glyphicon-remove pull-right"></span></br>
         <h1 class="well">Filtre</h1>
         <h4>Urgence</h4>
         <div class="form-group">
             <div class="list-group">
                 
-                <div class="list-group-item"><label>Date de retour étude inférieur à J+</label><input type="number" class="form-control" id="filter-dre" value="5"></input></div>
+                <div class="list-group-item"><label>Date de retour étude inférieur à J+</label><input type="number" class="form-control" id="filter-dre" value="<?php echo $filtresUser->filterdre ?>"></input></div>
                 <div class="list-group-item"><div class="panel panel-default">
       <div class="panel-heading"> 
             <h3 class="panel-title">
@@ -31,7 +40,7 @@
       
     </div></div>
     
-    <div class="list-group-item"><label>Couleur des urgences</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-urgent" value="#ff0000"></div></div>
+    <div class="list-group-item"><label>Couleur des urgences</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-urgent" value="<?php echo $filtresUser->filtercolorurgent ?>"></div></div>
             </div>
             
         </div>
@@ -40,11 +49,11 @@
      <h4>POI</h4>
         <div class="form-group">
             <div class="list-group">
-                <div class="list-group-item"><label>Couleur POI Client</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-client" value="#ffa500"></div></div>
-                <div class="list-group-item"><label>Couleur POI Immobilier</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-immo" value="#ffff00"></div></div>
-                <div class="list-group-item"><label>Couleur POI Dissimulation</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-dissi" value="#008000"></div></div>
-                <div class="list-group-item"><label>Couleur POI FO & CU</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-focu" value="#0000ff"></div></div>
-                <div class="list-group-item"><label>Couleur POI Coordination</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-coord" value="#800080"></div></div>
+                <div class="list-group-item"><label>Couleur POI Client</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-client" value="<?php echo $filtresUser->filtercolorclient ?>"></div></div>
+                <div class="list-group-item"><label>Couleur POI Immobilier</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-immo" value="<?php echo $filtresUser->filtercolorimmo ?>"></div></div>
+                <div class="list-group-item"><label>Couleur POI Dissimulation</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-dissi" value="<?php echo $filtresUser->filtercolordissi ?>"></div></div>
+                <div class="list-group-item"><label>Couleur POI FO & CU</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-focu" value="<?php echo $filtresUser->filtercolorfocu ?>"></div></div>
+                <div class="list-group-item"><label>Couleur POI Coordination</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-coord" value="<?php echo $filtresUser->filtercolorcoord ?>"></div></div>
             </div>
         </div>
         <button class="btn btn-primary pull-right" id="filter-save">Enregister</button>
@@ -84,6 +93,10 @@ $(".color-picker").spectrum({
         };
 
         var json_param = JSON.stringify(param);
-        console.log(json_param)
+        console.log(param);
+        
+        $.post("API/updateFiltresUtilisateur.php", {utilisateur_id: $("#user_id").val(), filtres_json: json_param}, function(){
+
+        });
     });
 </script>

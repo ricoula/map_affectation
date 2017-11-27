@@ -1,6 +1,7 @@
 $(function(){
     $("#div-slide-box").load('slide-box.php');
     $("#div-slide-users").load('slide-users.php');
+    $("#div-slide-filter").load('slide-filter.php?user_id=' + $("#user_id").val());
 
     $("#slide-box").click(function(){
         $("#side_bar").animate({left:'0px'},500);
@@ -13,7 +14,6 @@ $(function(){
     $("#slide-filter").click(function(){
         $("#side_bar").animate({left:'0px'},500);
         $("#glyph").animate({left:'500px'},500);
-        $("#div-slide-filter").load('slide-filter.php');
         $(".slide").hide();
         $("#div-slide-filter").show();
         $(".glyph_div").removeClass("active");

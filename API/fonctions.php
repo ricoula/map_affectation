@@ -636,4 +636,40 @@
 		}
 		return json_encode($image);
 	}
+	
+	function updateFiltresUtilisateur($idUser, $filtres)
+	{
+		include("connexionBdd.php");
+		$reponse = false;
+		try{
+			$req = $bdd->prepare("SELECT id FROM filtres_utilisateur WHERE utilisateur_id = ?");
+			$req->execute(array($idUser));
+			if($data = $req->fetch())
+			{
+				$req2 = $bdd->prepare("UPDATE filtres_utilisateur SET filtres_json = ? WHERE id = ?");
+				$reponse = $req2->execute(array($filtres, $data["id"]));
+			}
+			else{
+				$req2 = $bdd->prepare("INSERT INTO filtres_utilisateur(utilisateur_id, filtres_json) VALUES(?, ?)");
+				$reponse = $req2->execute(array($idUser, $filtres));
+			}
+		}catch(Exception $e){
+			$reponse = false;
+		}
+		
+		return json_encode($reponse);
+	}
+	
+	function getFiltresByUtilisateurId($idUtilisateur)
+	{
+		include("connexionBdd.php");
+		$filtres = null;
+		$req = $bdd->prepare("SELECT filtres_json FROM filtres_utilisateur WHERE utilisateur_id = ?");
+		$req->execute(array($idUtilisateur));
+		if($data = $req->fetch())
+		{
+			$filtres = $data["filtres_json"];
+		}
+		return json_encode($filtres);
+	}
 ?>
