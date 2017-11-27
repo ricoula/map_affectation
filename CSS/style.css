@@ -155,14 +155,14 @@ background-color:#f1f1f1;
 {
 color:black
 }
-#slide-close
+.slide-close
 {
 font-size:25px;
 color:#848484;
 cursor:pointer;
 }
 
-#slide-close:hover
+.slide-close:hover
 {
 font-size:25px;
 color:#000000;

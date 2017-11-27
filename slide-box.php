@@ -5,7 +5,7 @@
     $poiNa = json_decode(getPoiNA());
     $listeUi = json_decode(getUi());
     ?>
-    <span id="slide-close" class="glyphicon glyphicon-remove pull-right"></span></br>        
+    <span class="glyphicon glyphicon-remove pull-right slide-close"></span></br>        
     <h1 id="home-poi" class="well">Liste des POI</h1>
     <div class="btn-group" role="group" aria-label="Basic example" id="users-group">
         <?php
@@ -87,10 +87,9 @@
   });
     });
 
-    $("#slide-close").click(function(){
+    $(".slide-close").click(function(){
         $("#side_bar").animate({left:'-500px'},500);
         $("#glyph").animate({left:'0px'},500);
         $(".glyph_div").removeClass("active");
-        $("#side_bar").html("");
     });
 </script>
