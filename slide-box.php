@@ -12,16 +12,17 @@
         foreach($listeUi as $ui)
         {
             ?>
-            <button type="button" class="btn btn-default btn-primary btnUI" id="<?php echo $ui->ft_zone ?>" ><?php echo $ui->diminutif ?></button>
+            <button type="button" class="btn btn-default btn-primary btnUIBox" id="box-<?php echo $ui->ft_zone ?>" ><?php echo $ui->diminutif ?></button>
             <?php
         }
         ?>
+        <button type="button" class="btn btn-default btn-success btnUIAll" id="allUi" >All</button>
     </div><br/><br/>
     <?php
         foreach($poiNa as $poi)
         {
             ?>
-            <div class="card well card-<?php echo $poi->atr_ui ?>">
+            <div class="card-box well cardBox-<?php echo $poi->atr_ui ?>">
                 <input type="hidden" class="longitude" value="<?php echo $poi->ft_longitude ?>" />
                 <input type="hidden" class="latitude" value="<?php echo $poi->ft_latitude ?>" />
                 <div class="card-block">
@@ -37,15 +38,28 @@
     </body>
 </html>
 <script>
-    $(".btnUI").click(function(){
-        $(this).toggleClass("btn-primary");
-        var idBtn = $(this).attr("id");
-        if($(this).hasClass("btn-primary"))
+    $("#allUi").click(function(){
+        if($(this).hasClass("btn-success"))
         {
-            $(".card-" +idBtn).show();
+            $(this).removeClass("btn-success");
+            $(".btnUIBox").removeClass("btn-primary");
+            $(".card-box").hide();
         }
         else{
-            $(".card-" +idBtn).hide();
+            $(this).addClass("btn-success");
+            $(".btnUIBox").addClass("btn-primary");
+            $(".card-box").show();
+        }
+    });
+    $(".btnUIBox").click(function(){
+        $(this).toggleClass("btn-primary");
+        var idBtn = $(this).attr("id").split("-")[1];
+        if($(this).hasClass("btn-primary"))
+        {
+            $(".cardBox-" +idBtn).show();
+        }
+        else{
+            $(".cardBox-" +idBtn).hide();
         }
     });
 
@@ -59,7 +73,7 @@
                     scale: 7,
                   }
          });
-    $(".card").click(function(){
+    $(".card-box").click(function(){
         var longitude = $(this).children(".longitude").first().val();
         var latitude = $(this).children(".latitude").first().val();
         myLatlng = new google.maps.LatLng(Number(longitude),Number(latitude));
