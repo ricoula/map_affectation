@@ -16,7 +16,7 @@
             <?php
         }
         ?>
-        <button type="button" class="btn btn-default btn-success btnUIAll" id="allUi" >All</button>
+        <button type="button" class="btn btn-default btn-success btnUIAll" id="allUiBox" >All</button>
     </div><br/><br/>
     <?php
         foreach($poiNa as $poi)
@@ -38,7 +38,7 @@
     </body>
 </html>
 <script>
-    $("#allUi").click(function(){
+    $("#allUiBox").click(function(){
         if($(this).hasClass("btn-success"))
         {
             $(this).removeClass("btn-success");

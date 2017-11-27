@@ -113,6 +113,7 @@
           console.log(newUrl);
           history.pushState(null, null, newUrl);
           
+          
           console.log(marker.poi_id);
           $("#side_bar").animate({left:'0px'},500);
           $("#glyph").animate({left:'500px'},500);
