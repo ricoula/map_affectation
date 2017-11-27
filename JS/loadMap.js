@@ -12,8 +12,9 @@
     markersWontMove: true,
     markersWontHide: true
   });
-  $.getJSON('API/getConfigById',function(data){
-    config = JSON.parse(data);
+
+  $.post('API/getConfigById.php', {utilisateur_id: $("#user_id").val()},function(data){
+    config = JSON.parse(JSON.parse(data));
   });
   $.getJSON('API/getPoiNA.php',function(data){
             

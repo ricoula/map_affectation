@@ -2,7 +2,7 @@
 <?php
     include("API/fonctions.php");
     $listeUi = json_decode(getUi());
-    $config = json_decode(getConfigById(1));
+    $config = json_decode(getConfigById($_GET["utilisateur_id"]));
     $config_default = json_decode($config);
 ?>
     <body>
@@ -12,7 +12,7 @@
         <div class="form-group">
             <div class="list-group">
                 
-                <div class="list-group-item"><label>Date de retour étude inférieur à J+</label><input type="number" class="form-control" id="filter-dre" value="<?php echo $config_default->{"filterdre"}; ?>"></input><div class="pull-right"><input type='text' class="color-picker" id="filter-color-urgent" value="<?php echo $config_default->{"filtercolorurgent"}; ?>"></div></div>
+                <div class="list-group-item"><label>Date de retour étude inférieur à J+</label><input type="number" class="form-control" id="filter-dre" value="<?php echo $config_default->filterdre ?>"></input><div class="pull-right"><input type='text' class="color-picker" id="filter-color-urgent" value="<?php echo $config_default->filtercolorurgent ?>"></div></div>
                 <div class="list-group-item"><div class="panel panel-default">
       <div class="panel-heading"> 
             <h3 class="panel-title">
@@ -50,11 +50,11 @@
      <h4>POI</h4>
         <div class="form-group">
             <div class="list-group">
-                <div class="list-group-item"><label>Couleur POI Client</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-client" value="<?php echo $config_default->{"filtercolorclient"}; ?>"></div></div>
-                <div class="list-group-item"><label>Couleur POI Immobilier</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-immo" value="<?php echo $config_default->{"filtercolorimmo"}; ?>"></div></div>
-                <div class="list-group-item"><label>Couleur POI Dissimulation</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-dissi" value="<?php echo $config_default->{"filtercolordissi"}; ?>"></div></div>
-                <div class="list-group-item"><label>Couleur POI FO & CU</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-focu" value="<?php echo $config_default->{"filtercolorfocu"}; ?>"></div></div>
-                <div class="list-group-item"><label>Couleur POI Coordination</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-coord" value="<?php echo $config_default->{"filtercolorcoord"}; ?>"></div></div>
+                <div class="list-group-item"><label>Couleur POI Client</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-client" value="<?php echo $config_default->filtercolorclient ?>"></div></div>
+                <div class="list-group-item"><label>Couleur POI Immobilier</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-immo" value="<?php echo $config_default->filtercolorimmo ?>"></div></div>
+                <div class="list-group-item"><label>Couleur POI Dissimulation</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-dissi" value="<?php echo $config_default->filtercolordissi ?>"></div></div>
+                <div class="list-group-item"><label>Couleur POI FO & CU</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-focu" value="<?php echo $config_default->filtercolorfocu ?>"></div></div>
+                <div class="list-group-item"><label>Couleur POI Coordination</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-coord" value="<?php echo $config_default->filtercolorcoord ?>"></div></div>
             </div>
         </div>
         <button class="btn btn-primary pull-right" id="filter-save">Enregister</button>
@@ -90,8 +90,9 @@
         };
 
         var json_param = JSON.stringify(param);
-        $.post("API/addConfigById.php",{id : 1, config: json_param});
-        location.reload();
+        $.post("API/addConfigById.php",{id: 1, config: json_param}, function(){
+            location.reload();
+        });
     });
 </script>
 <script>

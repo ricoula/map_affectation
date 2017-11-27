@@ -1,4 +1,7 @@
-<?php include("header.php")?>
+<?php 
+    include("header.php");
+    $_SESSION["user_id"] = 2;
+?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -7,6 +10,7 @@
 
   </head>
   <body>
+      <input type="hidden" id="user_id" name="user_id" value="<?php echo $_SESSION["user_id"] ?>" />
   <div id="side_bar">
     <div id="div-slide-users" class="slide"></div>
     <div id="div-slide-box" class="slide"></div>

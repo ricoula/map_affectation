@@ -17,6 +17,7 @@
                 <?php
             }
             ?>
+            <button type="button" class="btn btn-default btn-success btnUIAll" id="allUi" >All</button>
         </div>
         <?php
         foreach($caffs as $caff)
@@ -31,6 +32,7 @@
                         <h4 class="users-name"><?php echo $caff->name_related ?><?php if(in_array($caff->id, $listeCaffsConges)){ ?><span class="label label-warning pull-right users-state">Congé</span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
                         <h6 class="users-site"><?php echo $caff->site ?></h6>
                         <h6 class="users-charge">Charge: <span class="label label-danger users-charge-count">123</span><button class="btn btn-info btn-xs pull-right users-button-poi" caff_id="<?php echo $caff->id ?>">Afficher POI</button></h6>
+                        <!--<h6 class="users-charge">Charge: <span class="label label-danger users-charge-count">123</span><button id="btnAfficherPoiCaff-<?php /*echo urlencode($caff->name_related)*/ ?>" class="btn btn-info btn-xs pull-right btnAfficherPoiCaff">Afficher POI</button></h6>-->
                     </div>
                 </div>
                 <?php
@@ -41,6 +43,25 @@
     </body>
 </html>
 <script>
+    $(".btnAfficherPoiCaff").click(function(){
+        var caffName = $(this).attr("id").split("-")[1];
+        $("#divlistePoiCaff").load("modaleAfficherAllPoiCaff.php?caff_name=" + caffName, function(){
+            $("#listePoiCaff").modal("show");
+        });
+    });
+    $("#allUi").click(function(){
+        if($(this).hasClass("btn-success"))
+        {
+            $(this).removeClass("btn-success");
+            $(".btnUI").removeClass("btn-primary");
+            $(".users-card-caff").hide();
+        }
+        else{
+            $(this).addClass("btn-success");
+            $(".btnUI").addClass("btn-primary");
+            $(".users-card-caff").show();
+        }
+    });
         $(".btnUI").click(function(){
             $(this).toggleClass("btn-primary");
             var idBtn = $(this).attr("id");

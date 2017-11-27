@@ -645,6 +645,19 @@
 
 	function getConfigById($id){
 		include("connexionBdd.php");
+		
+		//configuration par défaut
+		$config = (object) array();
+        $config->filtercolorurgent = 'red';
+        $config->filtercolorclient = 'orange';
+        $config->filtercolorimmo = 'yellow';
+        $config->filtercolordissi = 'green';
+        $config->filtercolorfocu = 'blue';
+        $config->filtercolorcoord = 'purple';
+        $config->filterdre = 1;
+        $config->filtersj = array();
+		$config = json_encode($config);
+		
 		$req = $bdd->prepare("SELECT * FROM cds_config WHERE caff_id = ?");
 		$req->execute(array($id));
 		if($data = $req->fetch())
@@ -655,7 +668,22 @@
 	}
 	function addConfigById($id,$json_code){
 		include("connexionBdd.php");
-		$req = $bdd->prepare("UPDATE cds_config SET config = ? WHERE caff_id = ?");
-		$req->execute(array($json_code,$id));
+		$reponse = false;
+		try{
+			$req = $bdd->prepare("SELECT id FROM cds_config WHERE caff_id = ?");
+			$req->execute(array($id));
+			if($data = $req->fetch())
+			{
+				$req = $bdd->prepare("UPDATE cds_config SET config = ? WHERE caff_id = ?");
+				$reponse = $req->execute(array($json_code,$id));
+			}
+			else{
+				$req = $bdd->prepare("INSERT INTO cds_config(config, caff_id) VALUES(?, ?)");
+				$reponse = $req->execute(array($json_code,$id));
+			}
+		}catch(Exception $e){
+			$reponse = false;
+		}
+		return json_encode($reponse);
 	}
 ?>
