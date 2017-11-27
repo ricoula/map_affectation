@@ -7,7 +7,12 @@
 
   </head>
   <body>
-  <div id="side_bar"></div>
+  <div id="side_bar">
+    <div id="div-slide-users" class="slide"></div>
+    <div id="div-slide-box" class="slide"></div>
+    <div id="div-slide-filter" class="slide"></div>
+    <div id="div-slide-home" class="slide"></div>
+  </div>
     <div id="map_content">
       <div id="glyph">
         <div id="slide-home" class="glyph_div glyph_div_border"><span  class="glyphicon glyphicon-home font-glyph" aria-hidden="true"></span></div>
