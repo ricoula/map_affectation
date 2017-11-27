@@ -17,6 +17,7 @@
                 <?php
             }
             ?>
+            <button type="button" class="btn btn-default btn-success btnUIAll" id="allUi" >All</button>
         </div>
         <?php
         foreach($caffs as $caff)
@@ -41,6 +42,19 @@
     </body>
 </html>
 <script>
+    $("#allUi").click(function(){
+        if($(this).hasClass("btn-success"))
+        {
+            $(this).removeClass("btn-success");
+            $(".btnUI").removeClass("btn-primary");
+            $(".users-card-caff").hide();
+        }
+        else{
+            $(this).addClass("btn-success");
+            $(".btnUI").addClass("btn-primary");
+            $(".users-card-caff").show();
+        }
+    });
         $(".btnUI").click(function(){
             $(this).toggleClass("btn-primary");
             var idBtn = $(this).attr("id");
