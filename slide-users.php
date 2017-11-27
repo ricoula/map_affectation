@@ -31,7 +31,7 @@
                     <div class="card-block users-card-info" id="">
                         <h4 class="users-name"><?php echo $caff->name_related ?><?php if(in_array($caff->id, $listeCaffsConges)){ ?><span class="label label-warning pull-right users-state">Congé</span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
                         <h6 class="users-site"><?php echo $caff->site ?></h6>
-                        <h6 class="users-charge">Charge: <span class="label label-danger users-charge-count">123</span><button class="btn btn-info btn-xs pull-right">Afficher POI</button></h6>
+                        <h6 class="users-charge">Charge: <span class="label label-danger users-charge-count">123</span><button id="btnAfficherPoiCaff-<?php echo urlencode($caff->name_related) ?>" class="btn btn-info btn-xs pull-right btnAfficherPoiCaff">Afficher POI</button></h6>
                     </div>
                 </div>
                 <?php
@@ -42,6 +42,12 @@
     </body>
 </html>
 <script>
+    $(".btnAfficherPoiCaff").click(function(){
+        var caffName = $(this).attr("id").split("-")[1];
+        $("#divlistePoiCaff").load("modaleAfficherAllPoiCaff.php?caff_name=" + caffName, function(){
+            $("#listePoiCaff").modal("show");
+        });
+    });
     $("#allUi").click(function(){
         if($(this).hasClass("btn-success"))
         {

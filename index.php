@@ -43,6 +43,11 @@
           <div class="modal-content" id="divInfosCaffAffectation"></div>  
         </div> 
     </div>
+    <div class="modal fade" id="listePoiCaff">
+        <div class="modal-dialog modal-lg"> 
+          <div class="modal-content" id="divlistePoiCaff"></div>  
+        </div> 
+    </div>
 
   <?php include("footer.php") ?>
   </body>
