@@ -17,7 +17,6 @@
     config = JSON.parse(JSON.parse(data));
   });
   $.getJSON('API/getPoiNA.php',function(data){
-            
    
             data.forEach(function(poi){
              
