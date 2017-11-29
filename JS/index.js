@@ -1,15 +1,22 @@
 $(function(){
+    $("#div-slide-home").load('slide-home.php');
+    $("#div-slide-box").load('slide-box.php');
+    $("#div-slide-users").load('slide-users.php');
+    $("#div-slide-filter").load('slide-filter.php?utilisateur_id=' + $("#user_id").val());
+
     $("#slide-box").click(function(){
         $("#side_bar").animate({left:'0px'},500);
         $("#glyph").animate({left:'500px'},500);
-        $("#side_bar").load('slide-box.php');
+        $(".slide").hide();
+        $("#div-slide-box").show();
         $(".glyph_div").removeClass("active");
         $("#slide-box").addClass("active");
     });
     $("#slide-filter").click(function(){
         $("#side_bar").animate({left:'0px'},500);
         $("#glyph").animate({left:'500px'},500);
-        $("#side_bar").load('slide-filter.php');
+        $(".slide").hide();
+        $("#div-slide-filter").show();
         $(".glyph_div").removeClass("active");
         $("#slide-filter").addClass("active");
     });
@@ -17,17 +24,19 @@ $(function(){
         var poi = getUrlParameter('poi');
         $("#side_bar").animate({left:'0px'},500);
         $("#glyph").animate({left:'500px'},500);
-        $("#side_bar").load('slide-home.php');
+        $(".slide").hide();
+        $("#div-slide-home").show();
         $(".glyph_div").removeClass("active");
         $("#slide-home").addClass("active");
         if(poi != undefined){
-            $("#side_bar").load('slide-home.php?poi_id=' + poi);
+            $("#div-slide-home").load('slide-home.php?poi_id=' + poi);
         }
     });
     $("#slide-users").click(function(){
         $("#side_bar").animate({left:'0px'},500);
         $("#glyph").animate({left:'500px'},500);
-        $("#side_bar").load('slide-users.php');
+        $(".slide").hide();
+        $("#div-slide-users").show();
         $(".glyph_div").removeClass("active");
         $("#slide-users").addClass("active");
     });

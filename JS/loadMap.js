@@ -18,7 +18,6 @@
   });
   $.getJSON('API/getPoiNA.php',function(data){
    
-    
             data.forEach(function(poi){
              
               var strokecolorpoi = 'black';

@@ -11,7 +11,7 @@
     <!-- <input type="hidden" id="poi_lat_lng" latlng='<?php echo $closestSite->poilatlng ;?>'>
     <input type="hidden" id="site_lat_lng" latlng='<?php echo $closestSite->sitelatlng ;?>'>
     <input type="hidden" id="site_nb" nb="<?php echo $closestSite->i ?>"> -->
-    <span id="slide-close" class="glyphicon glyphicon-remove pull-right"></span></br> 
+    <span class="glyphicon glyphicon-remove pull-right slide-close"></span></br> 
     <h1 id="home-poi" class="well"><?php echo $poi->ft_numero_oeie ?><span class="badge badge-default pull-right" id="home-domaine"><?php echo $poi->domaine ?></span></h1>
     <h4>Information POI</h4>
     <form>
@@ -66,11 +66,10 @@
     </body>
 </html>
 <script>   
-        $("#slide-close").click(function(){
+        $(".slide-close").click(function(){
         $("#side_bar").animate({left:'-500px'},500);
         $("#glyph").animate({left:'0px'},500);
         $(".glyph_div").removeClass("active");
-        $("#side_bar").html("");
     });
 </script>
 <script>
