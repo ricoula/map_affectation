@@ -1,7 +1,4 @@
-<?php 
-    include("header.php");
-    $_SESSION["user_id"] = 2;
-?>
+<?php include("header.php")?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -10,13 +7,7 @@
 
   </head>
   <body>
-      <input type="hidden" id="user_id" name="user_id" value="<?php echo $_SESSION["user_id"] ?>" />
-  <div id="side_bar">
-    <div id="div-slide-users" class="slide"></div>
-    <div id="div-slide-box" class="slide"></div>
-    <div id="div-slide-filter" class="slide"></div>
-    <div id="div-slide-home" class="slide"></div>
-  </div>
+  <div id="side_bar"></div>
     <div id="map_content">
       <div id="glyph">
         <div id="slide-home" class="glyph_div glyph_div_border"><span  class="glyphicon glyphicon-home font-glyph" aria-hidden="true"></span></div>
@@ -45,11 +36,6 @@
     <div class="modal fade" id="modaleInfosCaffAffectation">
         <div class="modal-dialog modal-lg"> 
           <div class="modal-content" id="divInfosCaffAffectation"></div>  
-        </div> 
-    </div>
-    <div class="modal fade" id="listePoiCaff">
-        <div class="modal-dialog modal-lg"> 
-          <div class="modal-content" id="divlistePoiCaff"></div>  
         </div> 
     </div>
 

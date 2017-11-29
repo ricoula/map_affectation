@@ -5,24 +5,23 @@
     $poiNa = json_decode(getPoiNA());
     $listeUi = json_decode(getUi());
     ?>
-    <span class="glyphicon glyphicon-remove pull-right slide-close"></span></br>        
+    <span id="slide-close" class="glyphicon glyphicon-remove pull-right"></span></br>        
     <h1 id="home-poi" class="well">Liste des POI</h1>
     <div class="btn-group" role="group" aria-label="Basic example" id="users-group">
         <?php
         foreach($listeUi as $ui)
         {
             ?>
-            <button type="button" class="btn btn-default btn-primary btnUIBox" id="box-<?php echo $ui->ft_zone ?>" ><?php echo $ui->diminutif ?></button>
+            <button type="button" class="btn btn-default btn-primary btnUI" id="<?php echo $ui->ft_zone ?>" ><?php echo $ui->diminutif ?></button>
             <?php
         }
         ?>
-        <button type="button" class="btn btn-default btn-success btnUIAll" id="allUiBox" >All</button>
     </div><br/><br/>
     <?php
         foreach($poiNa as $poi)
         {
             ?>
-            <div class="card-box well cardBox-<?php echo $poi->atr_ui ?>">
+            <div class="card well card-<?php echo $poi->atr_ui ?>">
                 <input type="hidden" class="longitude" value="<?php echo $poi->ft_longitude ?>" />
                 <input type="hidden" class="latitude" value="<?php echo $poi->ft_latitude ?>" />
                 <div class="card-block">
@@ -38,28 +37,15 @@
     </body>
 </html>
 <script>
-    $("#allUiBox").click(function(){
-        if($(this).hasClass("btn-success"))
-        {
-            $(this).removeClass("btn-success");
-            $(".btnUIBox").removeClass("btn-primary");
-            $(".card-box").hide();
-        }
-        else{
-            $(this).addClass("btn-success");
-            $(".btnUIBox").addClass("btn-primary");
-            $(".card-box").show();
-        }
-    });
-    $(".btnUIBox").click(function(){
+    $(".btnUI").click(function(){
         $(this).toggleClass("btn-primary");
-        var idBtn = $(this).attr("id").split("-")[1];
+        var idBtn = $(this).attr("id");
         if($(this).hasClass("btn-primary"))
         {
-            $(".cardBox-" +idBtn).show();
+            $(".card-" +idBtn).show();
         }
         else{
-            $(".cardBox-" +idBtn).hide();
+            $(".card-" +idBtn).hide();
         }
     });
 
@@ -73,7 +59,7 @@
                     scale: 7,
                   }
          });
-    $(".card-box").click(function(){
+    $(".card").click(function(){
         var longitude = $(this).children(".longitude").first().val();
         var latitude = $(this).children(".latitude").first().val();
         myLatlng = new google.maps.LatLng(Number(longitude),Number(latitude));
@@ -87,9 +73,10 @@
   });
     });
 
-    $(".slide-close").click(function(){
+    $("#slide-close").click(function(){
         $("#side_bar").animate({left:'-500px'},500);
         $("#glyph").animate({left:'0px'},500);
         $(".glyph_div").removeClass("active");
+        $("#side_bar").html("");
     });
 </script>
