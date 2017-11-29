@@ -253,3 +253,14 @@ width:70px;
   height: 100%;
   display: none;
 }
+#divInfos{
+  position: absolute;
+  z-index: 1000;
+  left: 90%;
+}
+#labelNbPoiNA{
+  display: none;
+}
+#divListePoiNAUi{
+  display: none;
+}

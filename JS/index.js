@@ -55,4 +55,27 @@ $(function(){
         }
     };
 
+    $("#selectUi").change(function(){
+        $("#labelNbPoiNA").hide();
+        $("#divListePoiNAUi").hide();
+        $.post("API/getPoiNAByUi.php", {ui: $(this).val()}, function(data){
+            var listePoi = JSON.parse(data);
+            $("#nbPoiNA").text(listePoi.length);
+            $("#labelNbPoiNA").show();
+            $("#btnGenererPoiNA").click(function(){
+                $("#resultatsListePoiNA").html("").hide();
+                $("#divLoadingPoiNA").show();
+                $("#divListePoiNAUi").show();
+
+                listePoi.forEach(function(poi){
+                    $.post("API/getAffectationAuto.php", {poi_id: poi.id, km: $("#kmRadius").val()}, function(data2){
+                        poi.affectationAuto = JSON.parse(data2);
+                    });
+                });
+
+                
+            });
+        })
+    });
+
 });

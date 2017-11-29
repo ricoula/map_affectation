@@ -80,7 +80,7 @@
             iw.close();
           });
           google.maps.event.addListener(marker, 'rightclick', function(e) {  // 'spider_rightclick', not plain 'click'
-          $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: 10}, function(data){
+          $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val()}, function(data){
             var caff = JSON.parse(data);
             iw.setContent('<div class="container info_poi_modal" >'+
                   '<h2 id="win_info_numero_oeie">'+marker.title+'</h2>' +

@@ -82,7 +82,7 @@
         var elt = $(this);
         var idCaff = $(this).attr("id").split("-")[1];
         $.post("API/getImageByCaff.php", {caff_id: idCaff}, function(data){
-            var image = JSON.parse(data);
+            var image = data;
             if(image != null && image != '')
             {
                 elt.css("background-image", 'url("' + image + '")');

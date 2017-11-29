@@ -641,7 +641,7 @@
 		{
 			$image = "data:image/jpeg;base64, ".stream_get_contents($data['image']);
 		}
-		return json_encode($image);
+		return $image;
 	}
 
 	function getConfigById($id){
@@ -847,6 +847,8 @@
 		}
 		$listeIdSites = implode(", ", $listeIdSites);
 		
+		$listeCaffs = array();
+		
 		$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, ((reactive + (non_reactive * ".$coefCharge.")) 
         - ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.")
 		+ ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND ft_titulaire_client = '".$poi->ft_titulaire_client."' AND ft_titulaire_client IS NOT NULL AND ft_titulaire_client != '' AND ft_titulaire_client != 'suppr. CNIL') * ".$coefNbPoiClient.")
@@ -905,6 +907,8 @@ FROM (select id,t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.sit
 			}
 			$caff->charge_totale += ($tauxDre * $caff->reactive);
 			
+			array_push($listeCaffs, $caff);
+			
 			if($caffAuto == null)
 			{
 				$caffAuto = $caff;
@@ -914,7 +918,55 @@ FROM (select id,t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.sit
 			}
 		}
 		
+		/*if($caffAuto != null)
+		{
+			var_dump($listeCaffs);
+			function comparer($a, $b) {
+				var_dump(strcmp($a->charge_totale, $b->charge_totale));
+			  return strcmp($a->charge_totale, $b->charge_totale);
+			}
+			usort($listeCaffs, 'comparer');
+			var_dump($listeCaffs);
+			
+			$caffAuto->listeAutresCaffs = $listeCaffs;
+		}*/
+		
 		return json_encode($caffAuto);
+	}
+	
+	function getPoiNAByUi($ui) //ft_zone
+	{
+		include("connexionBddErp.php");
+		$listePoi = array();
+		$req = $bddErp->prepare("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.ft_titulaire_client, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
+		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
+		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
+		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1' AND ag_poi.atr_ui = ?");
+		$req->execute(array($ui));
+		while($data = $req->fetch())
+		{
+			$poi = (object) array();
+			$poi->atr_ui = $data["atr_ui"];
+			$poi->ft_numero_oeie = $data["ft_numero_oeie"];
+			$poi->domaine = $data["domaine"];
+			$poi->ft_titulaire_client = $data["ft_titulaire_client"];
+			$poi->ft_libelle_commune = $data["ft_libelle_commune"];
+			$poi->ft_libelle_de_voie = $data["ft_libelle_de_voie"];
+			$poi->ft_pg = $data["ft_pg"];
+			$poi->ft_sous_justification_oeie = $data["ft_sous_justification_oeie"];
+			$poi->ft_oeie_dre = $data["ft_oeie_dre"];
+			$poi->ft_latitude = $data["ft_latitude"];
+			$poi->insee_code = $data["insee_code"];
+			$poi->ft_longitude = $data["ft_longitude"];
+			$poi->ft_libelle_affaire = $data["ft_libelle_affaire"];
+			$poi->ft_date_limite_realisation = $data["ft_date_limite_realisation"];
+			$poi->create_date = $data["create_date"];
+			$poi->id = $data["id"];
+			
+			array_push($listePoi, $poi);
+		}
+		
+		return json_encode($listePoi);
 	}
 
 ?>
