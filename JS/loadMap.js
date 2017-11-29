@@ -12,11 +12,11 @@
     markersWontMove: true,
     markersWontHide: true
   });
-  $.getJSON('API/getConfigById',function(data){
-    config = JSON.parse(data);
+
+  $.post('API/getConfigById.php', {utilisateur_id: $("#user_id").val()},function(data){
+    config = JSON.parse(JSON.parse(data));
   });
   $.getJSON('API/getPoiNA.php',function(data){
-            
    
             data.forEach(function(poi){
              
@@ -80,29 +80,33 @@
             iw.close();
           });
           google.maps.event.addListener(marker, 'rightclick', function(e) {  // 'spider_rightclick', not plain 'click'
-        iw.setContent('<div class="container info_poi_modal" >'+
-        '<h2 id="win_info_numero_oeie">'+marker.title+'</h2>' +
-       '<div class="list-group">' +
-          '<a href="#" class="list-group-item" id="win_info_affecter_a">Affecter à</a>' +
-          '<a class="list-group-item testClass" id="win_info_liens" style="cursor: pointer">POI en lien <span class="badge" id="badgeNbPoi"></span></a>' +
-          '<a href="#" class="list-group-item" id="win_info_affecter_auto">Affecter auto. <span class="label label-info pull-right">RICOU Damien</span></a>' +
-      '</div>' +
-   '</div>');
-        iw.open(map, marker);
-        $.post("API/getNbPoiEnLien.php", {commune: poi.ft_libelle_commune, voie: poi.ft_libelle_de_voie, titulaire: poi.ft_titulaire_client, ui: poi.atr_ui}, function(data){
-                  var nbPoi = JSON.parse(data);
-                  $("#badgeNbPoi").text(nbPoi);
-              });
-              $("#win_info_liens").click(function(){
-                  $("#divListeCaffsLienPoi").load("modaleListeCaffsLienPoi.php?poi=" + poi.id, function(){
-                      $('#modaleListeCaffsLienPoi').modal('show');
+          $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: 10}, function(data){
+            var caff = JSON.parse(data);
+            iw.setContent('<div class="container info_poi_modal" >'+
+                  '<h2 id="win_info_numero_oeie">'+marker.title+'</h2>' +
+                '<div class="list-group">' +
+                    '<a href="#" class="list-group-item" id="win_info_affecter_a">Affecter à</a>' +
+                    '<a class="list-group-item testClass" id="win_info_liens" style="cursor: pointer">POI en lien <span class="badge" id="badgeNbPoi"></span></a>' +
+                    '<a href="#" class="list-group-item" id="win_info_affecter_auto">Affecter auto. <span class="label label-info pull-right">' + caff.name_related + '</span></a>' +
+                '</div>' +
+            '</div>');
+
+            iw.open(map, marker);
+            $.post("API/getNbPoiEnLien.php", {commune: poi.ft_libelle_commune, voie: poi.ft_libelle_de_voie, titulaire: poi.ft_titulaire_client, ui: poi.atr_ui}, function(data2){
+                      var nbPoi = JSON.parse(data2);
+                      $("#badgeNbPoi").text(nbPoi);
                   });
-              });
-              $("#win_info_affecter_a").click(function(){
-                $("#divAffecterA").load("modaleAffecterA.php?poi_id=" + poi.id, function(){
-                    $('#modaleAffecterA').modal('show');
+                  $("#win_info_liens").click(function(){
+                      $("#divListeCaffsLienPoi").load("modaleListeCaffsLienPoi.php?poi=" + poi.id, function(){
+                          $('#modaleListeCaffsLienPoi').modal('show');
+                      });
+                  });
+                  $("#win_info_affecter_a").click(function(){
+                    $("#divAffecterA").load("modaleAffecterA.php?poi_id=" + poi.id, function(){
+                        $('#modaleAffecterA').modal('show');
+                    });
                 });
-            });
+          });
   
           });
           google.maps.event.addListener(marker, 'spider_click', function(e) {  // 'spider_rightclick', not plain 'click'
@@ -112,11 +116,14 @@
           console.log(newUrl);
           history.pushState(null, null, newUrl);
           
+          
           console.log(marker.poi_id);
           $("#side_bar").animate({left:'0px'},500);
           $("#glyph").animate({left:'500px'},500);
           
-          $("#side_bar").load('slide-home.php?poi_id=' + marker.poi_id);
+          $("#div-slide-home").load('slide-home.php?poi_id=' + marker.poi_id);
+          $(".slide").hide();
+          $("#div-slide-home").show();
           $(".glyph_div").removeClass("active");
           $("#slide-home").addClass("active");
           
