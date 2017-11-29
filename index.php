@@ -1,6 +1,6 @@
 <?php 
     include("header.php");
-    $_SESSION["user_id"] = 2;
+    $_SESSION["user_id"] = 1;
 ?>
 <!DOCTYPE html>
 <html>
