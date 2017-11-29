@@ -1,4 +1,4 @@
 <?php
 	require_once("fonctions.php");
-	echo nbPoiCaffByRadius($_POST["latitude"], $_POST["longitude"], $_POST["km"]);
+	echo nbPoiCaffByRadius($_POST["poi_id"], $_POST["km"]);
 ?>
