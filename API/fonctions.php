@@ -243,12 +243,13 @@
 		include("connexionBdd.php");
 		
 		$listeSites = array();
-		$req = $bdd->prepare("SELECT site, site_longitude, site_latitude FROM cds_transco_ui_site WHERE ft_zone = ?");
+		$req = $bdd->prepare("SELECT site, erp_site_id, site_longitude, site_latitude FROM cds_transco_ui_site WHERE ft_zone = ?");
 		$req->execute(array($ui));
 		while($data = $req->fetch())
 		{
 			$site = (object) array();
 			$site->libelle = $data["site"];
+			$site->id = $data["erp_site_id"];
 			$site->longitude = $data["site_longitude"];
 			$site->latitude = $data["site_latitude"];
 			
@@ -307,22 +308,22 @@
 		return json_encode($closestSite);
 	}
 	
-	function nbPoiCaffByRadius($idPoi, $km)
+	function nbPoiCaffByRadius($latitude, $longitude, $km)
 	{
 		include("connexionBddErp.php");
 		$liste = array();
 		
-		$poi = json_decode(getPoiById($idPoi));
-		
-		$req = $bddErp->prepare("select name_related,count(ft_numero_oeie) nb from ag_poi
+		$req = $bddErp->prepare("select atr_caff_traitant_id, name_related, count(ft_numero_oeie) nb from ag_poi
 		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
 		where sqrt(power((ft_longitude - ?)/0.0090808,2)+power((ft_latitude - ?)/0.01339266,2)) < ? and ft_etat = '1' and name_related is not null
-		group by name_related");
-		$req->execute(array($poi->ft_longitude, $poi->ft_latitude, $km));
+		group by name_related, atr_caff_traitant_id");
+		$req->execute(array($longitude, $latitude, $km));
 		while($data = $req->fetch())
 		{
 			$obj = (object) array();
-			$obj->caff = $data["name_related"];
+			$obj->caff = (object) array();
+			$obj->caff->id = $data["atr_caff_traitant_id"];
+			$obj->caff->name = $data["name_related"];
 			$obj->nbPoi = $data["nb"];
 			array_push($liste, $obj);
 		}
@@ -645,6 +646,19 @@
 
 	function getConfigById($id){
 		include("connexionBdd.php");
+		
+		//configuration par défaut
+		$config = (object) array();
+        $config->filtercolorurgent = 'red';
+        $config->filtercolorclient = 'orange';
+        $config->filtercolorimmo = 'yellow';
+        $config->filtercolordissi = 'green';
+        $config->filtercolorfocu = 'blue';
+        $config->filtercolorcoord = 'purple';
+        $config->filterdre = 1;
+        $config->filtersj = array();
+		$config = json_encode($config);
+		
 		$req = $bdd->prepare("SELECT * FROM cds_config WHERE caff_id = ?");
 		$req->execute(array($id));
 		if($data = $req->fetch())
@@ -653,9 +667,254 @@
 		}
 		return json_encode($config);
 	}
+	
 	function addConfigById($id,$json_code){
 		include("connexionBdd.php");
-		$req = $bdd->prepare("UPDATE cds_config SET config = ? WHERE caff_id = ?");
-		$req->execute(array($json_code,$id));
+		$reponse = false;
+		try{
+			$req = $bdd->prepare("SELECT id FROM cds_config WHERE caff_id = ?");
+			$req->execute(array($id));
+			if($data = $req->fetch())
+			{
+				$req = $bdd->prepare("UPDATE cds_config SET config = ? WHERE caff_id = ?");
+				$reponse = $req->execute(array($json_code,$id));
+			}
+			else{
+				$req = $bdd->prepare("INSERT INTO cds_config(config, caff_id) VALUES(?, ?)");
+				$reponse = $req->execute(array($json_code,$id));
+			}
+		}catch(Exception $e){
+			$reponse = false;
+		}
+		return json_encode($reponse);
 	}
+	
+	function getChargeCaff($caff) //$caff = object caff en json
+	{
+		$caff = json_decode($caff);
+		$coef = 0.1;
+		$charge = intval($caff->reactive) + (intval($caff->non_reactive) * $coef);
+		return json_encode($charge);
+	}
+	
+	function getNbPoiProximiteByCaffByPoi($idPoi, $idCaff, $km) //$caff = json
+	{
+		include("connexionBddErp.php");
+		$poi = json_decode(getPoiById($idPoi));
+		
+		$nbPoi = 0;
+		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = ? AND sqrt(power((ft_longitude - ?)/0.0090808,2)+power((ft_latitude - ?)/0.01339266,2)) < ? AND ft_etat = '1'");
+		$req->execute(array($idCaff, $poi->ft_longitude, $poi->ft_latitude, $km));
+		if($data = $req->fetch())
+		{
+			$nbPoi = $data["nb"];
+		}
+		return json_encode($nbPoi);
+	}
+	
+	function getNbPoiClientByCaff($idCaff, $client)
+	{
+		include("connexionBddErp.php");
+		$nbPoi = 0;
+		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_titulaire_client = ? AND ft_titulaire_client IS NOT NULL AND ft_titulaire_client != '' AND ft_titulaire_client != 'suppr. CNIL'");
+		$req->execute(array($idCaff, $client));
+		if($data = $req->fetch())
+		{
+			$nbPoi = $data["nb"];;
+		}
+		return json_encode($nbPoi);
+	}
+	
+	/*function getAffectationAuto($idPoi, $km)
+	{
+		include("connexionBddErp.php");
+		include("connexionBdd.php");
+		
+		$caffAuto = null;
+		
+		$coefNbPoiProimite = 0.5;
+		$coefNbPoiClient = 0.8;
+		
+		$poi = json_decode(getPoiById($idPoi));
+		$listeCaffs = json_decode(nbPoiCaffByRadius($poi->ft_latitude, $poi->ft_longitude, $km));
+		foreach($listeCaffs as $caff)
+		{
+			$caff = json_decode(getCaffById($caff->caff->id));
+			
+			if($caff != null)
+			{
+				$charge = json_decode(getChargeCaff(json_encode($caff)));
+			
+				$nbPoiProximite = intval(json_decode(getNbPoiProximiteByCaffByPoi($idPoi, $caff->id, $km)));
+				
+				$nbPoiClient = intval(json_decode(getNbPoiClientByCaff($caff->id, $poi->ft_titulaire_client)));
+				
+				$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
+				$nbPoiEnRetard = 0;
+				$dateAjd = new DateTime("now");
+				foreach($listePoi as $poi)
+				{
+					$dre = new DateTime($poi->ft_oeie_dre);
+					if($dateAjd > $dre)
+					{
+						$nbPoiEnRetard++;
+					}
+				}
+				if(sizeof($listePoi) > 0)
+				{
+					$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
+				}
+				else{
+					$tauxDre = 0;
+				}
+				
+				$chargeGlobale = $charge - ($nbPoiProximite * $coefNbPoiProimite) + ($tauxDre * $caff->reactive) + ($nbPoiClient * $coefNbPoiClient);
+				
+				if($caffAuto == null)
+				{
+					$caffAuto = $caff;
+					$caffAuto->chargeGlobale = $chargeGlobale;
+				}
+				elseif($caffAuto->chargeGlobale > $chargeGlobale){
+					$caffAuto = $caff;
+					$caffAuto->chargeGlobale = $chargeGlobale;
+				}
+			}
+		}
+		
+		return json_encode($caffAuto);
+	}*/
+	
+	function getCaffById($id)
+	{
+		include("connexionBddErp.php");
+		
+		$caff = null;
+		$req = $bddErp->prepare("select id,t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.agence,case when t3.reactive is null then 0 else t3.reactive end,
+		case when t3.non_reactive is null then 0 else t3.non_reactive end from
+		(
+		select t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name as agence, sum(t2.reactive) as reactive, sum(t2.non_reactive) as non_reactive from (
+		 
+		select t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, case when account_analytic_account.name in ('Client', 'FO & CU') then count (ag_poi.id)
+		end as reactive , case when account_analytic_account.name not in ('Client', 'FO & CU') then count (ag_poi.id) end as non_reactive
+		from ag_poi
+		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id  
+		full join
+		(select hr_employee.id, hr_employee.name_related,hr_employee.mobile_phone,hr_employee.work_email,ag_site.name as site,ag_agence.name from res_users
+		full join hr_employee on res_users.ag_employee_id = hr_employee.id
+		full join ag_site on hr_employee.ag_site_id = ag_site.id
+		full join ag_agence on hr_employee.ag_agence_id = ag_agence.id
+		full join hr_job on hr_employee.job_id = hr_job.id
+		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
+		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name) t2
+		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name ) t3
+		WHERE id = ?");
+		$req->execute(array($id));
+		if($data = $req->fetch())
+		{
+			$caff = (object) array();
+			$caff->id = $data["id"];
+			$caff->name_related = $data["name_related"];
+			$caff->mobile_phone = $data["mobile_phone"];
+			$caff->work_email = $data["work_email"];
+			$caff->site = $data["site"];
+			$caff->agence = $data["agence"];
+			$caff->reactive = $data["reactive"];
+			$caff->non_reactive = $data["non_reactive"];
+		}
+		return json_encode($caff);
+	}
+	
+	function getAffectationAuto($idPoi, $km)
+	{
+		include("connexionBddErp.php");
+		include("connexionBdd.php");
+		
+		$caffAuto = null;
+		
+		$coefNbPoiProimite = 0.5;
+		$coefNbPoiClient = 0.8;
+		$coefCharge = 0.5;
+		
+		$poi = json_decode(getPoiById($idPoi));
+		
+		$listeSites = json_decode(getSitesByUi($poi->atr_ui));
+		
+		$listeIdSites = array();
+		foreach($listeSites as $site)
+		{
+			array_push($listeIdSites, $site->id);
+		}
+		$listeIdSites = implode(", ", $listeIdSites);
+		
+		$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, ((reactive + (non_reactive * ".$coefCharge.")) 
+        - ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.")
+		+ ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND ft_titulaire_client = '".$poi->ft_titulaire_client."' AND ft_titulaire_client IS NOT NULL AND ft_titulaire_client != '' AND ft_titulaire_client != 'suppr. CNIL') * ".$coefNbPoiClient.")
+        )charge_totale 
+FROM (select id,t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.site_id, t3.agence,case when t3.reactive is null then 0 else t3.reactive end,
+		case when t3.non_reactive is null then 0 else t3.non_reactive end from
+		(
+		select t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.site_id, t2.name as agence, sum(t2.reactive) as reactive, sum(t2.non_reactive) as non_reactive from (
+		 
+		select t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site, t1.site_id,t1.name, case when account_analytic_account.name in ('Client', 'FO & CU') then count (ag_poi.id)
+		end as reactive , case when account_analytic_account.name not in ('Client', 'FO & CU') then count (ag_poi.id) end as non_reactive
+		from ag_poi
+		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id  
+		full join
+		(select hr_employee.id, hr_employee.name_related,hr_employee.mobile_phone,hr_employee.work_email,ag_site.name as site, ag_site.id as site_id,ag_agence.name from res_users
+		full join hr_employee on res_users.ag_employee_id = hr_employee.id
+		full join ag_site on hr_employee.ag_site_id = ag_site.id
+		full join ag_agence on hr_employee.ag_agence_id = ag_agence.id
+		full join hr_job on hr_employee.job_id = hr_job.id
+		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
+		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, t1.site_id) t2
+		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name, t2.site_id ) t3
+		where name_related is not null AND site_id IN(".$listeIdSites."))caff
+        ORDER BY charge_totale");
+		while($data = $req->fetch())
+		{
+			$caff = (object) array();
+			$caff->name_related = $data["name_related"];
+			$caff->mobile_phone = $data["mobile_phone"];
+			$caff->work_email = $data["work_email"];
+			$caff->site = $data["site"];
+			$caff->site_id = $data["site_id"];
+			$caff->agence = $data["agence"];
+			$caff->reactive = $data["reactive"];
+			$caff->non_reactive = $data["non_reactive"];
+			$caff->charge_totale = $data["charge_totale"];
+			$caff->id = $data["id"];
+			
+			$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
+			$nbPoiEnRetard = 0;
+			$dateAjd = new DateTime("now");
+			foreach($listePoi as $poi)
+			{
+				$dre = new DateTime($poi->ft_oeie_dre);
+				if($dateAjd > $dre)
+				{
+					$nbPoiEnRetard++;
+				}
+			}
+			if(sizeof($listePoi) > 0)
+			{
+				$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
+			}
+			else{
+				$tauxDre = 0;
+			}
+			$caff->charge_totale += ($tauxDre * $caff->reactive);
+			
+			if($caffAuto == null)
+			{
+				$caffAuto = $caff;
+			}
+			elseif($caffAuto->charge_totale > $caff->charge_totale){
+				$caffAuto = $caff;
+			}
+		}
+		
+		return json_encode($caffAuto);
+	}
+
 ?>
