@@ -1,7 +1,7 @@
 $(function(){
     $("#div-slide-home").load('slide-home.php');
     $("#div-slide-box").load('slide-box.php');
-    $("#div-slide-users").load('slide-users.php');
+    $("#div-slide-users").load('slide-users.php?coefCharge=' + $("#coefCharge").val());
     $("#div-slide-filter").load('slide-filter.php?utilisateur_id=' + $("#user_id").val());
 
     $("#slide-box").click(function(){
@@ -63,17 +63,41 @@ $(function(){
             $("#nbPoiNA").text(listePoi.length);
             $("#labelNbPoiNA").show();
             $("#btnGenererPoiNA").click(function(){
+                var el = document.getElementById('btnGenererPoiNA'),
+                elClone = el.cloneNode(true);
+                el.parentNode.replaceChild(elClone, el);
                 $("#resultatsListePoiNA").html("").hide();
                 $("#divLoadingPoiNA").show();
                 $("#divListePoiNAUi").show();
 
+                var html = "<table class='table table-striped table-hover table-condensed table-responsive'><thead><tr><th>POI</th><th>Domaine</th><th>DRE</th><th>SJ</th><th>Caff</th></tr></thead><tbody>";
+                var i = 0;
                 listePoi.forEach(function(poi){
-                    $.post("API/getAffectationAuto.php", {poi_id: poi.id, km: $("#kmRadius").val()}, function(data2){
+                    $.post("API/getAffectationAuto.php", {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()}, function(data2){
+                        i++;
                         poi.affectationAuto = JSON.parse(data2);
+                        var optionElt = "";
+                        poi.affectationAuto.listeAutresCaffs.forEach(function(ceCaff){
+                            
+                            if(ceCaff.id == poi.affectationAuto.id)
+                            {
+                                optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info' selected>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ")" + "</option>";
+                            }
+                            else{
+                                optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ")" + "</option>";
+                            }
+                        });
+                        html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select>" + optionElt + "</select></td></tr>";
+                        $("#btnCaffAffectAuto-" + poi.id).click()
+                        if(i == listePoi.length)
+                        {
+                            html += "</tbody></table>";
+                            $("#divLoadingPoiNA").hide();
+                            document.getElementById("resultatsListePoiNA").innerHTML = html;
+                            $("#resultatsListePoiNA").show();
+                        }
                     });
                 });
-
-                
             });
         })
     });

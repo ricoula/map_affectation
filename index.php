@@ -12,6 +12,9 @@
   </head>
   <body>
       <input type="hidden" id="kmRadius" name="kmRadius" value="20" />
+      <input type="hidden" id="coefPoiProxi" name="coefPoiProxi" value="0.5" />
+      <input type="hidden" id="coefPoiClient" name="coefPoiClient" value="0.8" />
+      <input type="hidden" id="coefCharge" name="coefCharge" value="0.5" />
 
       <input type="hidden" id="user_id" name="user_id" value="<?php echo $_SESSION["user_id"] ?>" />
       <div id="divInfos" class="well" >
@@ -87,11 +90,8 @@
               <hr/>
                 <div id="divLoadingPoiNA" style="text-align: center">
                   <img src="img/loading.gif" />
-                <div>
+              </div>
                 <div id="resultatsListePoiNA">
-                  <table id="tableResultatsListePoiNA">
-                    
-                  </table>
                 </div>
             </div>
           </div>

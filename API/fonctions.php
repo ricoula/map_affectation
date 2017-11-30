@@ -689,10 +689,10 @@
 		return json_encode($reponse);
 	}
 	
-	function getChargeCaff($caff) //$caff = object caff en json
+	function getChargeCaff($caff, $coef) //$caff = object caff en json
 	{
 		$caff = json_decode($caff);
-		$coef = 0.1;
+		//$coef = 0.1;
 		$charge = intval($caff->reactive) + (intval($caff->non_reactive) * $coef);
 		return json_encode($charge);
 	}
@@ -825,16 +825,16 @@
 		return json_encode($caff);
 	}
 	
-	function getAffectationAuto($idPoi, $km)
+	function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefNbPoiClient, $coefCharge)
 	{
 		include("connexionBddErp.php");
 		include("connexionBdd.php");
 		
 		$caffAuto = null;
 		
-		$coefNbPoiProimite = 0.5;
+		/*$coefNbPoiProimite = 0.5;
 		$coefNbPoiClient = 0.8;
-		$coefCharge = 0.5;
+		$coefCharge = 0.5;*/
 		
 		$poi = json_decode(getPoiById($idPoi));
 		
@@ -853,7 +853,7 @@
         - ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.")
 		+ ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND ft_titulaire_client = '".$poi->ft_titulaire_client."' AND ft_titulaire_client IS NOT NULL AND ft_titulaire_client != '' AND ft_titulaire_client != 'suppr. CNIL') * ".$coefNbPoiClient.")
         )charge_totale 
-FROM (select id,t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.site_id, t3.agence,case when t3.reactive is null then 0 else t3.reactive end,
+		FROM (select id,t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.site_id, t3.agence,case when t3.reactive is null then 0 else t3.reactive end,
 		case when t3.non_reactive is null then 0 else t3.non_reactive end from
 		(
 		select t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.site_id, t2.name as agence, sum(t2.reactive) as reactive, sum(t2.non_reactive) as non_reactive from (
@@ -907,7 +907,11 @@ FROM (select id,t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.sit
 			}
 			$caff->charge_totale += ($tauxDre * $caff->reactive);
 			
-			array_push($listeCaffs, $caff);
+			$ceCaff = (object) array();
+			$ceCaff->id = $caff->id;
+			$ceCaff->name_related = $caff->name_related;
+			$ceCaff->charge_totale = $caff->charge_totale;
+			array_push($listeCaffs, $ceCaff);
 			
 			if($caffAuto == null)
 			{
@@ -918,18 +922,18 @@ FROM (select id,t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.sit
 			}
 		}
 		
-		/*if($caffAuto != null)
+		if($caffAuto != null)
 		{
-			var_dump($listeCaffs);
+			/*var_dump($listeCaffs);
 			function comparer($a, $b) {
 				var_dump(strcmp($a->charge_totale, $b->charge_totale));
 			  return strcmp($a->charge_totale, $b->charge_totale);
 			}
 			usort($listeCaffs, 'comparer');
-			var_dump($listeCaffs);
+			var_dump($listeCaffs);*/
 			
 			$caffAuto->listeAutresCaffs = $listeCaffs;
-		}*/
+		}
 		
 		return json_encode($caffAuto);
 	}
@@ -968,5 +972,22 @@ FROM (select id,t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.sit
 		
 		return json_encode($listePoi);
 	}
-
+	
+	function getListeAffectationAuto($listeIdPoi, $km) //$listeIdPoi = array en json
+	{
+		$listeIdPoi = json_decode($listeIdPoi);
+		
+		$listeCaffsAuto = array();
+		
+		foreach($listeIdPoi as $idPoi)
+		{
+			$obj = (object) array();
+			$obj->caff = json_decode(getAffectationAuto($idPoi, $km));
+			$obj->idPoi = $idPoi;
+			
+			array_push($listeCaffsAuto, $obj);
+		}
+		
+		return json_encode($listeCaffsAuto);
+	}
 ?>
