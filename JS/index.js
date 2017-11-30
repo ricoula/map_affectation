@@ -56,9 +56,11 @@ $(function(){
     };
 
     $("#selectUi").change(function(){
+        $("#loadingChoixUi").show();
         $("#labelNbPoiNA").hide();
         $("#divListePoiNAUi").hide();
         $.post("API/getPoiNAByUi.php", {ui: $(this).val()}, function(data){
+            $("#loadingChoixUi").hide();
             var listePoi = JSON.parse(data);
             $("#nbPoiNA").text(listePoi.length);
             $("#labelNbPoiNA").show();

@@ -264,3 +264,6 @@ width:70px;
 #divListePoiNAUi{
   display: none;
 }
+#loadingChoixUi{
+  display: none;
+}

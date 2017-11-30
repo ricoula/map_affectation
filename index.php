@@ -83,7 +83,7 @@
                   <?php
                 }
                 ?>
-              </select>
+              </select><img id="loadingChoixUi" src="img/wait.gif" />
                 <label id="labelNbPoiNA"> <span id="nbPoiNA">0</span> POI non-affectées<button class="btn btn-info" id="btnGenererPoiNA">Générer</button></label>
             </div>
             <div id="divListePoiNAUi">
