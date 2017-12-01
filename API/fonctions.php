@@ -1055,22 +1055,4 @@
 		
 		return json_encode($listeCaffsAuto);
 	}
-	
-	function getSimulationChargeTotaleCaff($chargeGlobale, $listePoi)
-	{
-		if($listePoi != null && sizeof($listePoi) > 0)
-		{
-			foreach($listePoi as $poi)
-			{
-				if($poi->reactive)
-				{
-					$chargeGlobale += 1;
-				}
-				else{
-					$chargeGlobale += $coefCharge;
-				}
-			}
-		}
-		return json_encode($chargeGlobale);
-	}
 ?>

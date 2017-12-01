@@ -89,6 +89,7 @@
             <div id="divListePoiNAUi">
               <hr/>
                 <div id="divLoadingPoiNA" style="text-align: center">
+                  <div><span id="nbPoiNaEffectue"></span>/<span id="nbPoiNaEffectueTotal"></span></div>
                   <img src="img/loading.gif" />
               </div>
                 <div id="resultatsListePoiNA">

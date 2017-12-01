@@ -63,6 +63,8 @@ $(function(){
         $.post("API/getPoiNAByUi.php", {ui: $(this).val()}, function(data){
             $("#loadingChoixUi").hide();
             var listePoi = JSON.parse(data);
+            $("#nbPoiNaEffectueTotal").text(listePoi.length);
+            $("#nbPoiNaEffectue").text("0");
             $("#nbPoiNA").text(listePoi.length);
             $("#labelNbPoiNA").show();
             $("#btnGenererPoiNA").click(function(){
@@ -127,6 +129,7 @@ $(function(){
                         data: {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()},// liste_caffs_simulation: listeCaffsSimulation},
                         success: function(data2){
                             i++;
+                            $("#nbPoiNaEffectue").text(i);
                             console.log("Data: " + data2);
                             poi.affectationAuto = JSON.parse(data2);
                             //listeCaffsSimulation = JSON.parse(listeCaffsSimulation);
