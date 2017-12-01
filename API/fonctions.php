@@ -29,6 +29,13 @@
 			$poi->ft_date_limite_realisation = $data["ft_date_limite_realisation"];
 			$poi->create_date = $data["create_date"];
 			$poi->id = $data["id"];
+			if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
+			{
+				$poi->reactive = true;
+			}
+			else{
+				$poi->reactive = false;
+			}
 			
 			array_push($listePoi, $poi);
 		}
@@ -223,6 +230,13 @@
 			$poi->ft_date_creation_as = $data["ft_date_creation_as"];
 			$poi->ft_commentaire_creation_as = $data["ft_commentaire_creation_as"];
 			$poi->ft_zone_as = $data["ft_zone_as"];
+			if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
+			{
+				$poi->reactive = true;
+			}
+			else{
+				$poi->reactive = false;
+			}
 		}
 		
 		return json_encode($poi);
@@ -825,12 +839,14 @@
 		return json_encode($caff);
 	}
 	
-	function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefNbPoiClient, $coefCharge)
+	function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefNbPoiClient, $coefCharge)//, $listeCaffsSimulation) // $listeCaffsSimulation (facultatif) = array en json
 	{
 		include("connexionBddErp.php");
 		include("connexionBdd.php");
 		
 		$caffAuto = null;
+		
+		//$listeCaffsSimulation = json_decode($listeCaffsSimulation);
 		
 		/*$coefNbPoiProimite = 0.5;
 		$coefNbPoiClient = 0.8;
@@ -879,37 +895,66 @@
 			$req2->execute(array($data["id"]));
 			if(!$data2 = $req2->fetch())
 			{
-				$caff = (object) array();
-				$caff->name_related = $data["name_related"];
-				$caff->mobile_phone = $data["mobile_phone"];
-				$caff->work_email = $data["work_email"];
-				$caff->site = $data["site"];
-				$caff->site_id = $data["site_id"];
-				$caff->agence = $data["agence"];
-				$caff->reactive = $data["reactive"];
-				$caff->non_reactive = $data["non_reactive"];
-				$caff->charge_totale = $data["charge_totale"];
-				$caff->id = $data["id"];
+				/*$caffInSimulation = false;
 				
-				$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
-				$nbPoiEnRetard = 0;
-				$dateAjd = new DateTime("now");
-				foreach($listePoi as $poi)
+				if($listeCaffsSimulation != null && sizeof($listeCaffsSimulation) > 0)
 				{
-					$dre = new DateTime($poi->ft_oeie_dre);
-					if($dateAjd > $dre)
+					//var_dump($listeCaffsSimulation);
+					//return json_encode($listeCaffsSimulation);
+					foreach($listeCaffsSimulation as $caffSimulation)
 					{
-						$nbPoiEnRetard++;
+						//var_dump($caffSimulation);
+						if($caffSimulation != null && $caffSimulation->id == $data["id"])
+						{
+							$caffInSimulation = true;
+							$caff = $caffSimulation;
+							
+							$nbPoiSimulation = sizeof($caff->listePoiSimulation)-1;
+							//var_dump($nbPoiSimulation);
+							if($caff->listePoiSimulation[$nbPoiSimulation]->reactive == true)
+							{
+								$caff->charge_totale += 1;
+							}
+							else{
+								$caff->charge_totale += $coefCharge;
+							}
+						}
 					}
 				}
-				if(sizeof($listePoi) > 0)
-				{
-					$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
-				}
-				else{
-					$tauxDre = 0;
-				}
-				$caff->charge_totale += ($tauxDre * $caff->reactive);
+				if(!$caffInSimulation)
+				{*/
+					$caff = (object) array();
+					$caff->name_related = $data["name_related"];
+					$caff->mobile_phone = $data["mobile_phone"];
+					$caff->work_email = $data["work_email"];
+					$caff->site = $data["site"];
+					$caff->site_id = $data["site_id"];
+					$caff->agence = $data["agence"];
+					$caff->reactive = $data["reactive"];
+					$caff->non_reactive = $data["non_reactive"];
+					$caff->charge_totale = $data["charge_totale"];
+					$caff->id = $data["id"];
+					
+					$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
+					$nbPoiEnRetard = 0;
+					$dateAjd = new DateTime("now");
+					foreach($listePoi as $poi)
+					{
+						$dre = new DateTime($poi->ft_oeie_dre);
+						if($dateAjd > $dre)
+						{
+							$nbPoiEnRetard++;
+						}
+					}
+					if(sizeof($listePoi) > 0)
+					{
+						$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
+					}
+					else{
+						$tauxDre = 0;
+					}
+					$caff->charge_totale += ($tauxDre * $caff->reactive);
+				//}
 				
 				$ceCaff = (object) array();
 				$ceCaff->id = $caff->id;
@@ -979,6 +1024,13 @@
 			$poi->ft_date_limite_realisation = $data["ft_date_limite_realisation"];
 			$poi->create_date = $data["create_date"];
 			$poi->id = $data["id"];
+			if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
+			{
+				$poi->reactive = true;
+			}
+			else{
+				$poi->reactive = false;
+			}
 			
 			array_push($listePoi, $poi);
 		}
@@ -1002,5 +1054,23 @@
 		}
 		
 		return json_encode($listeCaffsAuto);
+	}
+	
+	function getSimulationChargeTotaleCaff($chargeGlobale, $listePoi)
+	{
+		if($listePoi != null && sizeof($listePoi) > 0)
+		{
+			foreach($listePoi as $poi)
+			{
+				if($poi->reactive)
+				{
+					$chargeGlobale += 1;
+				}
+				else{
+					$chargeGlobale += $coefCharge;
+				}
+			}
+		}
+		return json_encode($chargeGlobale);
 	}
 ?>
