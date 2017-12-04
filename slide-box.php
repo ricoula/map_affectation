@@ -74,6 +74,8 @@
                   }
          });
     $(".card-box").click(function(){
+        $(".card-box").css({"backgroundColor" : "#f5f5f5"});
+        $(this).css({"backgroundColor" : "#d5d5d5"});
         var longitude = $(this).children(".longitude").first().val();
         var latitude = $(this).children(".latitude").first().val();
         myLatlng = new google.maps.LatLng(Number(longitude),Number(latitude));
@@ -84,6 +86,7 @@
        
         google.maps.event.addListener(marker, 'click', function(event) {
     this.setMap(null);
+    $(".card-box").css({"backgroundColor" : "#f5f5f5"});
   });
     });
 
