@@ -865,7 +865,7 @@
 		
 		$listeCaffs = array();
 		
-		$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, ((reactive + (non_reactive * ".$coefCharge.")) 
+		$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, (reactive + (non_reactive * ".$coefCharge.")) charge_initiale, ((reactive + (non_reactive * ".$coefCharge.")) 
         - ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.")
 		+ ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND ft_titulaire_client = '".$poi->ft_titulaire_client."' AND ft_titulaire_client IS NOT NULL AND ft_titulaire_client != '' AND ft_titulaire_client != 'suppr. CNIL') * ".$coefNbPoiClient.")
         )charge_totale 
@@ -933,6 +933,7 @@
 					$caff->reactive = $data["reactive"];
 					$caff->non_reactive = $data["non_reactive"];
 					$caff->charge_totale = $data["charge_totale"];
+					$caff->charge_initiale = $data["charge_initiale"];
 					$caff->id = $data["id"];
 					
 					$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
@@ -958,6 +959,7 @@
 				
 				$ceCaff = (object) array();
 				$ceCaff->id = $caff->id;
+				$ceCaff->charge_initiale = $caff->charge_initiale;
 				$ceCaff->name_related = $caff->name_related;
 				$ceCaff->charge_totale = $caff->charge_totale;
 				array_push($listeCaffs, $ceCaff);
