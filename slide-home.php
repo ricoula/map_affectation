@@ -94,16 +94,16 @@
               if($("#home-domaine").text() == 'Client'){
                 color_label_poi = config.filtercolorclient
               }
-              if($("#home-domaine").text() == 'Immo'){
+              else if($("#home-domaine").text() == 'Immo'){
                 color_label_poi = config.filtercolorimmo
               }
-              if($("#home-domaine").text() == 'Dissi'){
+              else if($("#home-domaine").text() == 'Dissi'){
                 color_label_poi = config.filtercolordissi
               }
-              if($("#home-domaine").text() == 'FO & CU'){
+              else if($("#home-domaine").text() == 'FO & CU'){
                 color_label_poi = config.filtercolorfocu
               }
-              if($("#home-domaine").text() == 'Coordi'){
+              else if($("#home-domaine").text() == 'Coordi'){
                 color_label_poi = config.filtercolorcoord
               }
               else{
