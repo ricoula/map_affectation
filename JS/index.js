@@ -63,22 +63,31 @@ $(function(){
         $.post("API/getPoiNAByUi.php", {ui: $(this).val()}, function(data){
             $("#loadingChoixUi").hide();
             var listePoi = JSON.parse(data);
-            $("#nbPoiNaEffectueTotal").text(listePoi.length);
-            $("#nbPoiNaEffectue").text("0");
             $("#nbPoiNA").text(listePoi.length);
             $("#labelNbPoiNA").show();
+
+            $("#progress_bar_affect").css({"width":"0%"});
+            $("#progress_bar_affect").html("0%");
+
             $("#btnGenererPoiNA").click(function(){
                 var el = document.getElementById('btnGenererPoiNA'),
                 elClone = el.cloneNode(true);
                 el.parentNode.replaceChild(elClone, el);
                 $("#resultatsListePoiNA").html("").hide();
-                $("#divLoadingPoiNA").show();
+               
                 $("#divListePoiNAUi").show();
-
+                var progress = 0;
                 var html = "<table class='table table-striped table-hover table-condensed table-responsive'><thead><tr><th>POI</th><th>Domaine</th><th>DRE</th><th>SJ</th><th>Caff</th></tr></thead><tbody>";
                 var i = 0;
                 var listeCaffsSimulation = new Array();
                 listePoi.forEach(function(poi){
+                      
+                    console.log(progress);
+               
+                    //  progress = (i / listePoi.length) * 100;
+                    // console.log(progress);
+                    // $("#progress_bar_affect").css({"width":""+progress+"%"});
+                    // $("#progress_bar_affect").html({progress+"%"});
                     //console.log(listeCaffsSimulation);
                     //listeCaffsSimulation = JSON.stringify(listeCaffsSimulation);
                     /*var seen = [];
@@ -129,9 +138,15 @@ $(function(){
                         data: {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()},// liste_caffs_simulation: listeCaffsSimulation},
                         success: function(data2){
                             i++;
-                            $("#nbPoiNaEffectue").text(i);
+                            
+                            progress = Math.round(((i) / listePoi.length) * 100);  
+                            $("#progress_bar_affect").attr("aria-valuenow", progress)
+                            // $("#progress_bar_affect").css({"width":""+progress+"%"});
+                            $("#progress_bar_affect").css("width", progress+"%");
+                             $("#progress_bar_affect").html(progress+"%");
                             console.log("Data: " + data2);
                             poi.affectationAuto = JSON.parse(data2);
+                            
                             //listeCaffsSimulation = JSON.parse(listeCaffsSimulation);
                             console.log("DECODE" + i);
     
@@ -189,7 +204,7 @@ $(function(){
                             if(i == listePoi.length)
                             {
                                 html += "</tbody></table>";
-                                $("#divLoadingPoiNA").hide();
+                             
                                 document.getElementById("resultatsListePoiNA").innerHTML = html;
                                 $("#resultatsListePoiNA").show();
                             }

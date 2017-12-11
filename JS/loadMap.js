@@ -44,7 +44,13 @@
                 }
                   
               });
-              
+              $("#leg_client").css({"backgroundColor":config.filtercolorclient});
+              $("#leg_immo").css({"backgroundColor":config.filtercolorimmo});
+              $("#leg_focu").css({"backgroundColor":config.filtercolorfocu});
+              $("#leg_dissi").css({"backgroundColor":config.filtercolordissi});
+              $("#leg_coord").css({"backgroundColor":config.filtercolorcoord});
+              $("#leg_dre").css({"borderColor":config.filtercolorurgent});
+              $("#leg_dre_txt").text("DRE < J+"+config.filterdre);
               if(poi.domaine == 'Client'){
                 color = config.filtercolorclient
               }
