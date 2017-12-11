@@ -19,6 +19,24 @@
       <input type="hidden" id="user_id" name="user_id" value="<?php echo $_SESSION["user_id"] ?>" />
       <div id="divInfos" class="well" >
         <button data-toggle="modal" href="#modaleAffectationPoi" class="btn btn-primary btn-lg">Affecter POI</button>
+        <div class="panel-group"></br>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" href="#collapse1">Légende</a>
+              </h4>
+            </div>
+            <div id="collapse1" class="panel-collapse collapse">
+              <div class="panel-body"><span>Client: <span id="leg_client" class="leg_poi pull-right"></span></span></div>
+              <div class="panel-body"><span>FO & CU:</span><span id="leg_focu" class="leg_poi pull-right"></span></div>
+              <div class="panel-body"><span>Immo:</span><span id="leg_immo" class="leg_poi pull-right"></span></div>
+              <div class="panel-body"><span>Dissi:</span><span id="leg_dissi" class="leg_poi pull-right"></span></div>
+              <div class="panel-body"><span>Coordi:</span><span id="leg_coord" class="leg_poi pull-right"></span></div>
+              <div class="panel-body"><span id="leg_dre_txt">DRE < à :</span><span id="leg_dre" class="pull-right"></span></div>
+            </div>
+          </div>
+        </div>
+
       </div>
   <div id="side_bar">
     <div id="div-slide-users" class="slide"></div>
@@ -84,14 +102,17 @@
                 }
                 ?>
               </select><img id="loadingChoixUi" src="img/wait.gif" />
-                <label id="labelNbPoiNA"> <span id="nbPoiNA">0</span> POI non-affectées<button class="btn btn-info" id="btnGenererPoiNA">Générer</button></label>
+                <label id="labelNbPoiNA"> <span id="nbPoiNA">0</span> POI non-affectées<button class="btn btn-info pull-right" id="btnGenererPoiNA">Générer</button></label></br>
+                <div class="progress">
+                <div class="progress-bar" id="progress_bar_affect" role="progressbar" aria-valuenow="70"
+                aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                  0%
+                </div>
+              </div>
             </div>
             <div id="divListePoiNAUi">
               <hr/>
-                <div id="divLoadingPoiNA" style="text-align: center">
-                  <div><span id="nbPoiNaEffectue"></span>/<span id="nbPoiNaEffectueTotal"></span></div>
-                  <img src="img/loading.gif" />
-              </div>
+
                 <div id="resultatsListePoiNA">
                 </div>
             </div>
