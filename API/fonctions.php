@@ -1055,4 +1055,31 @@
 		
 		return json_encode($listeCaffsAuto);
 	}
+	function addRemoveFormationByCaffId($caff_id,$state){
+		include("connexionBdd.php");
+		if($state == "OUI"){
+			$req = $bdd->prepare("INSERT INTO cds_formation (caff_id) VALUES (?)");
+			$req->execute(array($caff_id));
+		}
+		else
+		{
+			$req = $bdd->prepare("DELETE FROM cds_formation WHERE caff_id = ?");
+			$req->execute(array($caff_id));
+		}
+	}
+
+	function getFormationCaff($idCaff)
+	{
+		include("connexionBdd.php");
+		$req = $bdd->prepare("SELECT id FROM cds_formation WHERE caff_id = ?");
+		$req->execute(array($idCaff));
+		if($data = $req->fetch())
+		{
+			return "OUI";
+		}
+		else{
+			return "NON";
+		}
+	}
+
 ?>

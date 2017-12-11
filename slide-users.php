@@ -24,13 +24,14 @@
         {
             if($caff->id != 326)
             {
+                $formation = getFormationCaff($caff->id);
                 $caff->ui = json_decode(getUiBySite($caff->site));
                 ?>
                 <div class="input-group users-card-caff card-<?php echo $caff->ui->ft_zone ?>" id="<?php echo urlencode(json_encode($caff)) ?>" >
                     <label class="input-group-addon imageCaff" style='background-image: url("img/inconnu.jpg"); background-size: 100px 100px; width:100px; height:100px;' id="imageCaff-<?php echo $caff->id ?>" ></label>
                     <div class="card-block users-card-info" id="">
-                        <h4 class="users-name"><?php echo $caff->name_related ?><?php if(in_array($caff->id, $listeCaffsConges)){ ?><span class="label label-warning pull-right users-state">Congé</span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
-                        <h6 class="users-site"><?php echo $caff->site ?></h6>
+                        <h4 class="users-name"><?php echo $caff->name_related ?></span><?php if(in_array($caff->id, $listeCaffsConges)){ ?><span class="label label-warning pull-right users-state">Congé</span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
+                        <h6 class="users-site"><?php echo $caff->site ?><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
                         <!--<h6 class="users-charge">Charge: <span class="label label-danger users-charge-count">123</span><button class="btn btn-info btn-xs pull-right users-button-poi" id="<?php /*echo $caff->id*/ ?>">Afficher POI</button></h6>-->
                         <h6 class="users-charge">Charge: <span class="label label-danger users-charge-count"><?php echo getChargeCaff(json_encode($caff), $_GET["coefCharge"]) ?></span><button id="btnAfficherPoiCaff-<?php echo urlencode($caff->name_related) ?>" class="btn btn-info btn-xs pull-right btnAfficherPoiCaff">Afficher POI</button></h6>
                     </div>
@@ -113,4 +114,24 @@ $(".users-button-poi").click(function(){
     console.log(caff_id);
     $.getJSON("get")
 });
+</script>
+<script>
+$(".users-formation").click(function(){
+
+    var caff_id = $(this).attr("caff_id");
+    console.log(caff_id)
+    if($(this).hasClass("label label-default")){
+    $(this).removeClass("label label-default");
+        $(this).addClass("label label-warning");
+        $(this).text("OUI");
+        $.post("API/addRemoveFormationByCaffId.php", {caff_id: caff_id, state: "OUI"});
+    }
+        else
+        {
+            $(this).removeClass("label label-warning");
+        $(this).addClass("label label-default");
+        $(this).text("NON");
+        $.post("API/addRemoveFormationByCaffId.php", {caff_id: caff_id, state:"NON"});
+        }
+})
 </script>

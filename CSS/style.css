@@ -266,4 +266,7 @@ width:70px;
 }
 #loadingChoixUi{
   display: none;
+.users-formation
+{
+  cursor: pointer;
 }
