@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="plugins/colorpicker/color.css">
     
     <link href="plugins/chosen/chosen.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
   </head>
   <body>
   </body>

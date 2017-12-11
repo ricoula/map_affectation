@@ -33,8 +33,7 @@
                         <h4 class="users-name"><?php echo $caff->name_related ?></span><?php if(in_array($caff->id, $listeCaffsConges)){ ?><span class="label label-warning pull-right users-state">Congé</span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
                         <h6 class="users-site"><?php echo $caff->site ?><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
                         <!--<h6 class="users-charge">Charge: <span class="label label-danger users-charge-count">123</span><button class="btn btn-info btn-xs pull-right users-button-poi" id="<?php /*echo $caff->id*/ ?>">Afficher POI</button></h6>-->
-                        <h6 class="users-charge">Charge: <span class="label label-danger users-charge-count"><?php echo getChargeCaff(json_encode($caff)) ?></span><button id="btnAfficherPoiCaff-<?php echo urlencode($caff->name_related) ?>" class="btn btn-info btn-xs pull-right btnAfficherPoiCaff">Afficher POI</button></h6>
-                        
+                        <h6 class="users-charge">Charge: <span class="label label-danger users-charge-count"><?php echo getChargeCaff(json_encode($caff), $_GET["coefCharge"]) ?></span><button id="btnAfficherPoiCaff-<?php echo urlencode($caff->name_related) ?>" class="btn btn-info btn-xs pull-right btnAfficherPoiCaff">Afficher POI</button></h6>
                     </div>
                 </div>
                 <?php
@@ -84,7 +83,7 @@
         var elt = $(this);
         var idCaff = $(this).attr("id").split("-")[1];
         $.post("API/getImageByCaff.php", {caff_id: idCaff}, function(data){
-            var image = JSON.parse(data);
+            var image = data;
             if(image != null && image != '')
             {
                 elt.css("background-image", 'url("' + image + '")');

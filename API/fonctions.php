@@ -29,6 +29,13 @@
 			$poi->ft_date_limite_realisation = $data["ft_date_limite_realisation"];
 			$poi->create_date = $data["create_date"];
 			$poi->id = $data["id"];
+			if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
+			{
+				$poi->reactive = true;
+			}
+			else{
+				$poi->reactive = false;
+			}
 			
 			array_push($listePoi, $poi);
 		}
@@ -223,6 +230,13 @@
 			$poi->ft_date_creation_as = $data["ft_date_creation_as"];
 			$poi->ft_commentaire_creation_as = $data["ft_commentaire_creation_as"];
 			$poi->ft_zone_as = $data["ft_zone_as"];
+			if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
+			{
+				$poi->reactive = true;
+			}
+			else{
+				$poi->reactive = false;
+			}
 		}
 		
 		return json_encode($poi);
@@ -641,7 +655,7 @@
 		{
 			$image = "data:image/jpeg;base64, ".stream_get_contents($data['image']);
 		}
-		return json_encode($image);
+		return $image;
 	}
 
 	function getConfigById($id){
@@ -689,10 +703,10 @@
 		return json_encode($reponse);
 	}
 	
-	function getChargeCaff($caff) //$caff = object caff en json
+	function getChargeCaff($caff, $coef) //$caff = object caff en json
 	{
 		$caff = json_decode($caff);
-		$coef = 0.1;
+		//$coef = 0.1;
 		$charge = intval($caff->reactive) + (intval($caff->non_reactive) * $coef);
 		return json_encode($charge);
 	}
@@ -825,16 +839,18 @@
 		return json_encode($caff);
 	}
 	
-	function getAffectationAuto($idPoi, $km)
+	function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefNbPoiClient, $coefCharge)//, $listeCaffsSimulation) // $listeCaffsSimulation (facultatif) = array en json
 	{
 		include("connexionBddErp.php");
 		include("connexionBdd.php");
 		
 		$caffAuto = null;
 		
-		$coefNbPoiProimite = 0.5;
+		//$listeCaffsSimulation = json_decode($listeCaffsSimulation);
+		
+		/*$coefNbPoiProimite = 0.5;
 		$coefNbPoiClient = 0.8;
-		$coefCharge = 0.5;
+		$coefCharge = 0.5;*/
 		
 		$poi = json_decode(getPoiById($idPoi));
 		
@@ -847,11 +863,13 @@
 		}
 		$listeIdSites = implode(", ", $listeIdSites);
 		
+		$listeCaffs = array();
+		
 		$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, ((reactive + (non_reactive * ".$coefCharge.")) 
         - ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.")
 		+ ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND ft_titulaire_client = '".$poi->ft_titulaire_client."' AND ft_titulaire_client IS NOT NULL AND ft_titulaire_client != '' AND ft_titulaire_client != 'suppr. CNIL') * ".$coefNbPoiClient.")
         )charge_totale 
-FROM (select id,t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.site_id, t3.agence,case when t3.reactive is null then 0 else t3.reactive end,
+		FROM (select id,t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.site_id, t3.agence,case when t3.reactive is null then 0 else t3.reactive end,
 		case when t3.non_reactive is null then 0 else t3.non_reactive end from
 		(
 		select t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.site_id, t2.name as agence, sum(t2.reactive) as reactive, sum(t2.non_reactive) as non_reactive from (
@@ -873,48 +891,169 @@ FROM (select id,t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.sit
         ORDER BY charge_totale");
 		while($data = $req->fetch())
 		{
-			$caff = (object) array();
-			$caff->name_related = $data["name_related"];
-			$caff->mobile_phone = $data["mobile_phone"];
-			$caff->work_email = $data["work_email"];
-			$caff->site = $data["site"];
-			$caff->site_id = $data["site_id"];
-			$caff->agence = $data["agence"];
-			$caff->reactive = $data["reactive"];
-			$caff->non_reactive = $data["non_reactive"];
-			$caff->charge_totale = $data["charge_totale"];
-			$caff->id = $data["id"];
-			
-			$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
-			$nbPoiEnRetard = 0;
-			$dateAjd = new DateTime("now");
-			foreach($listePoi as $poi)
+			$req2 = $bdd->prepare("SELECT id FROM cds_formation WHERE caff_id = ?");
+			$req2->execute(array($data["id"]));
+			if(!$data2 = $req2->fetch())
 			{
-				$dre = new DateTime($poi->ft_oeie_dre);
-				if($dateAjd > $dre)
+				/*$caffInSimulation = false;
+				
+				if($listeCaffsSimulation != null && sizeof($listeCaffsSimulation) > 0)
 				{
-					$nbPoiEnRetard++;
+					//var_dump($listeCaffsSimulation);
+					//return json_encode($listeCaffsSimulation);
+					foreach($listeCaffsSimulation as $caffSimulation)
+					{
+						//var_dump($caffSimulation);
+						if($caffSimulation != null && $caffSimulation->id == $data["id"])
+						{
+							$caffInSimulation = true;
+							$caff = $caffSimulation;
+							
+							$nbPoiSimulation = sizeof($caff->listePoiSimulation)-1;
+							//var_dump($nbPoiSimulation);
+							if($caff->listePoiSimulation[$nbPoiSimulation]->reactive == true)
+							{
+								$caff->charge_totale += 1;
+							}
+							else{
+								$caff->charge_totale += $coefCharge;
+							}
+						}
+					}
+				}
+				if(!$caffInSimulation)
+				{*/
+					$caff = (object) array();
+					$caff->name_related = $data["name_related"];
+					$caff->mobile_phone = $data["mobile_phone"];
+					$caff->work_email = $data["work_email"];
+					$caff->site = $data["site"];
+					$caff->site_id = $data["site_id"];
+					$caff->agence = $data["agence"];
+					$caff->reactive = $data["reactive"];
+					$caff->non_reactive = $data["non_reactive"];
+					$caff->charge_totale = $data["charge_totale"];
+					$caff->id = $data["id"];
+					
+					$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
+					$nbPoiEnRetard = 0;
+					$dateAjd = new DateTime("now");
+					foreach($listePoi as $poi)
+					{
+						$dre = new DateTime($poi->ft_oeie_dre);
+						if($dateAjd > $dre)
+						{
+							$nbPoiEnRetard++;
+						}
+					}
+					if(sizeof($listePoi) > 0)
+					{
+						$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
+					}
+					else{
+						$tauxDre = 0;
+					}
+					$caff->charge_totale += ($tauxDre * $caff->reactive);
+				//}
+				
+				$ceCaff = (object) array();
+				$ceCaff->id = $caff->id;
+				$ceCaff->name_related = $caff->name_related;
+				$ceCaff->charge_totale = $caff->charge_totale;
+				array_push($listeCaffs, $ceCaff);
+				
+				if($caffAuto == null)
+				{
+					$caffAuto = $caff;
+				}
+				elseif($caffAuto->charge_totale > $caff->charge_totale){
+					$caffAuto = $caff;
 				}
 			}
-			if(sizeof($listePoi) > 0)
-			{
-				$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
-			}
-			else{
-				$tauxDre = 0;
-			}
-			$caff->charge_totale += ($tauxDre * $caff->reactive);
 			
-			if($caffAuto == null)
-			{
-				$caffAuto = $caff;
+		}
+		
+		if($caffAuto != null)
+		{
+			function comparer($a, $b) {
+				if($a->charge_totale < $b->charge_totale)
+				{
+					return -1;
+				}
+				elseif($a->charge_totale == $b->charge_totale)
+				{
+					return 0;
+				}
+				else{
+					return 1;
+				}
 			}
-			elseif($caffAuto->charge_totale > $caff->charge_totale){
-				$caffAuto = $caff;
-			}
+			usort($listeCaffs, 'comparer');
+			
+			$caffAuto->listeAutresCaffs = $listeCaffs;
 		}
 		
 		return json_encode($caffAuto);
+	}
+	
+	function getPoiNAByUi($ui) //ft_zone
+	{
+		include("connexionBddErp.php");
+		$listePoi = array();
+		$req = $bddErp->prepare("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.ft_titulaire_client, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
+		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
+		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
+		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1' AND ag_poi.atr_ui = ?");
+		$req->execute(array($ui));
+		while($data = $req->fetch())
+		{
+			$poi = (object) array();
+			$poi->atr_ui = $data["atr_ui"];
+			$poi->ft_numero_oeie = $data["ft_numero_oeie"];
+			$poi->domaine = $data["domaine"];
+			$poi->ft_titulaire_client = $data["ft_titulaire_client"];
+			$poi->ft_libelle_commune = $data["ft_libelle_commune"];
+			$poi->ft_libelle_de_voie = $data["ft_libelle_de_voie"];
+			$poi->ft_pg = $data["ft_pg"];
+			$poi->ft_sous_justification_oeie = $data["ft_sous_justification_oeie"];
+			$poi->ft_oeie_dre = $data["ft_oeie_dre"];
+			$poi->ft_latitude = $data["ft_latitude"];
+			$poi->insee_code = $data["insee_code"];
+			$poi->ft_longitude = $data["ft_longitude"];
+			$poi->ft_libelle_affaire = $data["ft_libelle_affaire"];
+			$poi->ft_date_limite_realisation = $data["ft_date_limite_realisation"];
+			$poi->create_date = $data["create_date"];
+			$poi->id = $data["id"];
+			if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
+			{
+				$poi->reactive = true;
+			}
+			else{
+				$poi->reactive = false;
+			}
+			
+			array_push($listePoi, $poi);
+		}
+		
+		return json_encode($listePoi);
+	}
+	
+	function getListeAffectationAuto($listeIdPoi, $km) //$listeIdPoi = array en json
+	{
+		$listeIdPoi = json_decode($listeIdPoi);
+		
+		$listeCaffsAuto = array();
+		
+		foreach($listeIdPoi as $idPoi)
+		{
+			$obj = (object) array();
+			$obj->caff = json_decode(getAffectationAuto($idPoi, $km));
+			$obj->idPoi = $idPoi;
+			
+			array_push($listeCaffsAuto, $obj);
+		}
+		
+		return json_encode($listeCaffsAuto);
 	}
 	function addRemoveFormationByCaffId($caff_id,$state){
 		include("connexionBdd.php");
