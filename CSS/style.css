@@ -288,3 +288,18 @@ width:70px;
   border-radius:100%;
   border:solid 4px;
 }
+.progress
+{
+  height:4px;
+  border-radius:0px;
+  border:none;
+  background-color:white;
+  box-shadow:none;
+}
+#percent
+{
+  text-align:center;
+  margin-top:-22px;
+  display:none;
+  color:#545454;
+}
