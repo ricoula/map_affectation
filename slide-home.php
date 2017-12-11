@@ -73,7 +73,6 @@
     });
 </script>
 <script>
-                console.log("CONFIG");
                 var d = new Date();
                 var date_now = Number(d.getFullYear() +''+ (d.getMonth() + 1) +''+ d.getDate());
                 var date_poi = Number($("#home-dre").text().split('-')[0] + $("#home-dre").text().split('-')[1] + $("#home-dre").text().split('-')[2]);
@@ -107,8 +106,8 @@
                 color_label_poi = config.filtercolorcoord
               }
               else{
-                color_label_poi = null;
-              }
+ +                color_label_poi = null;
+ +              }
               $("#home-domaine").css({"backgroundColor":color_label_poi,"color":"black"})
 
 

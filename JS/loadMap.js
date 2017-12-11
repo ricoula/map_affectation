@@ -12,12 +12,12 @@
     markersWontMove: true,
     markersWontHide: true
   });
+
   $.post('API/getConfigById.php', {utilisateur_id: $("#user_id").val()},function(data){
     config = JSON.parse(JSON.parse(data));
-    console.log("First config: " + config);
   });
   $.getJSON('API/getPoiNA.php',function(data){
-    console.log("Second config: " + config);
+   
             data.forEach(function(poi){
              
               var strokecolorpoi = 'black';
@@ -138,10 +138,6 @@
 
           oms.addMarker(marker);
             });
-            
-
-            //Index.js (Debut)
-
             $("#div-slide-home").load('slide-home.php');
             $("#div-slide-box").load('slide-box.php');
             $("#div-slide-users").load('slide-users.php?coefCharge=' + $("#coefCharge").val());
@@ -206,22 +202,33 @@
                 $.post("API/getPoiNAByUi.php", {ui: $(this).val()}, function(data){
                     $("#loadingChoixUi").hide();
                     var listePoi = JSON.parse(data);
-                    $("#nbPoiNaEffectueTotal").text(listePoi.length);
-                    $("#nbPoiNaEffectue").text("0");
                     $("#nbPoiNA").text(listePoi.length);
                     $("#labelNbPoiNA").show();
+        
+                    $("#progress_bar_affect").css({"width":"0%"});
+                    $("#progress_bar_affect").html("0%");
+        
                     $("#btnGenererPoiNA").click(function(){
                         var el = document.getElementById('btnGenererPoiNA'),
                         elClone = el.cloneNode(true);
                         el.parentNode.replaceChild(elClone, el);
                         $("#resultatsListePoiNA").html("").hide();
-                        $("#divLoadingPoiNA").show();
+                       
                         $("#divListePoiNAUi").show();
-        
+                        var progress = 0;
                         var html = "<table class='table table-striped table-hover table-condensed table-responsive'><thead><tr><th>POI</th><th>Domaine</th><th>DRE</th><th>SJ</th><th>Caff</th></tr></thead><tbody>";
                         var i = 0;
+                        var y = 0;
                         var listeCaffsSimulation = new Array();
                         listePoi.forEach(function(poi){
+                              y++;
+                              
+                       //     console.log(progress);
+                       
+                            //  progress = (i / listePoi.length) * 100;
+                            // console.log(progress);
+                            // $("#progress_bar_affect").css({"width":""+progress+"%"});
+                            // $("#progress_bar_affect").html({progress+"%"});
                             //console.log(listeCaffsSimulation);
                             //listeCaffsSimulation = JSON.stringify(listeCaffsSimulation);
                             /*var seen = [];
@@ -239,7 +246,7 @@
                             console.log("ENCODE");*/
         
         
-                            
+                            console.log(y + "=" + poi.ft_numero_oeie);
         
                             /*$(document).ajaxStart(function() {
                                 console.log('Méthode ajaxStart exécutée<br>');
@@ -261,10 +268,10 @@
                                 console.log('Méthode ajaxError exécutée, ');
                                 console.log('erreur : ' + erreur + '<br>');
                               });*/
-        
-                              console.log("Objet:");
-                              console.log({poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()});
-        
+                            
+                            //  console.log("Objet:");
+                             // console.log({poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()});
+                            
         
                             $.ajax({
                                 type: 'POST',
@@ -272,11 +279,18 @@
                                 data: {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()},// liste_caffs_simulation: listeCaffsSimulation},
                                 success: function(data2){
                                     i++;
-                                    $("#nbPoiNaEffectue").text(i);
-                                    console.log("Data: " + data2);
+                                    console.log(i + "=" + poi.ft_numero_oeie);
+                                 
+                                    progress = Math.round(((i) / listePoi.length) * 100);  
+                                    $("#progress_bar_affect").attr("aria-valuenow", progress)
+                                    // $("#progress_bar_affect").css({"width":""+progress+"%"});
+                                    $("#progress_bar_affect").css("width", progress+"%");
+                                     $("#progress_bar_affect").html(progress+"%");
+                                  //  console.log("Data: " + data2);
                                     poi.affectationAuto = JSON.parse(data2);
+                                    
                                     //listeCaffsSimulation = JSON.parse(listeCaffsSimulation);
-                                    console.log("DECODE" + i);
+                                    // console.log("DECODE" + i);
             
                                     var optionElt = "";
         
@@ -286,7 +300,7 @@
                                             poi.affectationAuto.listeAutresCaffs.forEach(function(caffSimu){
                                                 if(caffSimu.id == caffSimulation.id)
                                                 {
-                                                    console.log("SECONDAIRE");
+                                                 //   console.log("SECONDAIRE");
                                                     caffSimulation.listePoiSimulation.forEach(function(poiSimulation){
                                                     if(poiSimulation.reactive)
                                                     {
@@ -324,7 +338,7 @@
                                             //optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info' selected>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ")" + "</option>";
                                         //}
                                         //else{
-                                            optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ")" + "</option>";
+                                            optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ")</option>";
                                         //}
                                     });
                                     html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select>" + optionElt + "</select></td></tr>";
@@ -332,7 +346,7 @@
                                     if(i == listePoi.length)
                                     {
                                         html += "</tbody></table>";
-                                        $("#divLoadingPoiNA").hide();
+                                     
                                         document.getElementById("resultatsListePoiNA").innerHTML = html;
                                         $("#resultatsListePoiNA").show();
                                     }
@@ -355,7 +369,7 @@
                                         listeCaffsSimulation.push(caff);
                                     }
                                 },
-                                async:false
+                                async:true
                               });
                               
                             /*$.post("API/getAffectationAuto.php", {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), liste_caffs_simulation: listeCaffsSimulation}, function(data2){
@@ -407,8 +421,7 @@
                     });
                 })
             });
-            //Index.js (Fin)
-
           });
 
     }
+    
