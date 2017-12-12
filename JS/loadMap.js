@@ -209,6 +209,7 @@
                     $("#progress_bar_affect").html("0%");
         
                     $("#btnGenererPoiNA").click(function(){
+                      $("#percent").fadeIn();
                         var el = document.getElementById('btnGenererPoiNA'),
                         elClone = el.cloneNode(true);
                         el.parentNode.replaceChild(elClone, el);
@@ -246,7 +247,7 @@
                             console.log("ENCODE");*/
         
         
-                            console.log(y + "=" + poi.ft_numero_oeie);
+                          //  console.log(y + "=" + poi.ft_numero_oeie);
         
                             /*$(document).ajaxStart(function() {
                                 console.log('Méthode ajaxStart exécutée<br>');
@@ -279,13 +280,14 @@
                                 data: {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()},// liste_caffs_simulation: listeCaffsSimulation},
                                 success: function(data2){
                                     i++;
-                                    console.log(i + "=" + poi.ft_numero_oeie);
+                                   // console.log(i + "=" + poi.ft_numero_oeie);
                                  
                                     progress = Math.round(((i) / listePoi.length) * 100);  
                                     $("#progress_bar_affect").attr("aria-valuenow", progress)
                                     // $("#progress_bar_affect").css({"width":""+progress+"%"});
                                     $("#progress_bar_affect").css("width", progress+"%");
-                                     $("#progress_bar_affect").html(progress+"%");
+                                     $("#percent").html(progress+"%");
+                                     console.log(progress);
                                   //  console.log("Data: " + data2);
                                     poi.affectationAuto = JSON.parse(data2);
                                     
@@ -373,6 +375,7 @@
                                      
                                         document.getElementById("resultatsListePoiNA").innerHTML = html;
                                         $("#resultatsListePoiNA").show();
+                                        $("#percent").fadeOut();
                                     }
                                     var caffSimulation = poi.affectationAuto;
                                     var trouve = false;

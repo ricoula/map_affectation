@@ -108,10 +108,13 @@
                 aria-valuemin="0" aria-valuemax="100" style="width:0%">
                   0%
                 </div>
+                
               </div>
+              <div id="percent">0%</div>
+              
             </div>
             <div id="divListePoiNAUi">
-              <hr/>
+              
 
                 <div id="resultatsListePoiNA">
                 </div>
