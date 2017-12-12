@@ -54,17 +54,20 @@
               if(poi.domaine == 'Client'){
                 color = config.filtercolorclient
               }
-              if(poi.domaine == 'Immo'){
+              else if(poi.domaine == 'Immo'){
                 color = config.filtercolorimmo
               }
-              if(poi.domaine == 'Dissi'){
+              else if(poi.domaine == 'Dissi'){
                 color = config.filtercolordissi
               }
-              if(poi.domaine == 'FO & CU'){
+              else if(poi.domaine == 'FO & CU'){
                 color = config.filtercolorfocu
               }
-              if(poi.domaine == 'Coordi'){
+              else if(poi.domaine == 'Coordi'){
                 color = config.filtercolorcoord
+              }
+              else{
+                color = null;
               }
               
               var marker = new google.maps.Marker({
