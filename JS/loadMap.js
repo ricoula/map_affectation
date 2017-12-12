@@ -247,6 +247,9 @@
 
                                     var optionElt = "";
                                     
+                                    poi.affectationAuto.listeAutresCaffs.forEach(function(caffSimu){
+                                        caffSimu.chargeGlobale = caffSimu.charge_totale;
+                                    });
 
                                     listeCaffsSimulation.forEach(function(caffSimulation){
                                         if(caffSimulation.id == poi.affectationAuto.id)
@@ -257,8 +260,10 @@
                                                     caffSimulation.listePoiSimulation.forEach(function(poiSimulation){
                                                     if(poiSimulation.reactive)
                                                     {
-                                                        caffSimu.chargeGlobale =  caffSimu.charge_totale;
-                                                        caffSimu.charge_totale += 1;
+                                                        console.log("AVANT +1 :", caffSimu.charge_totale);
+                                                        caffSimu.charge_totale = parseFloat(caffSimu.charge_totale);
+                                                        caffSimu.charge_totale += parseFloat(1);
+                                                        console.log("APRES +1 :", caffSimu.charge_totale);
                                                         if(caffSimu.charge_simu == null)
                                                         {
                                                             caffSimu.charge_simu = 1;
@@ -268,16 +273,20 @@
                                                         }
                                                     }
                                                     else{
+                                                        console.log("AVANT +0.5 :", caffSimu.charge_totale);
+                                                        caffSimu.charge_totale = parseFloat(caffSimu.charge_totale);
                                                         caffSimu.charge_totale += parseFloat($("#coefCharge").val());
+                                                        console.log("APRES +0.5 :", caffSimu.charge_totale)
                                                         if(caffSimu.charge_simu == null)
                                                         {
-                                                            caffSimu.charge_simu = 0.5;
+                                                            caffSimu.charge_simu = parseFloat($("#coefCharge").val());
                                                         }
                                                         else{
-                                                            caffSimu.charge_simu += 0.5;
+                                                            caffSimu.charge_simu += parseFloat($("#coefCharge").val());
                                                         }
                                                     }
                                                 });
+                                                console.log(caffSimu.name_related + " = " + caffSimu.charge_totale);
                                                 }
                                             });
                                         }
@@ -301,15 +310,13 @@
         
                                     poi.affectationAuto.listeAutresCaffs.forEach(function(ceCaff){
 
-                                            if(ceCaff.chargeGlobale == null)
-                                            {
-                                                ceCaff.chargeGlobale = ceCaff.charge_totale;
-                                            }
                                             if(ceCaff.charge_simu == null)
                                             {
                                                 ceCaff.charge_simu = 0;
                                             }
-                                            optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ") (init:" + ceCaff.charge_initiale + ")(global:" + ceCaff.chargeGlobale + ")(simu:" + ceCaff.charge_simu + ")</option>";
+                                            console.log("Global = " + ceCaff.chargeGlobale);
+                                            optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ") ("+ ceCaff.charge_initiale + ")(" + (ceCaff.chargeGlobale - ceCaff.charge_initiale) + ")(" + ceCaff.charge_simu + ")</option>";
+                                        //}
                                     });
                                     html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select>" + optionElt + "</select></td></tr>";
                                     $("#btnCaffAffectAuto-" + poi.id).click()
@@ -336,6 +343,7 @@
                                     if(!trouve)
                                     {
                                         var caff = poi.affectationAuto;
+                                        console.log(caff.name_related + " = " + caff.charge_totale);
                                         caff.listePoiSimulation = new Array(poi);
                                         listeCaffsSimulation.push(caff);
                                     }
