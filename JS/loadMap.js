@@ -326,10 +326,10 @@
                                                         caffSimu.charge_totale += parseFloat($("#coefCharge").val());
                                                         if(caffSimu.charge_simu == null)
                                                         {
-                                                            caffSimu.charge_simu = 0.5;
+                                                            caffSimu.charge_simu = parseFloat($("#coefCharge").val());
                                                         }
                                                         else{
-                                                            caffSimu.charge_simu += 0.5;
+                                                            caffSimu.charge_simu += parseFloat($("#coefCharge").val());
                                                         }
                                                     }
                                                 });
@@ -369,7 +369,8 @@
                                             {
                                                 ceCaff.charge_simu = 0;
                                             }
-                                            optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ") (init:" + ceCaff.charge_initiale + ")(global:" + ceCaff.chargeGlobale + ")(simu:" + ceCaff.charge_simu + ")</option>";
+                                            
+                                            optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ") ("+ ceCaff.charge_initiale + ")(" + (ceCaff.chargeGlobale - ceCaff.charge_initiale) + ")(" + ceCaff.charge_simu + ")</option>";
                                         //}
                                     });
                                     html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select>" + optionElt + "</select></td></tr>";
