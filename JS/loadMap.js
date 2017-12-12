@@ -252,8 +252,6 @@
                                     });
 
                                     listeCaffsSimulation.forEach(function(caffSimulation){
-                                        if(caffSimulation.id == poi.affectationAuto.id)
-                                        {
                                             poi.affectationAuto.listeAutresCaffs.forEach(function(caffSimu){
                                                 if(caffSimu.id == caffSimulation.id)
                                                 {
@@ -289,7 +287,6 @@
                                                 console.log(caffSimu.name_related + " = " + caffSimu.charge_totale);
                                                 }
                                             });
-                                        }
                                     });
         
                                     var compare = function(a, b){
@@ -328,7 +325,7 @@
                                         $("#resultatsListePoiNA").show();
                                         $("#percent").fadeOut();
                                     }
-                                    var caffSimulation = poi.affectationAuto;
+                                    var caffSimulation = poi.affectationAuto.listeAutresCaffs[0];
                                     var trouve = false;
                                     if(listeCaffsSimulation.length > 0)
                                     {
@@ -342,7 +339,8 @@
                                     }
                                     if(!trouve)
                                     {
-                                        var caff = poi.affectationAuto;
+                                        var caff = poi.affectationAuto.listeAutresCaffs[0];
+                                        console.log("NOUVEAU CAFF: " + poi.affectationAuto.listeAutresCaffs[0].name_related);
                                         console.log(caff.name_related + " = " + caff.charge_totale);
                                         caff.listePoiSimulation = new Array(poi);
                                         listeCaffsSimulation.push(caff);
