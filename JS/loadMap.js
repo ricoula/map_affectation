@@ -200,6 +200,10 @@
             };
         
             $("#selectUi").change(function(){
+                var el = document.getElementById('btnGenererPoiNA'),
+                elClone = el.cloneNode(true);
+                el.parentNode.replaceChild(elClone, el);
+
                 $("#loadingChoixUi").show();
                 $("#labelNbPoiNA").hide();
                 $("#divListePoiNAUi").hide();
@@ -212,6 +216,8 @@
         
                     $("#progress_bar_affect").css({"width":"0%"});
                     $("#progress_bar_affect").html("0%");
+
+
         
                     $("#btnGenererPoiNA").click(function(){
                       $("#percent").fadeIn();
