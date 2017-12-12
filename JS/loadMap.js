@@ -220,7 +220,7 @@
 
         
                     $("#btnGenererPoiNA").click(function(){
-                      $("#percent").fadeIn();
+                      $("#percent").text('0%').fadeIn();
                         var el = document.getElementById('btnGenererPoiNA'),
                         elClone = el.cloneNode(true);
                         el.parentNode.replaceChild(elClone, el);
