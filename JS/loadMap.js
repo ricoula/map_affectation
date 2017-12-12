@@ -89,18 +89,15 @@
             iw.close();
           });
           google.maps.event.addListener(marker, 'rightclick', function(e) {  // 'spider_rightclick', not plain 'click'
-          $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()}, function(data){
-            //console.log(data);
-            var caff = JSON.parse(data);
-            iw.setContent('<div class="container info_poi_modal" >'+
-                  '<h2 id="win_info_numero_oeie">'+marker.title+'</h2>' +
+
+          iw.setContent('<div class="container info_poi_modal" >'+
+                '<h2 id="win_info_numero_oeie">'+marker.title+'</h2>' +
                 '<div class="list-group">' +
                     '<a href="#" class="list-group-item" id="win_info_affecter_a">Affecter à</a>' +
                     '<a class="list-group-item testClass" id="win_info_liens" style="cursor: pointer">POI en lien <span class="badge" id="badgeNbPoi"></span></a>' +
-                    '<a href="#" class="list-group-item" id="win_info_affecter_auto">Affecter auto. <span class="label label-info pull-right">' + caff.name_related + '</span></a>' +
+                    '<a href="#" class="list-group-item" id="win_info_affecter_auto">Affecter auto. <span id="rightClickPoi_' + marker.poi_id + '" class="glyphicon glyphicon-refresh gly-spin pull-right"></span></a>' +
                 '</div>' +
             '</div>');
-
             iw.open(map, marker);
             $.post("API/getNbPoiEnLien.php", {commune: poi.ft_libelle_commune, voie: poi.ft_libelle_de_voie, titulaire: poi.ft_titulaire_client, ui: poi.atr_ui}, function(data2){
                       var nbPoi = JSON.parse(data2);
@@ -116,6 +113,11 @@
                         $('#modaleAffecterA').modal('show');
                     });
                 });
+
+          $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()}, function(data){
+            //console.log(data);
+            var caff = JSON.parse(data);
+            $("#rightClickPoi_" + marker.poi_id).removeClass("glyphicon glyphicon-refresh gly-spin").addClass("label label-info").text(caff.name_related);
           });
   
           });
