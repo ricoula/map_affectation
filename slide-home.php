@@ -8,9 +8,10 @@
     $poi = json_decode(getPoiById($_GET["poi_id"]));
     $closestSite = json_decode(getClosestSite($poi->id));
     ?>
-    <!-- <input type="hidden" id="poi_lat_lng" latlng='<?php echo $closestSite->poilatlng ;?>'>
+    <!-- <input type="hidden" id="poi_lat_lng" latlng='<?php /*echo $closestSite->poilatlng ;?>'>
     <input type="hidden" id="site_lat_lng" latlng='<?php echo $closestSite->sitelatlng ;?>'>
-    <input type="hidden" id="site_nb" nb="<?php echo $closestSite->i ?>"> -->
+    <input type="hidden" id="site_nb" nb="<?php echo $closestSite->i*/ ?>"> -->
+    <input type="hidden" id="idPoi" name="idPoi" value="<?php echo $_GET["poi_id"] ?>" />
     <span class="glyphicon glyphicon-remove pull-right slide-close"></span></br> 
     <h1 id="home-poi" class="well"><?php echo $poi->ft_numero_oeie ?><span class="badge badge-default pull-right" id="home-domaine"><?php echo $poi->domaine ?></span></h1>
     <h4>Information POI</h4>
@@ -36,7 +37,7 @@
             <div class="list-group-item"><label>Site le plus proche</label><label class="pull-right home-result" id="home-closest"><?php echo $closestSite->libelle ?></label></div>
             <div class="list-group-item"><label>Distance</label><label class="pull-right home-result" id="home-distance"><?php echo $closestSite->distance ?></label></div>
             <div class="list-group-item"><label>Temps</label><label class="pull-right home-result" id="home-temps"><?php echo $closestSite->duree ?></label></div>
-            <div class="list-group-item"><label>Caff conseillé</label><label class="pull-right home-result label label-success" id="home-caff">DELABAERE Simon</label></div>
+            <div class="list-group-item"><label>Caff conseillé</label><span id="attenteCaffConseille" class="pull-right"><img src="img/wait.gif" /></span></div>
         </div>
         
       <!-- <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
@@ -66,6 +67,10 @@
     </body>
 </html>
 <script>
+        $.post("API/getAffectationAuto.php", {poi_id: $("#idPoi").val(), km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()}, function(data){
+            var caff = JSON.parse(data);
+            $("#attenteCaffConseille").replaceWith('<label class="pull-right home-result label label-success" id="home-caff">' + caff.name_related + '</label>');
+          });
         $(".slide-close").click(function(){
         $("#side_bar").animate({left:'-500px'},500);
         $("#glyph").animate({left:'0px'},500);
