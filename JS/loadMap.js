@@ -99,8 +99,8 @@
                 '</div>' +
             '</div>');
             iw.open(map, marker);
-            $.post("API/getNbPoiEnLien.php", {commune: poi.ft_libelle_commune, voie: poi.ft_libelle_de_voie, titulaire: poi.ft_titulaire_client, ui: poi.atr_ui}, function(data2){
-                      var nbPoi = JSON.parse(data2);
+            $.post("API/getNbPoiEnLien.php", {commune: poi.ft_libelle_commune, voie: poi.ft_libelle_de_voie, titulaire: poi.ft_titulaire_client, ui: poi.atr_ui}, function(data2){ 
+                    var nbPoi = JSON.parse(data2);
                       $("#badgeNbPoi").text(nbPoi);
                   });
                   $("#win_info_liens").click(function(){
@@ -115,7 +115,7 @@
                 });
 
           $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()}, function(data){
-            //console.log(data);
+            console.log(data);
             var caff = JSON.parse(data);
             $("#rightClickPoi_" + marker.poi_id).removeClass("glyphicon glyphicon-refresh gly-spin").addClass("label label-info").text(caff.name_related);
           });
@@ -228,56 +228,6 @@
                         var listeCaffsSimulation = new Array();
                         listePoi.forEach(function(poi){
                               y++;
-                              
-                       //     console.log(progress);
-                       
-                            //  progress = (i / listePoi.length) * 100;
-                            // console.log(progress);
-                            // $("#progress_bar_affect").css({"width":""+progress+"%"});
-                            // $("#progress_bar_affect").html({progress+"%"});
-                            //console.log(listeCaffsSimulation);
-                            //listeCaffsSimulation = JSON.stringify(listeCaffsSimulation);
-                            /*var seen = [];
-                            
-                            listeCaffsSimulation = JSON.stringify(listeCaffsSimulation, function(key, val) {
-                               if (val != null && typeof val == "object") {
-                                    if (seen.indexOf(val) >= 0) {
-                                        return;
-                                    }
-                                    seen.push(val);
-                                }
-                                return val;
-                            });
-                            console.log(listeCaffsSimulation);
-                            console.log("ENCODE");*/
-        
-        
-                          //  console.log(y + "=" + poi.ft_numero_oeie);
-        
-                            /*$(document).ajaxStart(function() {
-                                console.log('Méthode ajaxStart exécutée<br>');
-                              });
-                              $(document).ajaxSend(function(ev, req, options){
-                                console.log('Méthode ajaxSend exécutée, ');
-                                console.log('nom du fichier : ' + options.url + '<br>');
-                              });
-                              $(document).ajaxStop(function(){
-                                console.log('Méthode ajaxStop exécutée<br>');
-                              });
-                              $(document).ajaxSuccess(function(ev, req, options){
-                                console.log('Méthode ajaxSuccess exécutée<br>');
-                              });
-                              $(document).ajaxComplete(function(ev, req, options){
-                                console.log('Méthode ajaxComplete exécutée<br>');
-                              });
-                              $(document).ajaxError(function(ev, req, options, erreur){
-                                console.log('Méthode ajaxError exécutée, ');
-                                console.log('erreur : ' + erreur + '<br>');
-                              });*/
-                            
-                            //  console.log("Objet:");
-                             // console.log({poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()});
-                            
         
                             $.ajax({
                                 type: 'POST',
@@ -285,20 +235,16 @@
                                 data: {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()},// liste_caffs_simulation: listeCaffsSimulation},
                                 success: function(data2){
                                     i++;
-                                   // console.log(i + "=" + poi.ft_numero_oeie);
-                                 
+                                    
+                                    console.log(data2);
                                     progress = Math.round(((i) / listePoi.length) * 100);  
-                                    $("#progress_bar_affect").attr("aria-valuenow", progress)
-                                    // $("#progress_bar_affect").css({"width":""+progress+"%"});
+                                    $("#progress_bar_affect").attr("aria-valuenow", progress);
+  
                                     $("#progress_bar_affect").css("width", progress+"%");
                                      $("#percent").html(progress+"%");
                                      console.log(progress);
-                                  //  console.log("Data: " + data2);
                                     poi.affectationAuto = JSON.parse(data2);
-                                    
-                                    //listeCaffsSimulation = JSON.parse(listeCaffsSimulation);
-                                    // console.log("DECODE" + i);
-            
+
                                     var optionElt = "";
                                     
 
@@ -308,7 +254,6 @@
                                             poi.affectationAuto.listeAutresCaffs.forEach(function(caffSimu){
                                                 if(caffSimu.id == caffSimulation.id)
                                                 {
-                                                 //   console.log("SECONDAIRE");
                                                     caffSimulation.listePoiSimulation.forEach(function(poiSimulation){
                                                     if(poiSimulation.reactive)
                                                     {
@@ -355,12 +300,7 @@
                                     poi.affectationAuto.listeAutresCaffs.sort(compare);
         
                                     poi.affectationAuto.listeAutresCaffs.forEach(function(ceCaff){
-                                        
-                                       // if(ceCaff.id == poi.affectationAuto.id)
-                                        //{
-                                            //optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info' selected>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ")" + "</option>";
-                                        //}
-                                        //else{
+
                                             if(ceCaff.chargeGlobale == null)
                                             {
                                                 ceCaff.chargeGlobale = ceCaff.charge_totale;
@@ -370,7 +310,6 @@
                                                 ceCaff.charge_simu = 0;
                                             }
                                             optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ") (init:" + ceCaff.charge_initiale + ")(global:" + ceCaff.chargeGlobale + ")(simu:" + ceCaff.charge_simu + ")</option>";
-                                        //}
                                     });
                                     html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select>" + optionElt + "</select></td></tr>";
                                     $("#btnCaffAffectAuto-" + poi.id).click()
@@ -397,57 +336,13 @@
                                     if(!trouve)
                                     {
                                         var caff = poi.affectationAuto;
-                                        caff.listePoiSimulation = new Array(poi);+
+                                        caff.listePoiSimulation = new Array(poi);
                                         listeCaffsSimulation.push(caff);
                                     }
                                 },
                                 async:true
                               });
                               
-                            /*$.post("API/getAffectationAuto.php", {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), liste_caffs_simulation: listeCaffsSimulation}, function(data2){
-                                i++;
-                                //console.log(data2);
-                                poi.affectationAuto = JSON.parse(data2);
-                                listeCaffsSimulation = JSON.parse(listeCaffsSimulation);
-                                var caffSimulation = poi.affectationAuto;
-                                var trouve = false;
-                                if(listeCaffsSimulation.length > 0)
-                                {
-                                    listeCaffsSimulation.forEach(function(caff){
-                                        if(caff.id == caffSimulation.id)
-                                        {
-                                            caff.listePoiSimulation.push(poi);
-                                        }
-                                    });
-                                }
-                                if(!trouve)
-                                {
-                                    var caff = poi.affectationAuto;
-                                    caff.listePoiSimulation = new Array(poi);
-                                    listeCaffsSimulation.push(caff);
-                                }
-        
-                                var optionElt = "";
-                                poi.affectationAuto.listeAutresCaffs.forEach(function(ceCaff){
-                                    
-                                    if(ceCaff.id == poi.affectationAuto.id)
-                                    {
-                                        optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info' selected>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ")" + "</option>";
-                                    }
-                                    else{
-                                        optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ")" + "</option>";
-                                    }
-                                });
-                                html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select>" + optionElt + "</select></td></tr>";
-                                $("#btnCaffAffectAuto-" + poi.id).click()
-                                if(i == listePoi.length)
-                                {
-                                    html += "</tbody></table>";
-                                    $("#divLoadingPoiNA").hide();
-                                    document.getElementById("resultatsListePoiNA").innerHTML = html;
-                                    $("#resultatsListePoiNA").show();
-                                }
-                            });*/
                         });
                         
                     });
