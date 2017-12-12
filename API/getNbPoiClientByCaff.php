@@ -1,4 +1,4 @@
 <?php
 	require_once("fonctions.php");
-	echo getNbPoiClientByCaff($_POST["caff_id"], $_POST["client"]);
+	echo getNbPoiClientByCaff($_POST["caff_id"], $_POST["client"], $_POST["ui"]);
 ?>

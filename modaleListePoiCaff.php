@@ -2,7 +2,7 @@
   include("API/fonctions.php");
   switch($_GET["liaison_name"])
   {
-    case 'titulaire': $listePoi = json_decode(getListePoiByCaffByTitulaire($_GET["caff_id"], $_GET["titulaire"]));
+    case 'titulaire': $listePoi = json_decode(getListePoiByCaffByTitulaire($_GET["caff_id"], $_GET["titulaire"], $_GET["ui"]));
     $nameLiaison = $_GET["titulaire"];
     break;
     case 'voie' : $listePoi = json_decode(getListePoiByCaffByVoie($_GET["caff_id"], $_GET["voie"], $_GET["commune"]));
