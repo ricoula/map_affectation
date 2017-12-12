@@ -65,7 +65,7 @@
     ?>
     </body>
 </html>
-<script>   
+<script>
         $(".slide-close").click(function(){
         $("#side_bar").animate({left:'-500px'},500);
         $("#glyph").animate({left:'0px'},500);
@@ -77,38 +77,44 @@
                 var date_now = Number(d.getFullYear() +''+ (d.getMonth() + 1) +''+ d.getDate());
                 var date_poi = Number($("#home-dre").text().split('-')[0] + $("#home-dre").text().split('-')[1] + $("#home-dre").text().split('-')[2]);
                 if(date_poi <= (date_now + Number(config.filterdre))){
-                  $("#home-dre").addClass("label label-danger")
+                  $("#home-dre").addClass("label label-danger");
                 }
                 config.filtersj.forEach(function(sj){
                 var sj_oeie = sj.split("-")[1];
                 var ui_oeie = sj.split("-")[2];
                 console.log("test:" + sj_oeie + " poi:" + $("#home-sj").text() + " test:" + ui_oeie + " poi:" + $("#home-ui").text());
 
-                if(($("#home-sj").text() == sj_oeie && $("#home-ui").text() == ui_oeie)){
+                if($("#home-sj").text() == sj_oeie && $("#home-ui").text() == ui_oeie){
                   console.log("testok");
                   $("#home-sj").addClass("label label-danger");
                 }
             
               });
               if($("#home-domaine").text() == 'Client'){
-                color_label_poi = config.filtercolorclient
+                color_label_poi = config.filtercolorclient;
+                console.log("Color: " + color_label_poi);
               }
               else if($("#home-domaine").text() == 'Immo'){
-                color_label_poi = config.filtercolorimmo
+                color_label_poi = config.filtercolorimmo;
+                console.log("Color: " + color_label_poi);
               }
               else if($("#home-domaine").text() == 'Dissi'){
-                color_label_poi = config.filtercolordissi
+                color_label_poi = config.filtercolordissi;
+                console.log("Color: " + color_label_poi);
               }
               else if($("#home-domaine").text() == 'FO & CU'){
-                color_label_poi = config.filtercolorfocu
+                color_label_poi = config.filtercolorfocu;
+                console.log("Color: " + color_label_poi);
               }
               else if($("#home-domaine").text() == 'Coordi'){
-                color_label_poi = config.filtercolorcoord
+                color_label_poi = config.filtercolorcoord;
+                console.log("Color: " + color_label_poi);
               }
               else{
- +                color_label_poi = null;
- +              }
-              $("#home-domaine").css({"backgroundColor":color_label_poi,"color":"black"})
+                 color_label_poi = null;
+                  console.log("Color: " + color_label_poi);
+              }
+              $("#home-domaine").css({"backgroundColor":color_label_poi,"color":"black"});
 
 
 </script>

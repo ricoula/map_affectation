@@ -54,17 +54,20 @@
               if(poi.domaine == 'Client'){
                 color = config.filtercolorclient
               }
-              if(poi.domaine == 'Immo'){
+              else if(poi.domaine == 'Immo'){
                 color = config.filtercolorimmo
               }
-              if(poi.domaine == 'Dissi'){
+              else if(poi.domaine == 'Dissi'){
                 color = config.filtercolordissi
               }
-              if(poi.domaine == 'FO & CU'){
+              else if(poi.domaine == 'FO & CU'){
                 color = config.filtercolorfocu
               }
-              if(poi.domaine == 'Coordi'){
+              else if(poi.domaine == 'Coordi'){
                 color = config.filtercolorcoord
+              }
+              else{
+                color = null;
               }
               
               var marker = new google.maps.Marker({
@@ -86,18 +89,15 @@
             iw.close();
           });
           google.maps.event.addListener(marker, 'rightclick', function(e) {  // 'spider_rightclick', not plain 'click'
-          $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()}, function(data){
-            //console.log(data);
-            var caff = JSON.parse(data);
-            iw.setContent('<div class="container info_poi_modal" >'+
-                  '<h2 id="win_info_numero_oeie">'+marker.title+'</h2>' +
+
+          iw.setContent('<div class="container info_poi_modal" >'+
+                '<h2 id="win_info_numero_oeie">'+marker.title+'</h2>' +
                 '<div class="list-group">' +
                     '<a href="#" class="list-group-item" id="win_info_affecter_a">Affecter à</a>' +
                     '<a class="list-group-item testClass" id="win_info_liens" style="cursor: pointer">POI en lien <span class="badge" id="badgeNbPoi"></span></a>' +
-                    '<a href="#" class="list-group-item" id="win_info_affecter_auto">Affecter auto. <span class="label label-info pull-right">' + caff.name_related + '</span></a>' +
+                    '<a href="#" class="list-group-item" id="win_info_affecter_auto">Affecter auto. <span id="rightClickPoi_' + marker.poi_id + '" class="glyphicon glyphicon-refresh gly-spin pull-right"></span></a>' +
                 '</div>' +
             '</div>');
-
             iw.open(map, marker);
             $.post("API/getNbPoiEnLien.php", {commune: poi.ft_libelle_commune, voie: poi.ft_libelle_de_voie, titulaire: poi.ft_titulaire_client, ui: poi.atr_ui}, function(data2){
                       var nbPoi = JSON.parse(data2);
@@ -113,6 +113,11 @@
                         $('#modaleAffecterA').modal('show');
                     });
                 });
+
+          $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()}, function(data){
+            //console.log(data);
+            var caff = JSON.parse(data);
+            $("#rightClickPoi_" + marker.poi_id).removeClass("glyphicon glyphicon-refresh gly-spin").addClass("label label-info").text(caff.name_related);
           });
   
           });
@@ -295,7 +300,8 @@
                                     // console.log("DECODE" + i);
             
                                     var optionElt = "";
-        
+                                    
+
                                     listeCaffsSimulation.forEach(function(caffSimulation){
                                         if(caffSimulation.id == poi.affectationAuto.id)
                                         {
@@ -306,10 +312,25 @@
                                                     caffSimulation.listePoiSimulation.forEach(function(poiSimulation){
                                                     if(poiSimulation.reactive)
                                                     {
+                                                        caffSimu.chargeGlobale =  caffSimu.charge_totale;
                                                         caffSimu.charge_totale += 1;
+                                                        if(caffSimu.charge_simu == null)
+                                                        {
+                                                            caffSimu.charge_simu = 1;
+                                                        }
+                                                        else{
+                                                            caffSimu.charge_simu += 1;
+                                                        }
                                                     }
                                                     else{
                                                         caffSimu.charge_totale += parseFloat($("#coefCharge").val());
+                                                        if(caffSimu.charge_simu == null)
+                                                        {
+                                                            caffSimu.charge_simu = 0.5;
+                                                        }
+                                                        else{
+                                                            caffSimu.charge_simu += 0.5;
+                                                        }
                                                     }
                                                 });
                                                 }
@@ -340,7 +361,15 @@
                                             //optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info' selected>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ")" + "</option>";
                                         //}
                                         //else{
-                                            optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ")</option>";
+                                            if(ceCaff.chargeGlobale == null)
+                                            {
+                                                ceCaff.chargeGlobale = ceCaff.charge_totale;
+                                            }
+                                            if(ceCaff.charge_simu == null)
+                                            {
+                                                ceCaff.charge_simu = 0;
+                                            }
+                                            optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ") (init:" + ceCaff.charge_initiale + ")(global:" + ceCaff.chargeGlobale + ")(simu:" + ceCaff.charge_simu + ")</option>";
                                         //}
                                     });
                                     html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select>" + optionElt + "</select></td></tr>";
