@@ -5,7 +5,7 @@
 		
 		$listePoi = array();
 		
-		$req = $bddErp->query("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.ft_titulaire_client, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
+		$req = $bddErp->query("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.\"ft_numero_demande_42C\" numero_demande, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
 		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
 		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1'");
@@ -16,7 +16,7 @@
 			$poi->atr_ui = $data["atr_ui"];
 			$poi->ft_numero_oeie = $data["ft_numero_oeie"];
 			$poi->domaine = $data["domaine"];
-			$poi->ft_titulaire_client = $data["ft_titulaire_client"];
+			$poi->ft_titulaire_client = $data["numero_demande"];
 			$poi->ft_libelle_commune = $data["ft_libelle_commune"];
 			$poi->ft_libelle_de_voie = $data["ft_libelle_de_voie"];
 			$poi->ft_pg = $data["ft_pg"];
@@ -182,7 +182,7 @@
 			ag_poi.ft_oeie_dre,
 			ag_poi.ft_commentaire_creation_oeie,
 			hr_employee.name_related,
-			ag_poi.ft_titulaire_client,
+			ag_poi.\"ft_numero_demande_42C\" numero_demande,
 			ag_poi.ft_numero_de_voie,
 			ag_poi.ft_libelle_de_voie,
 			ag_poi.ft_libelle_commune,
@@ -214,7 +214,7 @@
 			$poi->ft_oeie_dre = $data["ft_oeie_dre"];
 			$poi->ft_commentaire_creation_oeie = $data["ft_commentaire_creation_oeie"];
 			$poi->employee_name = $data["name_related"];
-			$poi->ft_titulaire_client = $data["ft_titulaire_client"];
+			$poi->ft_titulaire_client = $data["numero_demande"];
 			$poi->ft_numero_de_voie = $data["ft_numero_de_voie"];
 			$poi->ft_libelle_de_voie = $data["ft_libelle_de_voie"];
 			$poi->ft_libelle_commune = $data["ft_libelle_commune"];
@@ -350,7 +350,7 @@
 		include("connexionBddErp.php");
 		$nbPoi = 0;
 		
-		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE ((ft_titulaire_client = ? AND ft_titulaire_client != '' AND ft_titulaire_client IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune != '' AND ft_libelle_de_voie != '' AND ft_libelle_commune IS NOT NULL AND ft_libelle_de_voie IS NOT NULL)) AND (atr_ui = ? AND atr_ui != '' AND atr_ui IS NOT NULL) AND atr_caff_traitant_id IN( select test2.employee_id from res_users  
+		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE ((\"ft_numero_demande_42C\" = ? AND \"ft_numero_demande_42C\" != '' AND \"ft_numero_demande_42C\" IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL) OR (ft_libelle_commune = ? AND ft_libelle_de_voie = ? AND ft_libelle_commune != '' AND ft_libelle_de_voie != '' AND ft_libelle_commune IS NOT NULL AND ft_libelle_de_voie IS NOT NULL)) AND (atr_ui = ? AND atr_ui != '' AND atr_ui IS NOT NULL) AND atr_caff_traitant_id IN( select test2.employee_id from res_users  
 				left join (select hr_job.name as job,ag_site.name as site,hr_employee.id as employee_id,hr_employee.name_related as employee_name,test.name_related as mana_name from hr_employee
 				left join ag_site on hr_employee.ag_site_id = ag_site.id
 				left join hr_job on hr_employee.job_id = hr_job.id
@@ -376,9 +376,9 @@
 		FROM ag_poi p 
 		JOIN hr_employee e 
 		ON p.atr_caff_traitant_id = e.id 
-		WHERE p.ft_titulaire_client = ?
-		AND p.ft_titulaire_client != ''
-		AND p.ft_titulaire_client IS NOT NULL
+		WHERE p.\"ft_numero_demande_42C\" = ?
+		AND p.\"ft_numero_demande_42C\" != ''
+		AND p.\"ft_numero_demande_42C\" IS NOT NULL
 		AND p.atr_caff_traitant_id IN( select test2.employee_id from res_users  
 				left join (select hr_job.name as job,ag_site.name as site,hr_employee.id as employee_id,hr_employee.name_related as employee_name,test.name_related as mana_name from hr_employee
 				left join ag_site on hr_employee.ag_site_id = ag_site.id
@@ -521,7 +521,7 @@
 		include("connexionBddErp.php");
 		
 		$listePoi = array();
-		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_titulaire_client = ? AND ft_titulaire_client != '' AND ft_titulaire_client IS NOT NULL ORDER BY ft_oeie_dre");
+		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND \"ft_numero_demande_42C\" = ? AND \"ft_numero_demande_42C\" != '' AND \"ft_numero_demande_42C\" IS NOT NULL ORDER BY ft_oeie_dre");
 		$req->execute(array($idCaff, $titulaire));
 		while($data = $req->fetch())
 		{
@@ -730,7 +730,7 @@
 	{
 		include("connexionBddErp.php");
 		$nbPoi = 0;
-		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = ? AND ft_titulaire_client = ? AND ft_titulaire_client IS NOT NULL AND ft_titulaire_client != '' AND ft_titulaire_client != 'suppr. CNIL'");
+		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = ? AND \"ft_numero_demande_42C\" = ? AND \"ft_numero_demande_42C\" IS NOT NULL AND \"ft_numero_demande_42C\" != '' AND \"ft_numero_demande_42C\" != 'suppr. CNIL'");
 		$req->execute(array($idCaff, $client));
 		if($data = $req->fetch())
 		{
@@ -867,7 +867,7 @@
 		
 		$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, (reactive + (non_reactive * ".$coefCharge.")) charge_initiale, ((reactive + (non_reactive * ".$coefCharge.")) 
         - ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.")
-		+ ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND ft_titulaire_client = '".$poi->ft_titulaire_client."' AND ft_titulaire_client IS NOT NULL AND ft_titulaire_client != '' AND ft_titulaire_client != 'suppr. CNIL') * ".$coefNbPoiClient.")
+		+ ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND \"ft_numero_demande_42C\" = '".$poi->ft_titulaire_client."' AND \"ft_numero_demande_42C\" IS NOT NULL AND \"ft_numero_demande_42C\" != '' AND \"ft_numero_demande_42C\" != 'suppr. CNIL') * ".$coefNbPoiClient.")
         )charge_totale 
 		FROM (select id,t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.site_id, t3.agence,case when t3.reactive is null then 0 else t3.reactive end,
 		case when t3.non_reactive is null then 0 else t3.non_reactive end from
@@ -1002,7 +1002,7 @@
 	{
 		include("connexionBddErp.php");
 		$listePoi = array();
-		$req = $bddErp->prepare("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.ft_titulaire_client, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
+		$req = $bddErp->prepare("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.\"ft_numero_demande_42C\" numero_demande, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
 		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
 		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1' AND ag_poi.atr_ui = ?");
@@ -1013,7 +1013,7 @@
 			$poi->atr_ui = $data["atr_ui"];
 			$poi->ft_numero_oeie = $data["ft_numero_oeie"];
 			$poi->domaine = $data["domaine"];
-			$poi->ft_titulaire_client = $data["ft_titulaire_client"];
+			$poi->ft_titulaire_client = $data["numero_demande"];
 			$poi->ft_libelle_commune = $data["ft_libelle_commune"];
 			$poi->ft_libelle_de_voie = $data["ft_libelle_de_voie"];
 			$poi->ft_pg = $data["ft_pg"];
