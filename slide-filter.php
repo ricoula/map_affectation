@@ -7,7 +7,7 @@
 ?>
     <body>
     <span class="glyphicon glyphicon-remove pull-right slide-close"></span></br>
-        <h1 class="well">Paramètres</h1>
+        <h1 class="well">Paramètres </h1><button class="btn btn-primary pull-right btn-xs">Paramètres avancés</button>
         <h4>Urgence</h4>
         <div class="form-group">
             <div class="list-group">

@@ -1,6 +1,6 @@
 
  window.onload = function() {
-
+   
   var mapElement = document.getElementById('map');
   map = new google.maps.Map(mapElement, { center: new google.maps.LatLng(45.6930369, 4.9989082), zoom: 8 });
   //document.getElementById("mapJson").value = JSON.stringify(map);
