@@ -250,13 +250,17 @@
                                      $("#percent").html(progress+"%");
                                      //console.log(progress);
                                     poi.affectationAuto = JSON.parse(data2);
-                                    /*if(poi.affectationAuto.listePoiTitulaire != null)
+                                    if(poi.affectationAuto == null)
+                                    {
+                                        console.log(poi);
+                                    }
+                                    if(poi.affectationAuto.listePoiTitulaire != null)
                                     {
                                         console.log("////////////////////////////////");
                                         console.log(poi.affectationAuto);
                                         console.log(poi);
                                         console.log("////////////////////////////////\n\n");
-                                    }*/
+                                    }
 
                                     var optionElt = "";
                                     
@@ -329,19 +333,19 @@
                                             {
                                                 if(poi.affectationAuto.listePoiTitulaire != null)
                                                 {
-                                                    optionElt += "<option selected style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
+                                                    optionElt += "<option selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
                                                 }
                                                 else{
-                                                    optionElt += "<option selected id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
+                                                    optionElt += "<option selected style='color:black' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
                                                 }
                                             }
                                             else{
-                                                optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
+                                                optionElt += "<option style='color:black' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
                                             }
 
                                         //}
                                     });
-                                    html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select>" + optionElt + "</select></td></tr>";
+                                    html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select id='selectAffectationAutoPoi-" + poi.id + "' class='selectAffectationAutoPoi'>" + optionElt + "</select></td></tr>";
                                     $("#btnCaffAffectAuto-" + poi.id).click()
                                     if(i == listePoi.length)
                                     {
@@ -350,6 +354,30 @@
                                         document.getElementById("resultatsListePoiNA").innerHTML = html;
                                         $("#resultatsListePoiNA").show();
                                         $("#percent").fadeOut();
+                                        
+                                        $(".selectAffectationAutoPoi").each(function(){
+                                            if($(this).children("option:selected").hasClass("caffTitulaireAffectAuto"))
+                                            {
+                                                $(this).css("color", "green");
+                                            }
+                                        });
+                                        /*if($(".selectAffectationAutoPoi option:selected").hasClass("caffTitulaireAffectAuto"))
+                                        {
+                                            console.log($(this).parent());
+                                        }
+                                        else{
+                                            $(this).parent().css("color", "black");
+                                        }*/
+                                        
+                                        $(".selectAffectationAutoPoi").change(function(){
+                                            if($(this).children("option:selected").hasClass("caffTitulaireAffectAuto"))
+                                            {
+                                                $(this).css("color", "green");
+                                            }
+                                            else{
+                                                $(this).css("color", "black");
+                                            }
+                                        });
                                     }
                                     var caffSimulation = poi.affectationAuto.listeAutresCaffs[0];
                                     var trouve = false;
