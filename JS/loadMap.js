@@ -265,8 +265,8 @@
                                                     if(poiSimulation.reactive)
                                                     {
                                                         console.log("AVANT +1 :", caffSimu.charge_totale);
-                                                        caffSimu.charge_totale = parseFloat(caffSimu.charge_totale);
-                                                        caffSimu.charge_totale += parseFloat(1);
+                                                        caffSimu.charge_totale = Number(caffSimu.charge_totale);
+                                                        caffSimu.charge_totale += 1;
                                                         console.log("APRES +1 :", caffSimu.charge_totale);
                                                         if(caffSimu.charge_simu == null)
                                                         {
@@ -278,15 +278,15 @@
                                                     }
                                                     else{
                                                         console.log("AVANT +0.5 :", caffSimu.charge_totale);
-                                                        caffSimu.charge_totale = parseFloat(caffSimu.charge_totale);
-                                                        caffSimu.charge_totale += parseFloat($("#coefCharge").val());
+                                                        caffSimu.charge_totale = Number(caffSimu.charge_totale);
+                                                        caffSimu.charge_totale += Number($("#coefCharge").val());
                                                         console.log("APRES +0.5 :", caffSimu.charge_totale)
                                                         if(caffSimu.charge_simu == null)
                                                         {
-                                                            caffSimu.charge_simu = parseFloat($("#coefCharge").val());
+                                                            caffSimu.charge_simu = 0.1;
                                                         }
                                                         else{
-                                                            caffSimu.charge_simu += parseFloat($("#coefCharge").val());
+                                                            caffSimu.charge_simu += 0.1;
                                                         }
                                                     }
                                                 });
