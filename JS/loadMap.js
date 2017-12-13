@@ -176,6 +176,7 @@
                     $("#div-slide-home").load('slide-home.php?poi_id=' + poi);
                 }
             });
+            
             $("#slide-users").click(function(){
                 $("#side_bar").animate({left:'0px'},500);
                 $("#glyph").animate({left:'500px'},500);

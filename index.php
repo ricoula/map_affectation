@@ -80,18 +80,24 @@
         </div> 
     </div>
     <div class="modal fade" id="advancedsettings">
-     <div class="modal-dialog">
+     <div class="modal-dialog modal-lg">
        <div class="modal-content">
          <div class="modal-header">
            <button type="button" class="close" data-dismiss="modal">x</button>
            <h4 class="modal-title">Paramètres avancés</h4>
          </div>
          <div class="modal-body">
-            <h3>Algorithme de calcul de charge</h3>
+            <h4>Algorithme de calcul de charge</h4>
+            <p class="color-red">Attention la modification de ce calcul influancera les affectations futures</p>
+            <p>((NbPoiReactive + NbPoiNonReactive * <label class="color-purple coef_non_react" id="coef_non_react">0.1</label>) * CoefCaff) - (%Retard * NbPoiReactive) - (NbPoiRayon(<label class="color-red" id="rayon_km">20</label>km) * <label class="color-yellow" id="coef_rayon">0.5</label>)->MAX(<label class="color-green" id="max_rayon">20</label>) + (NbPoiReactiveSimo + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react">0.1</label>) </p>
             
 
          </div>
          <div class="modal-footer">
+         <button class="btn btn-primary pull-left" id="config_modify">Modifier</button>
+         <button class="btn btn-success pull-left hide" id="config_valid">Valider</button>
+         <button class="btn btn-primary pull-left hide" id="config_cancel">Annuler</button>
+
            <button class="btn btn-info" data-dismiss="modal">Fermer</button>
          </div>
        </div>

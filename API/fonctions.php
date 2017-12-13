@@ -704,6 +704,26 @@
 		}
 		return json_encode($reponse);
 	}
+	function changeAdvancedConfig($json_code){
+		include("connexionBdd.php");
+		$reponse = false;
+		try{
+			$req = $bdd->prepare("SELECT id FROM cds_advanced_config WHERE id = 1");
+			$req->execute(array($id));
+			if($data = $req->fetch())
+			{
+				$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
+				$reponse = $req->execute(array($json_code));
+			}
+			else{
+				$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
+				$reponse = $req->execute(array($json_code));
+			}
+		}catch(Exception $e){
+			$reponse = false;
+		}
+		return json_encode($reponse);
+	}
 	
 	function getChargeCaff($caff, $coef) //$caff = object caff en json
 	{
