@@ -7,7 +7,7 @@
 ?>
     <body>
     <span class="glyphicon glyphicon-remove pull-right slide-close"></span></br>
-        <h1 class="well">Paramètres </h1><button class="btn btn-primary pull-right btn-xs">Paramètres avancés</button>
+        <h1 class="well">Paramètres </h1><button class="btn btn-primary pull-right btn-xs" data-toggle="modal" href="#advancedsettings">Paramètres avancés</button>
         <h4>Urgence</h4>
         <div class="form-group">
             <div class="list-group">
@@ -59,7 +59,7 @@
         </div>
         <button class="btn btn-primary pull-right" id="filter-save">Enregister</button>
      </div>
-        
+
     </body>
 </html>
 <script src="plugins/colorpicker/color.js"></script>
