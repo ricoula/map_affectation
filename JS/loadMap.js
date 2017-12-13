@@ -4,7 +4,7 @@
   var mapElement = document.getElementById('map');
   map = new google.maps.Map(mapElement, { center: new google.maps.LatLng(45.6930369, 4.9989082), zoom: 8 });
   //document.getElementById("mapJson").value = JSON.stringify(map);
-  //console.log(document.getElementById("mapJson").value);
+  ////console.log(document.getElementById("mapJson").value);
   //$("#mapJson").val(JSON.stringify(map));
   var iw = new google.maps.InfoWindow();
   
@@ -115,7 +115,7 @@
                 });
 
           $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val()}, function(data){
-            console.log(data);
+            //console.log(data);
             var caff = JSON.parse(data);
             $("#rightClickPoi_" + marker.poi_id).removeClass("glyphicon glyphicon-refresh gly-spin").addClass("label label-info").text(caff.name_related);
           });
@@ -125,11 +125,11 @@
           var myUrl = window.location.href;
           myUrl = myUrl.split("?")[0];
           var newUrl = myUrl + "?poi=" + marker.poi_id;
-          console.log(newUrl);
+          //console.log(newUrl);
           history.pushState(null, null, newUrl);
           
           
-          console.log(marker.poi_id);
+          //console.log(marker.poi_id);
           $("#side_bar").animate({left:'0px'},500);
           $("#glyph").animate({left:'500px'},500);
           
@@ -242,14 +242,21 @@
                                 success: function(data2){
                                     i++;
                                     
-                                    console.log(data2);
+                                    //console.log(data2);
                                     progress = Math.round(((i) / listePoi.length) * 100);  
                                     $("#progress_bar_affect").attr("aria-valuenow", progress);
   
                                     $("#progress_bar_affect").css("width", progress+"%");
                                      $("#percent").html(progress+"%");
-                                     console.log(progress);
+                                     //console.log(progress);
                                     poi.affectationAuto = JSON.parse(data2);
+                                    /*if(poi.affectationAuto.listePoiTitulaire != null)
+                                    {
+                                        console.log("////////////////////////////////");
+                                        console.log(poi.affectationAuto);
+                                        console.log(poi);
+                                        console.log("////////////////////////////////\n\n");
+                                    }*/
 
                                     var optionElt = "";
                                     
@@ -264,10 +271,10 @@
                                                     caffSimulation.listePoiSimulation.forEach(function(poiSimulation){
                                                     if(poiSimulation.reactive)
                                                     {
-                                                        console.log("AVANT +1 :", caffSimu.charge_totale);
+                                                        //console.log("AVANT +1 :", caffSimu.charge_totale);
                                                         caffSimu.charge_totale = Number(caffSimu.charge_totale);
                                                         caffSimu.charge_totale += 1;
-                                                        console.log("APRES +1 :", caffSimu.charge_totale);
+                                                        //console.log("APRES +1 :", caffSimu.charge_totale);
                                                         if(caffSimu.charge_simu == null)
                                                         {
                                                             caffSimu.charge_simu = 1;
@@ -277,10 +284,10 @@
                                                         }
                                                     }
                                                     else{
-                                                        console.log("AVANT +0.5 :", caffSimu.charge_totale);
+                                                        //console.log("AVANT +0.5 :", caffSimu.charge_totale);
                                                         caffSimu.charge_totale = Number(caffSimu.charge_totale);
                                                         caffSimu.charge_totale += Number($("#coefCharge").val());
-                                                        console.log("APRES +0.5 :", caffSimu.charge_totale)
+                                                        //console.log("APRES +0.5 :", caffSimu.charge_totale)
                                                         if(caffSimu.charge_simu == null)
                                                         {
                                                             caffSimu.charge_simu = 0.1;
@@ -290,7 +297,7 @@
                                                         }
                                                     }
                                                 });
-                                                console.log(caffSimu.name_related + " = " + caffSimu.charge_totale);
+                                                //console.log(caffSimu.name_related + " = " + caffSimu.charge_totale);
                                                 }
                                             });
                                     });
@@ -317,8 +324,21 @@
                                             {
                                                 ceCaff.charge_simu = 0;
                                             }
-                                            console.log("Global = " + ceCaff.chargeGlobale);
-                                            optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
+                                            //console.log("Global = " + ceCaff.chargeGlobale);
+                                            if(poi.affectationAuto.id == ceCaff.id)
+                                            {
+                                                if(poi.affectationAuto.listePoiTitulaire != null)
+                                                {
+                                                    optionElt += "<option selected style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
+                                                }
+                                                else{
+                                                    optionElt += "<option selected id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
+                                                }
+                                            }
+                                            else{
+                                                optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
+                                            }
+
                                         //}
                                     });
                                     html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select>" + optionElt + "</select></td></tr>";
@@ -346,8 +366,8 @@
                                     if(!trouve)
                                     {
                                         var caff = poi.affectationAuto.listeAutresCaffs[0];
-                                        console.log("NOUVEAU CAFF: " + poi.affectationAuto.listeAutresCaffs[0].name_related);
-                                        console.log(caff.name_related + " = " + caff.charge_totale);
+                                        //console.log("NOUVEAU CAFF: " + poi.affectationAuto.listeAutresCaffs[0].name_related);
+                                        //console.log(caff.name_related + " = " + caff.charge_totale);
                                         caff.listePoiSimulation = new Array(poi);
                                         listeCaffsSimulation.push(caff);
                                     }

@@ -867,6 +867,8 @@
 		
 		$listeCaffs = array();
 		
+		$caffTitulaireAuto = false; //Pour savoir si un caff est affilié ou non au titulaire de la poi
+		
 		$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, ((reactive + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement)) charge_initiale, ((reactive + (non_reactive * ".$coefCharge.")) 
         - ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.")
 		+ ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND \"ft_numero_demande_42C\" = '".$poi->ft_titulaire_client."' AND \"ft_numero_demande_42C\" IS NOT NULL AND \"ft_numero_demande_42C\" != '' AND \"ft_numero_demande_42C\" != 'suppr. CNIL') * ".$coefNbPoiClient.")
@@ -897,66 +899,166 @@
 			$req2->execute(array($data["id"]));
 			if(!$data2 = $req2->fetch())
 			{
-				$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= (NOW() - interval '1 day')");
-				$req3->execute(array($data["id"]));
-				if($data3 = $req3->fetch())
+				$listeCaffsTitulaireAffectationAuto = array();
+				$listeCaffsTitulaire = json_decode(getCaffsEnLienAvecPoiByTitulaire($poi->ft_titulaire_client, $poi->atr_ui));
+				foreach($listeCaffsTitulaire as $caffTitulaire)
 				{
-					if($data3["nb_affectations_jour"] <= $limiteJour)
+					if($caffTitulaire->id == $data["id"])
 					{
-						$lastMonday = date("Y-m-d",strtotime("last Monday"));
+						$caffTitulaireAuto = true;
 						
-						$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ?");
-						$req4->execute(array($data["id"], $lastMonday));
-						if($data4 = $req4->fetch())
+						$caff = (object) array();
+						$caff->name_related = $data["name_related"];
+						$caff->mobile_phone = $data["mobile_phone"];
+						$caff->work_email = $data["work_email"];
+						$caff->site = $data["site"];
+						$caff->site_id = $data["site_id"];
+						$caff->agence = $data["agence"];
+						$caff->reactive = $data["reactive"];
+						$caff->non_reactive = $data["non_reactive"];
+						$caff->charge_totale = $data["charge_totale"];
+						$caff->charge_initiale = $data["charge_initiale"];
+						$caff->id = $data["id"];
+						
+						$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
+						$nbPoiEnRetard = 0;
+						$dateAjd = new DateTime("now");
+						foreach($listePoi as $poi)
 						{
-							if($data4["nb_affectations_semaine"] <= $limiteSemaine)
+							$dre = new DateTime($poi->ft_oeie_dre);
+							if($dateAjd > $dre)
 							{
-								$caff = (object) array();
-								$caff->name_related = $data["name_related"];
-								$caff->mobile_phone = $data["mobile_phone"];
-								$caff->work_email = $data["work_email"];
-								$caff->site = $data["site"];
-								$caff->site_id = $data["site_id"];
-								$caff->agence = $data["agence"];
-								$caff->reactive = $data["reactive"];
-								$caff->non_reactive = $data["non_reactive"];
-								$caff->charge_totale = $data["charge_totale"];
-								$caff->charge_initiale = $data["charge_initiale"];
-								$caff->id = $data["id"];
+								$nbPoiEnRetard++;
+							}
+						}
+						if(sizeof($listePoi) > 0)
+						{
+							$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
+						}
+						else{
+							$tauxDre = 0;
+						}
+						$caff->charge_totale += ($tauxDre * $caff->reactive);
+						
+						$listePoiTitulaire = array();
+						$poiTitulaireEtat1 = false;
+						foreach($listePoi as $cettePoi)
+						{
+							if($cettePoi->ft_etat == 1 && $cettePoi->ft_titulaire_client == $poi->ft_titulaire_client)
+							{
+								$poiTitulaireEtat1 = true;
+								array_push($listePoiTitulaire, $cettePoi);
 								
-								$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
-								$nbPoiEnRetard = 0;
-								$dateAjd = new DateTime("now");
-								foreach($listePoi as $poi)
+							}
+						}
+						$caff->listePoiTitulaire = $listePoiTitulaire;
+						if($poiTitulaireEtat1)
+						{
+							array_push($listeCaffsTitulaireAffectationAuto, $caff);
+							if(sizeof($listeCaffsTitulaireAffectationAuto) == 1)
+							{
+								$caffAuto = $caff;
+							}
+							else{
+								$poiTituCaff = null;
+								foreach($listeCaffsTitulaireAffectationAuto as $caffTitulaireAffectationAuto)
 								{
-									$dre = new DateTime($poi->ft_oeie_dre);
-									if($dateAjd > $dre)
+									foreach($caffTitulaireAffectationAuto->listePoiTitulaire as $poiTitu)
 									{
-										$nbPoiEnRetard++;
+										if($poiTituCaff == null)
+										{
+											$poiTituCaff = (object) array();
+											$poiTituCaff->caff = $caffTitulaireAffectationAuto;
+											$poiTituCaff->poi = $poiTitu;
+										}
+										else{
+											if($poiTitu->ft_date_creation_oeie < $poiTituCaff->poi->ft_date_creation_oeie)
+											{
+												$poiTituCaff->caff = $caffTitulaireAffectationAuto;
+												$poiTituCaff->poi = $poiTitu;
+											}
+										}
 									}
 								}
-								if(sizeof($listePoi) > 0)
+								$caffAuto = $poiTituCaff->caff;
+							}
+						}
+						
+						$ceCaff = (object) array();
+						$ceCaff->id = $caff->id;
+						$ceCaff->charge_initiale = $caff->charge_initiale;
+						$ceCaff->name_related = $caff->name_related;
+						$ceCaff->charge_totale = $caff->charge_totale;
+						array_push($listeCaffs, $ceCaff);
+						
+						
+					}
+				}
+				
+				if($caffTitulaireAuto == false)
+				{
+					$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= (NOW() - interval '1 day')");
+					$req3->execute(array($data["id"]));
+					if($data3 = $req3->fetch())
+					{
+						if($data3["nb_affectations_jour"] <= $limiteJour)
+						{
+							$lastMonday = date("Y-m-d",strtotime("last Monday"));
+							
+							$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ?");
+							$req4->execute(array($data["id"], $lastMonday));
+							if($data4 = $req4->fetch())
+							{
+								if($data4["nb_affectations_semaine"] <= $limiteSemaine)
 								{
-									$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
-								}
-								else{
-									$tauxDre = 0;
-								}
-								$caff->charge_totale += ($tauxDre * $caff->reactive);
-								
-								$ceCaff = (object) array();
-								$ceCaff->id = $caff->id;
-								$ceCaff->charge_initiale = $caff->charge_initiale;
-								$ceCaff->name_related = $caff->name_related;
-								$ceCaff->charge_totale = $caff->charge_totale;
-								array_push($listeCaffs, $ceCaff);
-								
-								if($caffAuto == null)
-								{
-									$caffAuto = $caff;
-								}
-								elseif($caffAuto->charge_totale > $caff->charge_totale){
-									$caffAuto = $caff;
+									$caff = (object) array();
+									$caff->name_related = $data["name_related"];
+									$caff->mobile_phone = $data["mobile_phone"];
+									$caff->work_email = $data["work_email"];
+									$caff->site = $data["site"];
+									$caff->site_id = $data["site_id"];
+									$caff->agence = $data["agence"];
+									$caff->reactive = $data["reactive"];
+									$caff->non_reactive = $data["non_reactive"];
+									$caff->charge_totale = $data["charge_totale"];
+									$caff->charge_initiale = $data["charge_initiale"];
+									$caff->id = $data["id"];
+									
+									$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
+									$nbPoiEnRetard = 0;
+									$dateAjd = new DateTime("now");
+									foreach($listePoi as $poi)
+									{
+										$dre = new DateTime($poi->ft_oeie_dre);
+										if($dateAjd > $dre)
+										{
+											$nbPoiEnRetard++;
+										}
+									}
+									if(sizeof($listePoi) > 0)
+									{
+										$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
+									}
+									else{
+										$tauxDre = 0;
+									}
+									$caff->charge_totale += ($tauxDre * $caff->reactive);
+									
+									$ceCaff = (object) array();
+									$ceCaff->id = $caff->id;
+									$ceCaff->charge_initiale = $caff->charge_initiale;
+									$ceCaff->name_related = $caff->name_related;
+									$ceCaff->charge_totale = $caff->charge_totale;
+									array_push($listeCaffs, $ceCaff);
+									
+										if($caffAuto == null)
+										{
+											$caffAuto = $caff;
+										}
+										elseif($caffAuto->charge_totale > $caff->charge_totale){
+											$caffAuto = $caff;
+										}
+									
 								}
 							}
 						}

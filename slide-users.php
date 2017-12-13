@@ -136,7 +136,7 @@ $(".users-button-poi").click(function(){
         $(this).addClass("btn btn-info");
         $(this).text("Afficher POI");
     }
-    console.log(caff_id);
+    //console.log(caff_id);
     $.getJSON("get")
 });
 </script>
@@ -144,7 +144,7 @@ $(".users-button-poi").click(function(){
 $(".users-formation").click(function(){
 
     var caff_id = $(this).attr("caff_id");
-    console.log(caff_id)
+    //console.log(caff_id)
     if($(this).hasClass("label label-default")){
     $(this).removeClass("label label-default");
         $(this).addClass("label label-warning");
