@@ -79,7 +79,24 @@
           <div class="modal-content" id="divlistePoiCaff"></div>  
         </div> 
     </div>
-    
+    <div class="modal fade" id="advancedsettings">
+     <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal">x</button>
+           <h4 class="modal-title">Paramètres avancés</h4>
+         </div>
+         <div class="modal-body">
+            <h3>Algorithme de calcul de charge</h3>
+            
+
+         </div>
+         <div class="modal-footer">
+           <button class="btn btn-info" data-dismiss="modal">Fermer</button>
+         </div>
+       </div>
+     </div>
+   </div>
     <div class="modal" id="modaleAffectationPoi">
       <div class="modal-dialog">
         <div class="modal-content">
