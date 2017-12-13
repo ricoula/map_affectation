@@ -178,7 +178,7 @@ $("#config_modify").click(function(){
               var max_rayon = $("#max_rayon").text();
               $(".coef_non_react").html("<input class='input_modif coef_non_react_change' type='number' value='"+ coef_non_react +"'>");
               $("#rayon_km").html("<input type='number' class='input_modif' value='"+ rayon_km +"'>");
-              $("#coef_react").html("<input type='number' class='input_modif' value='"+ coef_react +"'>");
+              $(".coef_react").html("<input type='number' class='input_modif coef_react_change' value='"+ coef_react +"'>");
               $("#coef_rayon").html("<input type='number' class='input_modif' value='"+ coef_rayon +"'>");
               $("#max_rayon").html("<input type='number' class='input_modif' value='"+ max_rayon +"'>");
               $("#config_modify").addClass("hide");
@@ -186,6 +186,9 @@ $("#config_modify").click(function(){
               $("#config_cancel").removeClass("hide");
                 $(".coef_non_react_change").on('change paste keyup',function(){
                 $(".coef_non_react_change").val($(this).val())
+                });
+                $(".coef_react_change").on('change paste keyup',function(){
+                $(".coef_react_change").val($(this).val())
                 });
               $("#config_valid").click(function(){
                 
@@ -196,7 +199,7 @@ $("#config_modify").click(function(){
                var max_rayon_new = $("#max_rayon").children().val();
                 $(".coef_non_react").html(coef_non_react_new);
               $("#rayon_km").html(rayon_km_new);
-              $("#coef_react").html(coef_react_new);
+              $(".coef_react").html(coef_react_new);
               $("#coef_rayon").html(coef_rayon_new);
               $("#max_rayon").html(max_rayon_new);
               $("#config_modify").removeClass("hide");
@@ -219,7 +222,7 @@ $("#config_modify").click(function(){
             $("#config_cancel").click(function(){
 
             $(".coef_non_react").html(coef_non_react);
-            $("#coef_react").html(coef_react);
+            $(".coef_react").html(coef_react);
               $("#rayon_km").html(rayon_km);
               $("#coef_rayon").html(coef_rayon);
               $("#max_rayon").html(max_rayon);
