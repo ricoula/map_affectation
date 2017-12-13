@@ -1,12 +1,5 @@
 <html>
     <head>
-        <style>
-            .tooltip-inner {
-                white-space:pre;
-                overflow: visible;
-                max-width: none;
-            }
-        </style>
     </head>
     <body>
     <?php

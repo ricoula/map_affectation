@@ -307,3 +307,32 @@ width:70px;
 {
   cursor: pointer;
 }
+#side_bar
+{
+  overflow:visible;
+}
+.tooltip-inner {
+  white-space:pre;
+  overflow: visible;
+  max-width: none;
+  z-index: 1000000;
+}
+.color-purple{
+color:#ff57ff;
+}
+.color-red
+{
+color:red;
+}
+.color-yellow
+{
+color:#cccc00;
+}
+.color-green
+{
+color: green;
+}
+.input_modif
+{
+  width:50px;
+}
