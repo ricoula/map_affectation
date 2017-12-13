@@ -7,7 +7,7 @@
 ?>
     <body>
     <span class="glyphicon glyphicon-remove pull-right slide-close"></span></br>
-        <h1 class="well">Paramètres </h1><button class="btn btn-primary pull-right btn-xs">Paramètres avancés</button>
+        <h1 class="well">Paramètres </h1><button class="btn btn-primary pull-right btn-xs" data-toggle="modal" href="#advancedsettings">Paramètres avancés</button>
         <h4>Urgence</h4>
         <div class="form-group">
             <div class="list-group">
@@ -59,7 +59,7 @@
         </div>
         <button class="btn btn-primary pull-right" id="filter-save">Enregister</button>
      </div>
-        
+
     </body>
 </html>
 <script src="plugins/colorpicker/color.js"></script>
@@ -170,5 +170,67 @@ $(".color-picker").spectrum({
 });
 </script>
 <script>
+$("#config_modify").click(function(){
+              var coef_non_react = $("#coef_non_react").text();
+              var coef_react = $("#coef_react").text();
+              var rayon_km = $("#rayon_km").text();
+              var coef_rayon = $("#coef_rayon").text();
+              var max_rayon = $("#max_rayon").text();
+              $(".coef_non_react").html("<input class='input_modif coef_non_react_change' type='number' value='"+ coef_non_react +"'>");
+              $("#rayon_km").html("<input type='number' class='input_modif' value='"+ rayon_km +"'>");
+              $(".coef_react").html("<input type='number' class='input_modif coef_react_change' value='"+ coef_react +"'>");
+              $("#coef_rayon").html("<input type='number' class='input_modif' value='"+ coef_rayon +"'>");
+              $("#max_rayon").html("<input type='number' class='input_modif' value='"+ max_rayon +"'>");
+              $("#config_modify").addClass("hide");
+              $("#config_valid").removeClass("hide");
+              $("#config_cancel").removeClass("hide");
+                $(".coef_non_react_change").on('change paste keyup',function(){
+                $(".coef_non_react_change").val($(this).val())
+                });
+                $(".coef_react_change").on('change paste keyup',function(){
+                $(".coef_react_change").val($(this).val())
+                });
+              $("#config_valid").click(function(){
+                
+               var coef_non_react_new =  $("#coef_non_react").children().val();
+               var coef_react_new =  $("#coef_react").children().val();
+               var rayon_km_new = $("#rayon_km").children().val();
+               var coef_rayon_new = $("#coef_rayon").children().val();
+               var max_rayon_new = $("#max_rayon").children().val();
+                $(".coef_non_react").html(coef_non_react_new);
+              $("#rayon_km").html(rayon_km_new);
+              $(".coef_react").html(coef_react_new);
+              $("#coef_rayon").html(coef_rayon_new);
+              $("#max_rayon").html(max_rayon_new);
+              $("#config_modify").removeClass("hide");
+              $("#config_valid").addClass("hide");
+              $("#config_cancel").addClass("hide");
+              var modif_json = {
+                  coef_non_react: coef_non_react_new,
+                  coef_react: coef_react_new,
+                  rayon_km_new: rayon_km_new,
+                  coef_rayon_new: coef_rayon_new,
+                  max_rayon_new: max_rayon_new
+              };
+              var modif_json_string = JSON.stringify(modif_json);
+              console.log(modif_json_string);
+              $.post("API/changeAdvancedConfig.php",{config:modif_json_string});
+              
+
+            });
+
+            $("#config_cancel").click(function(){
+
+            $(".coef_non_react").html(coef_non_react);
+            $(".coef_react").html(coef_react);
+              $("#rayon_km").html(rayon_km);
+              $("#coef_rayon").html(coef_rayon);
+              $("#max_rayon").html(max_rayon);
+              $("#config_modify").removeClass("hide");
+              $("#config_valid").addClass("hide");
+              $("#config_cancel").addClass("hide");   
+            });
+            });
 
 </script>
+
