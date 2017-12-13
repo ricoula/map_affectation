@@ -378,6 +378,7 @@
 		ON p.atr_caff_traitant_id = e.id 
 		WHERE p.\"ft_numero_demande_42C\" = ?
 		AND p.\"ft_numero_demande_42C\" != ''
+		AND p.atr_ui = ?
 		AND p.\"ft_numero_demande_42C\" IS NOT NULL
 		AND p.atr_caff_traitant_id IN( select test2.employee_id from res_users  
 				left join (select hr_job.name as job,ag_site.name as site,hr_employee.id as employee_id,hr_employee.name_related as employee_name,test.name_related as mana_name from hr_employee
@@ -389,7 +390,7 @@
 		)
 		GROUP BY p.atr_caff_traitant_id, e.name_related, e.ag_site_id
 		ORDER BY nb DESC");
-		$req->execute(array($titulaire));
+		$req->execute(array($titulaire, $ui));
 		while($data = $req->fetch())
 		{
 			$req2 = $bdd->prepare("SELECT ft_zone FROM cds_transco_ui_site WHERE erp_site_id = ?");
@@ -516,13 +517,13 @@
 		return json_encode($listeCaffs);
 	}
 	
-	function getListePoiByCaffByTitulaire($idCaff, $titulaire)
+	function getListePoiByCaffByTitulaire($idCaff, $titulaire, $ui)
 	{
 		include("connexionBddErp.php");
 		
 		$listePoi = array();
-		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND \"ft_numero_demande_42C\" = ? AND \"ft_numero_demande_42C\" != '' AND \"ft_numero_demande_42C\" IS NOT NULL ORDER BY ft_oeie_dre");
-		$req->execute(array($idCaff, $titulaire));
+		$req = $bddErp->prepare("SELECT id FROM ag_poi WHERE atr_caff_traitant_id = ? AND \"ft_numero_demande_42C\" = ? AND \"ft_numero_demande_42C\" != '' AND \"ft_numero_demande_42C\" IS NOT NULL AND atr_ui = ? ORDER BY ft_oeie_dre");
+		$req->execute(array($idCaff, $titulaire, $ui));
 		while($data = $req->fetch())
 		{
 			$poi = json_decode(getPoiById($data["id"]));
@@ -726,12 +727,12 @@
 		return json_encode($nbPoi);
 	}
 	
-	function getNbPoiClientByCaff($idCaff, $client)
+	function getNbPoiClientByCaff($idCaff, $client, $ui)
 	{
 		include("connexionBddErp.php");
 		$nbPoi = 0;
-		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = ? AND \"ft_numero_demande_42C\" = ? AND \"ft_numero_demande_42C\" IS NOT NULL AND \"ft_numero_demande_42C\" != '' AND \"ft_numero_demande_42C\" != 'suppr. CNIL'");
-		$req->execute(array($idCaff, $client));
+		$req = $bddErp->prepare("SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = ? AND \"ft_numero_demande_42C\" = ? AND \"ft_numero_demande_42C\" IS NOT NULL AND \"ft_numero_demande_42C\" != '' AND \"ft_numero_demande_42C\" != 'suppr. CNIL' AND atr_ui = ?");
+		$req->execute(array($idCaff, $client, $ui));
 		if($data = $req->fetch())
 		{
 			$nbPoi = $data["nb"];;
