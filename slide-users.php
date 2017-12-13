@@ -3,6 +3,7 @@
         <style>
             .tooltip-inner {
                 white-space:pre;
+                overflow: visible;
                 max-width: none;
             }
         </style>
@@ -53,9 +54,7 @@
                         <h4 class="users-name"><?php echo $caff->name_related ?></span><?php if(in_array($caff->id, $listeCaffsConges)){ ?><span class="label label-warning pull-right users-state">Congé</span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
                         <h6 class="users-site"><?php echo $caff->site ?><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
                         <!--<h6 class="users-charge">Charge: <span class="label label-danger users-charge-count">123</span><button class="btn btn-info btn-xs pull-right users-button-poi" id="<?php /*echo $caff->id*/ ?>">Afficher POI</button></h6>-->
-                        <h6 class="users-charge">Charge: <span data-toggle="tooltip" data-placement="top" title="(nb_poi_reactives + (nb_poi_non_reactives * coef_poi_non_reactives)) 
-                        * (1 / coef_charge)
-                        
+                        <h6 class="users-charge">Charge: <span data-toggle="tooltip" data-placement="top" title="(nb_poi_reactives + (nb_poi_non_reactives * coef_poi_non_reactives)) * (1 / coef_charge)
                         = (<?php echo $caff->reactive ?> + (<?php echo $caff->non_reactive ?> * <?php echo $_GET["coefCharge"] ?>)) * (1 / <?php echo $caff->coefTraitement ?>)" class="label label-danger users-charge-count"><?php echo $caff->chargeInit ?></span><span class="label label-info coef-charge" data-toggle="tooltip" data-placement="right" title="Coef. charge"><?php echo $caff->ag_coeff_traitement ?></span><button id="btnAfficherPoiCaff-<?php echo urlencode($caff->name_related) ?>" class="btn btn-info btn-xs pull-right btnAfficherPoiCaff">Afficher POI</button></h6>
                     </div>
                 </div>
