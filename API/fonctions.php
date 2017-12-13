@@ -841,7 +841,7 @@
 		return json_encode($caff);
 	}
 	
-	function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefNbPoiClient, $coefCharge)//, $listeCaffsSimulation) // $listeCaffsSimulation (facultatif) = array en json
+	function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefNbPoiClient, $coefCharge, $limiteJour, $limiteSemaine)//, $listeCaffsSimulation) // $listeCaffsSimulation (facultatif) = array en json
 	{
 		include("connexionBddErp.php");
 		include("connexionBdd.php");
@@ -897,81 +897,70 @@
 			$req2->execute(array($data["id"]));
 			if(!$data2 = $req2->fetch())
 			{
-				/*$caffInSimulation = false;
-				
-				if($listeCaffsSimulation != null && sizeof($listeCaffsSimulation) > 0)
+				$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= (NOW() - interval '1 day')");
+				$req3->execute(array($data["id"]));
+				if($data3 = $req3->fetch())
 				{
-					//var_dump($listeCaffsSimulation);
-					//return json_encode($listeCaffsSimulation);
-					foreach($listeCaffsSimulation as $caffSimulation)
+					if($data3["nb_affectations_jour"] <= $limiteJour)
 					{
-						//var_dump($caffSimulation);
-						if($caffSimulation != null && $caffSimulation->id == $data["id"])
+						$lastMonday = date("Y-m-d",strtotime("last Monday"));
+						
+						$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ?");
+						$req4->execute(array($data["id"], $lastMonday));
+						if($data4 = $req4->fetch())
 						{
-							$caffInSimulation = true;
-							$caff = $caffSimulation;
-							
-							$nbPoiSimulation = sizeof($caff->listePoiSimulation)-1;
-							//var_dump($nbPoiSimulation);
-							if($caff->listePoiSimulation[$nbPoiSimulation]->reactive == true)
+							if($data4["nb_affectations_semaine"] <= $limiteSemaine)
 							{
-								$caff->charge_totale += 1;
-							}
-							else{
-								$caff->charge_totale += $coefCharge;
+								$caff = (object) array();
+								$caff->name_related = $data["name_related"];
+								$caff->mobile_phone = $data["mobile_phone"];
+								$caff->work_email = $data["work_email"];
+								$caff->site = $data["site"];
+								$caff->site_id = $data["site_id"];
+								$caff->agence = $data["agence"];
+								$caff->reactive = $data["reactive"];
+								$caff->non_reactive = $data["non_reactive"];
+								$caff->charge_totale = $data["charge_totale"];
+								$caff->charge_initiale = $data["charge_initiale"];
+								$caff->id = $data["id"];
+								
+								$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
+								$nbPoiEnRetard = 0;
+								$dateAjd = new DateTime("now");
+								foreach($listePoi as $poi)
+								{
+									$dre = new DateTime($poi->ft_oeie_dre);
+									if($dateAjd > $dre)
+									{
+										$nbPoiEnRetard++;
+									}
+								}
+								if(sizeof($listePoi) > 0)
+								{
+									$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
+								}
+								else{
+									$tauxDre = 0;
+								}
+								$caff->charge_totale += ($tauxDre * $caff->reactive);
+								
+								$ceCaff = (object) array();
+								$ceCaff->id = $caff->id;
+								$ceCaff->charge_initiale = $caff->charge_initiale;
+								$ceCaff->name_related = $caff->name_related;
+								$ceCaff->charge_totale = $caff->charge_totale;
+								array_push($listeCaffs, $ceCaff);
+								
+								if($caffAuto == null)
+								{
+									$caffAuto = $caff;
+								}
+								elseif($caffAuto->charge_totale > $caff->charge_totale){
+									$caffAuto = $caff;
+								}
 							}
 						}
 					}
-				}
-				if(!$caffInSimulation)
-				{*/
-					$caff = (object) array();
-					$caff->name_related = $data["name_related"];
-					$caff->mobile_phone = $data["mobile_phone"];
-					$caff->work_email = $data["work_email"];
-					$caff->site = $data["site"];
-					$caff->site_id = $data["site_id"];
-					$caff->agence = $data["agence"];
-					$caff->reactive = $data["reactive"];
-					$caff->non_reactive = $data["non_reactive"];
-					$caff->charge_totale = $data["charge_totale"];
-					$caff->charge_initiale = $data["charge_initiale"];
-					$caff->id = $data["id"];
-					
-					$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
-					$nbPoiEnRetard = 0;
-					$dateAjd = new DateTime("now");
-					foreach($listePoi as $poi)
-					{
-						$dre = new DateTime($poi->ft_oeie_dre);
-						if($dateAjd > $dre)
-						{
-							$nbPoiEnRetard++;
-						}
-					}
-					if(sizeof($listePoi) > 0)
-					{
-						$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
-					}
-					else{
-						$tauxDre = 0;
-					}
-					$caff->charge_totale += ($tauxDre * $caff->reactive);
-				//}
-				
-				$ceCaff = (object) array();
-				$ceCaff->id = $caff->id;
-				$ceCaff->charge_initiale = $caff->charge_initiale;
-				$ceCaff->name_related = $caff->name_related;
-				$ceCaff->charge_totale = $caff->charge_totale;
-				array_push($listeCaffs, $ceCaff);
-				
-				if($caffAuto == null)
-				{
-					$caffAuto = $caff;
-				}
-				elseif($caffAuto->charge_totale > $caff->charge_totale){
-					$caffAuto = $caff;
 				}
 			}
 			

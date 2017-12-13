@@ -70,7 +70,7 @@
         console.log("CETTE POI = " + $("#idPoi").val());
         if($("#idPoi").val() != undefined && $("#idPoi").val() != null)
         {
-          $.post("API/getAffectationAuto.php", {poi_id: $("#idPoi").val(), km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()}, function(data){
+          $.post("API/getAffectationAuto.php", {poi_id: $("#idPoi").val(), km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val()}, function(data){
             var caff = JSON.parse(data);
             $("#attenteCaffConseille").replaceWith('<label class="pull-right home-result label label-success" id="home-caff">' + caff.name_related + '</label>');
           });

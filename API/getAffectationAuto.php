@@ -7,7 +7,7 @@
 		$_POST["liste_caffs_simulation"] = json_encode($_POST["liste_caffs_simulation"]);
 	}*/
 	
-	echo getAffectationAuto($_POST["poi_id"], $_POST["km"], $_POST["coef_poi_proxi"], $_POST["coef_poi_client"], $_POST["coef_charge"]);//, $_POST["liste_caffs_simulation"]);
+	echo getAffectationAuto($_POST["poi_id"], $_POST["km"], $_POST["coef_poi_proxi"], $_POST["coef_poi_client"], $_POST["coef_charge"], $_POST["limite_jour"], $_POST["limite_semaine"]);//, $_POST["liste_caffs_simulation"]);
 	//echo getAffectationAuto(155375, 20, 0.5, 0.8, 0.5);
 	
 	/*$listeCaffsSimulation = array();
