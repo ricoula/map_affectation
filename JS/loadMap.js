@@ -265,8 +265,8 @@
                                                     if(poiSimulation.reactive)
                                                     {
                                                         console.log("AVANT +1 :", caffSimu.charge_totale);
-                                                        caffSimu.charge_totale = parseFloat(caffSimu.charge_totale);
-                                                        caffSimu.charge_totale += parseFloat(1);
+                                                        caffSimu.charge_totale = Number(caffSimu.charge_totale);
+                                                        caffSimu.charge_totale += 1;
                                                         console.log("APRES +1 :", caffSimu.charge_totale);
                                                         if(caffSimu.charge_simu == null)
                                                         {
@@ -278,15 +278,15 @@
                                                     }
                                                     else{
                                                         console.log("AVANT +0.5 :", caffSimu.charge_totale);
-                                                        caffSimu.charge_totale = parseFloat(caffSimu.charge_totale);
-                                                        caffSimu.charge_totale += parseFloat($("#coefCharge").val());
+                                                        caffSimu.charge_totale = Number(caffSimu.charge_totale);
+                                                        caffSimu.charge_totale += Number($("#coefCharge").val());
                                                         console.log("APRES +0.5 :", caffSimu.charge_totale)
                                                         if(caffSimu.charge_simu == null)
                                                         {
-                                                            caffSimu.charge_simu = parseFloat($("#coefCharge").val());
+                                                            caffSimu.charge_simu = 0.1;
                                                         }
                                                         else{
-                                                            caffSimu.charge_simu += parseFloat($("#coefCharge").val());
+                                                            caffSimu.charge_simu += 0.1;
                                                         }
                                                     }
                                                 });
@@ -318,7 +318,7 @@
                                                 ceCaff.charge_simu = 0;
                                             }
                                             console.log("Global = " + ceCaff.chargeGlobale);
-                                            optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + ceCaff.charge_totale + ") ("+ ceCaff.charge_initiale + ")(" + (ceCaff.chargeGlobale - ceCaff.charge_initiale) + ")(" + ceCaff.charge_simu + ")</option>";
+                                            optionElt += "<option id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale.toFixed(1)) + ") ("+ ceCaff.charge_initiale + ")(" + (ceCaff.chargeGlobale - ceCaff.charge_initiale) + ")(" + Number(ceCaff.charge_simu.toFixed(1)) + ")</option>";
                                         //}
                                     });
                                     html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select>" + optionElt + "</select></td></tr>";
