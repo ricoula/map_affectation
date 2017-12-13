@@ -15,6 +15,8 @@
       <input type="hidden" id="coefPoiProxi" name="coefPoiProxi" value="0.5" />
       <input type="hidden" id="coefPoiClient" name="coefPoiClient" value="0.8" />
       <input type="hidden" id="coefCharge" name="coefCharge" value="0.1" />
+      <input type="hidden" id="limiteAffectationJour" name="coefCharge" value="3" />
+      <input type="hidden" id="limiteAffectationSemaine" name="coefCharge" value="10" />
 
       <input type="hidden" id="user_id" name="user_id" value="<?php echo $_SESSION["user_id"] ?>" />
       <div id="divInfos" class="well" >

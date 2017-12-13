@@ -141,7 +141,7 @@ else
  });
 </script>
 <script>
-console.log("test")
+//console.log("test")
     $.post("API/getConfigById.php",{utilisateur_id : $("#user_id").val()},function(data){
         data = JSON.parse(data);
         var json_code = data;
@@ -150,7 +150,7 @@ console.log("test")
     sj_list.forEach(function(sj){
         ui = sj.split("-")[2];
         sj = sj.split("-")[1];
-        console.log(ui + " " + sj)
+        //console.log(ui + " " + sj)
         $("#filter-sj-list-"+ui).append('<label class="filter-sj-badge" id="label-'+sj+'-'+ui+'">'+sj+' <span class="glyphicon glyphicon-remove filter-remove-sj" ui="'+ui+'" sj="'+sj+'"></span></label>');
     })
     $(".filter-remove-sj").click(function(){

@@ -67,10 +67,10 @@
     </body>
 </html>
 <script>
-        console.log("CETTE POI = " + $("#idPoi").val());
+        //console.log("CETTE POI = " + $("#idPoi").val());
         if($("#idPoi").val() != undefined && $("#idPoi").val() != null)
         {
-          $.post("API/getAffectationAuto.php", {poi_id: $("#idPoi").val(), km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val()}, function(data){
+          $.post("API/getAffectationAuto.php", {poi_id: $("#idPoi").val(), km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val()}, function(data){
             var caff = JSON.parse(data);
             $("#attenteCaffConseille").replaceWith('<label class="pull-right home-result label label-success" id="home-caff">' + caff.name_related + '</label>');
           });
@@ -91,53 +91,53 @@
                 config.filtersj.forEach(function(sj){
                 var sj_oeie = sj.split("-")[1];
                 var ui_oeie = sj.split("-")[2];
-                console.log("test:" + sj_oeie + " poi:" + $("#home-sj").text() + " test:" + ui_oeie + " poi:" + $("#home-ui").text());
+                //console.log("test:" + sj_oeie + " poi:" + $("#home-sj").text() + " test:" + ui_oeie + " poi:" + $("#home-ui").text());
 
                 if($("#home-sj").text() == sj_oeie && $("#home-ui").text() == ui_oeie){
-                  console.log("testok");
+                  //console.log("testok");
                   $("#home-sj").addClass("label label-danger");
                 }
             
               });
               if($("#home-domaine").text() == 'Client'){
                 color_label_poi = config.filtercolorclient;
-                console.log("Color: " + color_label_poi);
+                //console.log("Color: " + color_label_poi);
               }
               else if($("#home-domaine").text() == 'Immo'){
                 color_label_poi = config.filtercolorimmo;
-                console.log("Color: " + color_label_poi);
+                //console.log("Color: " + color_label_poi);
               }
               else if($("#home-domaine").text() == 'Dissi'){
                 color_label_poi = config.filtercolordissi;
-                console.log("Color: " + color_label_poi);
+                //console.log("Color: " + color_label_poi);
               }
               else if($("#home-domaine").text() == 'FO & CU'){
                 color_label_poi = config.filtercolorfocu;
-                console.log("Color: " + color_label_poi);
+                //console.log("Color: " + color_label_poi);
               }
               else if($("#home-domaine").text() == 'Coordi'){
                 color_label_poi = config.filtercolorcoord;
-                console.log("Color: " + color_label_poi);
+                //console.log("Color: " + color_label_poi);
               }
               else{
                  color_label_poi = null;
-                  console.log("Color: " + color_label_poi);
+                  //console.log("Color: " + color_label_poi);
               }
               $("#home-domaine").css({"backgroundColor":color_label_poi,"color":"black"});
 
 
 </script>
 <!-- <script>
-console.log($("#poi_lat_lng").attr('latlng'));
-console.log($("#site_lat_lng").attr('latlng'));
-console.log($("#site_nb").attr('nb'))
+//console.log($("#poi_lat_lng").attr('latlng'));
+//console.log($("#site_lat_lng").attr('latlng'));
+//console.log($("#site_nb").attr('nb'))
 var a = $("#poi_lat_lng").attr('latlng').split("|")[$("#site_nb").attr('nb')];
 var b = $("#site_lat_lng").attr('latlng')
 var a_lng = Number(a.split(",")[0]);
 var a_lat = Number(a.split(",")[1]);
 var b_lng = Number(b.split(",")[0]);
 var b_lat = Number(b.split(",")[1]);
-console.log(a_lng + " " + a_lat + " " +b_lng + " " + b_lat);
+//console.log(a_lng + " " + a_lat + " " +b_lng + " " + b_lat);
 
 var pointA = new google.maps.LatLng(a_lng,a_lat);
 var pointB = new google.maps.LatLng(b_lng,b_lat);
