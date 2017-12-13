@@ -307,10 +307,7 @@ width:70px;
 {
   cursor: pointer;
 }
-#side_bar
-{
-  overflow:visible;
-}
+
 .tooltip-inner {
   white-space:pre;
   overflow: visible;
@@ -332,7 +329,15 @@ color:#cccc00;
 {
 color: green;
 }
+.color-grey
+{
+color: grey;
+}
 .input_modif
 {
   width:50px;
+}
+#modal_advanced_config
+{
+    width:1480px;
 }
