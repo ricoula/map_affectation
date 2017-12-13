@@ -303,3 +303,7 @@ width:70px;
   display:none;
   color:#545454;
 }
+.coef-charge
+{
+  cursor: pointer;
+}
