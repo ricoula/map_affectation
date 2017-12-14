@@ -387,9 +387,16 @@
                                             {
                                                 $(".selectAffectationAutoPoi").each(function(){
                                                     if($(this).hasClass(listeClass))
-                                                    {
-                                                        console.log(valSelect);                                                      
+                                                    {                                                      
                                                         $(this).val(valSelect);
+
+                                                        if($(this).children("option:selected").hasClass("caffTitulaireAffectAuto"))
+                                                        {
+                                                            $(this).css("color", "green");
+                                                        }
+                                                        else{
+                                                            $(this).css("color", "black");
+                                                        }
                                                     }
                                                 });
                                             }
