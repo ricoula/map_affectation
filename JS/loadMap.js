@@ -334,14 +334,14 @@
                                             {
                                                 if(poi.affectationAuto.listePoiTitulaire != null)
                                                 {
-                                                    optionElt += "<option selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
+                                                    optionElt += "<option value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
                                                 }
                                                 else{
-                                                    optionElt += "<option selected style='color:black' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
+                                                    optionElt += "<option value='caff-" + ceCaff.id + "' selected style='color:black' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
                                                 }
                                             }
                                             else{
-                                                optionElt += "<option style='color:black' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
+                                                optionElt += "<option value='caff-" + ceCaff.id + "' style='color:black' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
                                             }
 
                                         //}
@@ -385,11 +385,18 @@
                                             var listeClass = elt.target.classList.value;
                                             if($(this).hasClass("numAff"))
                                             {
-                                                console.log($(this));
                                                 $(".selectAffectationAutoPoi").each(function(){
                                                     if($(this).hasClass(listeClass))
-                                                    {
+                                                    {                                                      
                                                         $(this).val(valSelect);
+
+                                                        if($(this).children("option:selected").hasClass("caffTitulaireAffectAuto"))
+                                                        {
+                                                            $(this).css("color", "green");
+                                                        }
+                                                        else{
+                                                            $(this).css("color", "black");
+                                                        }
                                                     }
                                                 });
                                             }
