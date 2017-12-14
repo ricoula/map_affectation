@@ -235,7 +235,7 @@
                         var listeCaffsSimulation = new Array();
                         listePoi.forEach(function(poi){
                               y++;
-        
+                              
                             $.ajax({
                                 type: 'POST',
                                 url: "API/getAffectationAuto.php",
@@ -346,8 +346,15 @@
 
                                         //}
                                     });
-                                    html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select id='selectAffectationAutoPoi-" + poi.id + "' class='selectAffectationAutoPoi'>" + optionElt + "</select></td></tr>";
-                                    $("#btnCaffAffectAuto-" + poi.id).click()
+                                    if(poi.ft_titulaire_client != null && poi.ft_titulaire_client != "")
+                                    {
+                                        html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select id='selectAffectationAutoPoi-" + poi.id + "' class='selectAffectationAutoPoi numAff numAffaire-" + poi.ft_titulaire_client + "'>" + optionElt + "</select></td></tr>";
+                                    }
+                                    else{
+                                        html += "<tr><td>" + poi.ft_numero_oeie + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select id='selectAffectationAutoPoi-" + poi.id + "' class='selectAffectationAutoPoi'>" + optionElt + "</select></td></tr>";
+                                    }
+                                    
+                                    $("#btnCaffAffectAuto-" + poi.id).click();
                                     if(i == listePoi.length)
                                     {
                                         html += "</tbody></table>";
@@ -361,6 +368,9 @@
                                             {
                                                 $(this).css("color", "green");
                                             }
+                                            else{
+                                                $(this).css("color", "black");
+                                            }
                                         });
                                         /*if($(".selectAffectationAutoPoi option:selected").hasClass("caffTitulaireAffectAuto"))
                                         {
@@ -370,7 +380,19 @@
                                             $(this).parent().css("color", "black");
                                         }*/
                                         
-                                        $(".selectAffectationAutoPoi").change(function(){
+                                        $(".selectAffectationAutoPoi").change(function(elt){
+                                            var valSelect = $(this).val();
+                                            var listeClass = elt.target.classList.value;
+                                            if($(this).hasClass("numAff"))
+                                            {
+                                                console.log($(this));
+                                                $(".selectAffectationAutoPoi").each(function(){
+                                                    if($(this).hasClass(listeClass))
+                                                    {
+                                                        $(this).val(valSelect);
+                                                    }
+                                                });
+                                            }
                                             if($(this).children("option:selected").hasClass("caffTitulaireAffectAuto"))
                                             {
                                                 $(this).css("color", "green");
@@ -378,6 +400,8 @@
                                             else{
                                                 $(this).css("color", "black");
                                             }
+
+                                            
                                         });
                                     }
                                     var caffSimulation = poi.affectationAuto.listeAutresCaffs[0];
@@ -403,7 +427,6 @@
                                 },
                                 async:true
                               });
-                              
                         });
                         
                     });
