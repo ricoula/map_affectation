@@ -190,7 +190,9 @@ $("#config_modify").click(function(){
                 $(".coef_react_change").on('change paste keyup',function(){
                 $(".coef_react_change").val($(this).val())
                 });
-              $("#config_valid").click(function(){
+
+            });
+            $("#config_valid").click(function(){
                 
                var coef_non_react_new =  $("#coef_non_react").children().val();
                var coef_react_new =  $("#coef_react").children().val();
@@ -230,7 +232,5 @@ $("#config_modify").click(function(){
               $("#config_valid").addClass("hide");
               $("#config_cancel").addClass("hide");   
             });
-            });
-
 </script>
 
