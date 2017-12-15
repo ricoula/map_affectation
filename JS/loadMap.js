@@ -92,16 +92,17 @@
           
           $.post("API/getPoiLienByTitulaire.php", {poi_json: JSON.stringify(poi)}, function(data){
             var tabPoiLien = JSON.parse(data);
+            var title = "";
             if(tabPoiLien.length > 0)
             {
                 var tab = new Array();
                 tabPoiLien.forEach(function(cettePoi){
                     tab.push(cettePoi.ft_numero_oeie);
-                    console.log(cettePoi.ft_numero_oeie);
                   });
-                  var listePoiLien = tab.join(" <span class='glyphicon glyphicon-link'></span> ");
-                  listePoiLien = " <span class='glyphicon glyphicon-link'></span> " + listePoiLien;
+                  title = tab.join("\n");
+                  var listePoiLien = " <span class='glyphicon glyphicon-link' data-toggle='tooltip' data-placement='right' title='" + title + "'></span><sup>" + tab.length + "</sup>";
                 $("#listeLiens-" + marker.poi_id).html(listePoiLien);
+                $('[data-toggle="tooltip"]').tooltip();
             }
         });
           iw.setContent('<div class="container info_poi_modal" >'+
@@ -252,6 +253,9 @@
                         var listeCaffsSimulation = new Array();
                         listePoi.forEach(function(poi){
                             var listeLiensPoi = "";
+                            var nbPoiLien = 0;
+                            var tab = new Array();
+                            var thisTitle = "";
                             if(poi.ft_titulaire_client != null && poi.ft_titulaire_client != "")
                             {
                                 listePoi.forEach(function(cettePoi){
@@ -259,10 +263,28 @@
                                     {
                                         if(cettePoi.ft_titulaire_client == poi.ft_titulaire_client)
                                         {
-                                            listeLiensPoi += " <span class='glyphicon glyphicon-link'></span> " + cettePoi.ft_titulaire_client;
+                                            if(nbPoiLien < 2)
+                                            {
+                                                listeLiensPoi += " <span class='glyphicon glyphicon-link'></span> " + cettePoi.ft_numero_oeie;
+                                            }
+                                            else{
+                                                tab.push(cettePoi.ft_numero_oeie);
+                                            }
+
+                                            nbPoiLien++;
                                         }
                                     }
                                 });
+                            }
+
+                            if(tab.length > 0)
+                            {
+                                thisTitle = tab.join("\n");
+                            }
+
+                            if(nbPoiLien > 2)
+                            {
+                                listeLiensPoi += " <span class='glyphicon glyphicon-link' data-toggle='tooltip' title='" + thisTitle + "' data-placement='right'></span><sup>" + tab.length + "</sup>";
                             }
                               y++;
                               
@@ -392,6 +414,7 @@
                                         document.getElementById("resultatsListePoiNA").innerHTML = html;
                                         $("#resultatsListePoiNA").show();
                                         $("#percent").fadeOut();
+                                        $('[data-toggle="tooltip"]').tooltip();
                                         
                                         $(".selectAffectationAutoPoi").each(function(){
                                             if($(this).children("option:selected").hasClass("caffTitulaireAffectAuto"))
@@ -470,6 +493,5 @@
                 })
             });
           });
-
     }
     

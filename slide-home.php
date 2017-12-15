@@ -1,4 +1,12 @@
 <html>
+    <head>
+      <style>
+        .tooltip-inner {
+            white-space:pre;
+            max-width:none;
+        }
+      </style>
+    </head>
     <body>
 
     <?php
@@ -15,8 +23,8 @@
         {
           array_push($tab, $cettePoi->ft_numero_oeie);
         }
-          $listePoiLien = implode("<br/> <span class='glyphicon glyphicon-link'></span> ", $tab);
-          $listePoiLien = "<br/> <span class='glyphicon glyphicon-link'></span> ".$listePoiLien;
+        $title = implode("\n", $tab);
+        $listePoiLien = "<span class='glyphicon glyphicon-link' data-toggle='tooltip' data-placement='right' title='".$title."'></span><sup>".sizeof($tab)."</sup>";
     }
     else{
       $listePoiLien = "";
@@ -81,6 +89,7 @@
     </body>
 </html>
 <script>
+      $('[data-toggle="tooltip"]').tooltip();
         //console.log("CETTE POI = " + $("#idPoi").val());
         if($("#idPoi").val() != undefined && $("#idPoi").val() != null)
         {
