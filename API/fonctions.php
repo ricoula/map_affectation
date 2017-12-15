@@ -726,7 +726,9 @@
 		include("connexionBdd.php");
 		$reponse = false;
 		try{
-			$req = $bdd->prepare("SELECT id FROM cds_advanced_config WHERE id = 1");
+			$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ?");
+			$reponse = $req->execute(array($json_code));
+			/*$req = $bdd->prepare("SELECT id FROM cds_advanced_config WHERE id = 1");
 			$req->execute(array($id));
 			if($data = $req->fetch())
 			{
@@ -736,11 +738,23 @@
 			else{
 				$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
 				$reponse = $req->execute(array($json_code));
-			}
+			}*/
 		}catch(Exception $e){
 			$reponse = false;
 		}
 		return json_encode($reponse);
+	}
+
+	function getAdvancedConfig()
+	{
+		include("connexionBdd.php");
+		$config = null;
+		$req = $bdd->query("SELECT config FROM cds_advanced_config WHERE config IS NOT NULL AND config != '' LIMIT 1");
+		if($data = $req->fetch())
+		{
+			$config = $data["config"];
+		}
+		return $config;
 	}
 	
 	function getChargeCaff($caff, $coef) //$caff = object caff en json

@@ -2,6 +2,7 @@
     include("header.php");
     include("API/fonctions.php");
     $_SESSION["user_id"] = 1;
+    $config = json_decode(getAdvancedConfig());
 ?>
 <!DOCTYPE html>
 <html>
@@ -11,12 +12,31 @@
 
   </head>
   <body>
+    <?php 
+    if($config != null)
+    {
+      ?>
+      <input type="hidden" id="kmRadius" name="kmRadius" value="<?php echo $config->rayon_km_new ?>" />
+      <input type="hidden" id="coefPoiProxi" name="coefPoiProxi" value="<?php echo $config->coef_rayon_new ?>" />
+      <input type="hidden" id="coefPoiClient" name="coefPoiClient" value="<?php echo $config->coef_react ?>" />
+      <input type="hidden" id="coefCharge" name="coefCharge" value="<?php echo $config->coef_non_react ?>" />
+      <input type="hidden" id="limiteAffectationJour" name="limiteAffectationJour" value="3" />
+      <input type="hidden" id="limiteAffectationSemaine" name="limiteAffectationSemaine" value="10" />
+      <input type="hidden" id="limiteMaxCalcul" name="limiteMaxCalcul" value="20" />
+      <?php
+    }
+    else{
+      ?>
       <input type="hidden" id="kmRadius" name="kmRadius" value="20" />
       <input type="hidden" id="coefPoiProxi" name="coefPoiProxi" value="0.5" />
       <input type="hidden" id="coefPoiClient" name="coefPoiClient" value="0.8" />
       <input type="hidden" id="coefCharge" name="coefCharge" value="0.1" />
-      <input type="hidden" id="limiteAffectationJour" name="coefCharge" value="3" />
-      <input type="hidden" id="limiteAffectationSemaine" name="coefCharge" value="10" />
+      <input type="hidden" id="limiteAffectationJour" name="limiteAffectationJour" value="3" />
+      <input type="hidden" id="limiteAffectationSemaine" name="limiteAffectationSemaine" value="10" />
+      <input type="hidden" id="limiteMaxCalcul" name="limiteMaxCalcul" value="20" />
+      <?php
+    }
+    ?>
 
       <input type="hidden" id="user_id" name="user_id" value="<?php echo $_SESSION["user_id"] ?>" />
       <div id="divInfos" class="well" >
@@ -90,7 +110,7 @@
          </div>
          <div class="modal-body">
             <h4>Algorithme de calcul de charge</h4>
-            <p class="color-red">Attention la modification de ce calcul influancera les affectations futures</p>
+            <p class="color-red">Attention la modification de ce calcul influencera les affectations futures</p>
             <p>((NbPoiReactive * <label class="color-grey coef_react" id="coef_react">0.8</label> + NbPoiNonReactive * <label class="color-purple coef_non_react" id="coef_non_react">0.1</label>) * CoefCaff) - (%Retard * NbPoiReactive) - (NbPoiRayon(<label class="color-red" id="rayon_km">20</label>km) * <label class="color-yellow" id="coef_rayon">0.5</label>)->MAX(<label class="color-green" id="max_rayon">20</label>) + (NbPoiReactiveSimu * <label class="color-grey coef_react" id="coef_react">0.8</label> + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react">0.1</label>) </p>
             
 
