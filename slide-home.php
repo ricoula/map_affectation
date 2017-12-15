@@ -7,13 +7,27 @@
     include("API/fonctions.php");
     $poi = json_decode(getPoiById($_GET["poi_id"]));
     $closestSite = json_decode(getClosestSite($poi->id));
+    $tabPoiLien = json_decode(getPoiLienByTitulaire(json_encode($poi)));
+    if(sizeof($tabPoiLien) > 0)
+    {
+        $tab = array();
+        foreach($tabPoiLien as $cettePoi)
+        {
+          array_push($tab, $cettePoi->ft_numero_oeie);
+        }
+          $listePoiLien = implode("<br/> <span class='glyphicon glyphicon-link'></span> ", $tab);
+          $listePoiLien = "<br/> <span class='glyphicon glyphicon-link'></span> ".$listePoiLien;
+    }
+    else{
+      $listePoiLien = "";
+    }
     ?>
     <!-- <input type="hidden" id="poi_lat_lng" latlng='<?php /*echo $closestSite->poilatlng ;?>'>
     <input type="hidden" id="site_lat_lng" latlng='<?php echo $closestSite->sitelatlng ;?>'>
     <input type="hidden" id="site_nb" nb="<?php echo $closestSite->i*/ ?>"> -->
     <input type="hidden" id="idPoi" name="idPoi" value="<?php echo $_GET["poi_id"] ?>" />
     <span class="glyphicon glyphicon-remove pull-right slide-close"></span></br> 
-    <h1 id="home-poi" class="well"><?php echo $poi->ft_numero_oeie ?><span class="badge badge-default pull-right" id="home-domaine"><?php echo $poi->domaine ?></span></h1>
+    <h1 id="home-poi" class="well"><?php echo $poi->ft_numero_oeie.$listePoiLien ?><span class="badge badge-default pull-right" id="home-domaine"><?php echo $poi->domaine ?></span></h1>
     <h4>Information POI</h4>
     <form>
     <div class="form-group">

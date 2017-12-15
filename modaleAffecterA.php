@@ -4,11 +4,25 @@
     $closestSite = json_decode(getClosestSite($poi->id));
     $sitesUi = json_decode(getSitesByUi($poi->atr_ui));
     $caffs = json_decode(getInfosCaff());
+    $tabPoiLien = json_decode(getPoiLienByTitulaire(json_encode($poi)));
+    if(sizeof($tabPoiLien) > 0)
+    {
+        $tab = array();
+        foreach($tabPoiLien as $cettePoi)
+        {
+          array_push($tab, $cettePoi->ft_numero_oeie);
+        }
+          $listePoiLien = implode(" <span class='glyphicon glyphicon-link'></span> ", $tab);
+          $listePoiLien = " <span class='glyphicon glyphicon-link'></span> ".$listePoiLien;
+    }
+    else{
+      $listePoiLien = "";
+    }
 ?>
 
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal">&times;</button>
-  <h1>Affectation de la POI: <?php echo $poi->ft_numero_oeie ?></h1>
+  <h1>Affectation de la POI: <?php echo $poi->ft_numero_oeie.$listePoiLien ?></h1>
 </div>
 <div class="modal-body">
   <div>

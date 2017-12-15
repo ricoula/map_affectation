@@ -19,7 +19,7 @@
   $.getJSON('API/getPoiNA.php',function(data){
    
             data.forEach(function(poi){
-             
+
               var strokecolorpoi = 'black';
               var strokeweightpoi = 2;
               var scalepoi = 7;
@@ -89,9 +89,25 @@
             iw.close();
           });
           google.maps.event.addListener(marker, 'rightclick', function(e) {  // 'spider_rightclick', not plain 'click'
-
+          
+          $.post("API/getPoiLienByTitulaire.php", {poi_json: JSON.stringify(poi)}, function(data){
+            var tabPoiLien = JSON.parse(data);
+            if(tabPoiLien.length > 0)
+            {
+                var tab = new Array();
+                tabPoiLien.forEach(function(cettePoi){
+                    tab.push(cettePoi.ft_numero_oeie);
+                    console.log(cettePoi.ft_numero_oeie);
+                  });
+                  var listePoiLien = tab.join(" <span class='glyphicon glyphicon-link'></span> ");
+                  listePoiLien = " <span class='glyphicon glyphicon-link'></span> " + listePoiLien;
+                $("#listeLiens-" + marker.poi_id).html(listePoiLien);
+            }
+        });
           iw.setContent('<div class="container info_poi_modal" >'+
-                '<h2 id="win_info_numero_oeie">'+marker.title+'</h2>' +
+                '<h2 id="win_info_numero_oeie">'+marker.title+ '<span id="listeLiens-' + marker.poi_id +'"></span>' + 
+                    //+'<span class="meta"><span class="glyphicon glyphicon-link"></span>' + marker.poi_lien + '</span>'+
+                '</h2>' +
                 '<div class="list-group">' +
                     '<a href="#" class="list-group-item" id="win_info_affecter_a">Affecter à</a>' +
                     '<a class="list-group-item testClass" id="win_info_liens" style="cursor: pointer">POI en lien <span class="badge" id="badgeNbPoi"></span></a>' +
@@ -122,6 +138,7 @@
   
           });
           google.maps.event.addListener(marker, 'spider_click', function(e) {  // 'spider_rightclick', not plain 'click'
+          console.log(marker.poi_id);
           var myUrl = window.location.href;
           myUrl = myUrl.split("?")[0];
           var newUrl = myUrl + "?poi=" + marker.poi_id;
