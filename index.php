@@ -20,9 +20,9 @@
       <input type="hidden" id="coefPoiProxi" name="coefPoiProxi" value="<?php echo $config->coef_rayon_new ?>" />
       <input type="hidden" id="coefPoiClient" name="coefPoiClient" value="<?php echo $config->coef_react ?>" />
       <input type="hidden" id="coefCharge" name="coefCharge" value="<?php echo $config->coef_non_react ?>" />
-      <input type="hidden" id="limiteAffectationJour" name="limiteAffectationJour" value="3" />
-      <input type="hidden" id="limiteAffectationSemaine" name="limiteAffectationSemaine" value="10" />
-      <input type="hidden" id="limiteMaxCalcul" name="limiteMaxCalcul" value="20" />
+      <input type="hidden" id="limiteAffectationJour" name="limiteAffectationJour" value="<?php echo $config->max_day ?>" />
+      <input type="hidden" id="limiteAffectationSemaine" name="limiteAffectationSemaine" value="<?php echo $config->max_week ?>" />
+      <input type="hidden" id="limiteMaxCalcul" name="limiteMaxCalcul" value="<?php echo $config->max_rayon_new ?>" />
       <?php
     }
     else{
