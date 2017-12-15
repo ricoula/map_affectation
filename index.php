@@ -111,8 +111,9 @@
          <div class="modal-body">
             <h4>Algorithme de calcul de charge</h4>
             <p class="color-red">Attention la modification de ce calcul influencera les affectations futures</p>
-            <p>((NbPoiReactive * <label class="color-grey coef_react" id="coef_react">0.8</label> + NbPoiNonReactive * <label class="color-purple coef_non_react" id="coef_non_react">0.1</label>) * CoefCaff) - (%Retard * NbPoiReactive) - (NbPoiRayon(<label class="color-red" id="rayon_km">20</label>km) * <label class="color-yellow" id="coef_rayon">0.5</label>)->MAX(<label class="color-green" id="max_rayon">20</label>) + (NbPoiReactiveSimu * <label class="color-grey coef_react" id="coef_react">0.8</label> + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react">0.1</label>) </p>
-            
+            <p>((NbPoiReactive * <label class="color-grey coef_react" id="coef_react">0.8</label> + NbPoiNonReactive * <label class="color-purple coef_non_react" id="coef_non_react">0.1</label>) * CoefCaff) + (%Retard * NbPoiReactive * <label class="color-grey coef_react" id="coef_react">0.8</label>) - (NbPoiRayon(<label class="color-red" id="rayon_km">20</label>km) * <label class="color-yellow" id="coef_rayon">0.5</label>)->MAX(<label class="color-green" id="max_rayon">20</label>) + (NbPoiReactiveSimu * <label class="color-grey coef_react" id="coef_react">0.8</label> + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react">0.1</label>) </p>
+            <p>Nombre de POI réactive MAX par jour: <label id="max_day">5</label></p>
+            <p>Nombre de POI réactive MAX par semaine: <label id="max_week">15</label></p>
 
          </div>
          <div class="modal-footer">
