@@ -170,12 +170,17 @@ $(".color-picker").spectrum({
 });
 </script>
 <script>
-$("#config_modify").click(function(){
-              var coef_non_react = $("#coef_non_react").text();
+    var coef_non_react = $("#coef_non_react").text();
               var coef_react = $("#coef_react").text();
               var rayon_km = $("#rayon_km").text();
               var coef_rayon = $("#coef_rayon").text();
               var max_rayon = $("#max_rayon").text();
+$("#config_modify").click(function(){
+               coef_non_react = $("#coef_non_react").text();
+               coef_react = $("#coef_react").text();
+               rayon_km = $("#rayon_km").text();
+               coef_rayon = $("#coef_rayon").text();
+               max_rayon = $("#max_rayon").text();
               $(".coef_non_react").html("<input class='input_modif coef_non_react_change' type='number' value='"+ coef_non_react +"'>");
               $("#rayon_km").html("<input type='number' class='input_modif' value='"+ rayon_km +"'>");
               $(".coef_react").html("<input type='number' class='input_modif coef_react_change' value='"+ coef_react +"'>");
