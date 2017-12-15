@@ -42,6 +42,24 @@
 		
 		return json_encode($listePoi);
 	}
+
+	function getPoiLienByTitulaire($poi) //$poi = format JSON
+	{
+		include("connexionBddErp.php");
+
+		$poi = json_decode($poi);
+
+		$listePoi = array();
+		$req = $bddErp->prepare("SELECT ag_poi.id FROM ag_poi left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
+		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
+		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1' AND ag_poi.atr_ui = ? AND ag_poi.\"ft_numero_demande_42C\" = ? AND ag_poi.\"ft_numero_demande_42C\" IS NOT NULL AND ag_poi.\"ft_numero_demande_42C\" != '' AND ag_poi.id != ?");
+		$req->execute(array($poi->atr_ui, $poi->ft_titulaire_client, $poi->id));
+		while($data = $req->fetch())
+		{
+			array_push($listePoi, json_decode(getPoiById($data["id"])));
+		}
+		return json_encode($listePoi);
+	}
 	
 	function getListeSites()
 	{
@@ -1172,6 +1190,7 @@
 			$poi->ft_date_limite_realisation = $data["ft_date_limite_realisation"];
 			$poi->create_date = $data["create_date"];
 			$poi->id = $data["id"];
+
 			if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
 			{
 				$poi->reactive = true;
