@@ -170,17 +170,28 @@ $(".color-picker").spectrum({
 });
 </script>
 <script>
-$("#config_modify").click(function(){
-              var coef_non_react = $("#coef_non_react").text();
+    var coef_non_react = $("#coef_non_react").text();
               var coef_react = $("#coef_react").text();
               var rayon_km = $("#rayon_km").text();
               var coef_rayon = $("#coef_rayon").text();
               var max_rayon = $("#max_rayon").text();
+              var max_day = $("#max_day").text();
+              var max_week = $("#max_week").text();
+$("#config_modify").click(function(){
+               coef_non_react = $("#coef_non_react").text();
+               coef_react = $("#coef_react").text();
+               rayon_km = $("#rayon_km").text();
+               coef_rayon = $("#coef_rayon").text();
+               max_rayon = $("#max_rayon").text();
+               max_day = $("#max_day").text();
+               max_week = $("#max_week").text();
               $(".coef_non_react").html("<input class='input_modif coef_non_react_change' type='number' value='"+ coef_non_react +"'>");
               $("#rayon_km").html("<input type='number' class='input_modif' value='"+ rayon_km +"'>");
               $(".coef_react").html("<input type='number' class='input_modif coef_react_change' value='"+ coef_react +"'>");
               $("#coef_rayon").html("<input type='number' class='input_modif' value='"+ coef_rayon +"'>");
               $("#max_rayon").html("<input type='number' class='input_modif' value='"+ max_rayon +"'>");
+              $("#max_day").html("<input type='number' class='input_modif' value='"+ max_day +"'>");
+              $("#max_week").html("<input type='number' class='input_modif' value='"+ max_week +"'>");
               $("#config_modify").addClass("hide");
               $("#config_valid").removeClass("hide");
               $("#config_cancel").removeClass("hide");
@@ -199,11 +210,15 @@ $("#config_modify").click(function(){
                var rayon_km_new = $("#rayon_km").children().val();
                var coef_rayon_new = $("#coef_rayon").children().val();
                var max_rayon_new = $("#max_rayon").children().val();
+               var max_day_new = $("#max_day").children().val();
+               var max_week_new = $("#max_week").children().val();
                 $(".coef_non_react").html(coef_non_react_new);
               $("#rayon_km").html(rayon_km_new);
               $(".coef_react").html(coef_react_new);
               $("#coef_rayon").html(coef_rayon_new);
               $("#max_rayon").html(max_rayon_new);
+              $("#max_week").html(max_week_new);
+              $("#max_day").html(max_day_new);
               $("#config_modify").removeClass("hide");
               $("#config_valid").addClass("hide");
               $("#config_cancel").addClass("hide");
@@ -212,7 +227,9 @@ $("#config_modify").click(function(){
                   coef_react: coef_react_new,
                   rayon_km_new: rayon_km_new,
                   coef_rayon_new: coef_rayon_new,
-                  max_rayon_new: max_rayon_new
+                  max_rayon_new: max_rayon_new,
+                  max_day: max_day_new,
+                  max_week: max_week_new
               };
               var modif_json_string = JSON.stringify(modif_json);
               console.log(modif_json_string);
@@ -228,6 +245,8 @@ $("#config_modify").click(function(){
               $("#rayon_km").html(rayon_km);
               $("#coef_rayon").html(coef_rayon);
               $("#max_rayon").html(max_rayon);
+              $("#max_day").html(max_day);
+              $("#max_week").html(max_week);
               $("#config_modify").removeClass("hide");
               $("#config_valid").addClass("hide");
               $("#config_cancel").addClass("hide");   
