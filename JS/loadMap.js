@@ -85,6 +85,7 @@
             poi_id: poi.id,
             title: poi.ft_numero_oeie
           });
+          
           google.maps.event.addListener(map, 'click', function(e){
             iw.close();
           });
