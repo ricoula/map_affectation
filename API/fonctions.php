@@ -1263,4 +1263,61 @@
 		}
 	}
 
+	function getCompetenceByCaffId($idCaff)
+	{
+		include("connexionBddErp.php");
+		$listcomp = array();
+		$req = $bddErp->prepare("SELECT employee_id,competence_id,name as competence_name FROM m2m__hr_employee__ag_competence
+		left join ag_competence on m2m__hr_employee__ag_competence.competence_id = ag_competence.id
+		where employee_id = ?");
+		$req->execute(array($idCaff));
+		while($data = $req->fetch())
+		{
+			if($data['competence_name'] == 'Fo & Cu'){
+				$data['competence_name'] = 'Focu';
+			}
+			array_push($listcomp,$data['competence_name']);
+		}
+		return json_encode($listcomp);
+	}
+
+	function getActivePoiByCaffId($idCaff)
+	{
+		$color = dechex(mt_rand(0,16777215));
+		$color = str_pad($color,6,'0');
+		include("connexionBddErp.php");
+		$listpoi = array();
+		$req = $bddErp->prepare("select ag_poi.id,ft_numero_oeie,ft_longitude,ft_latitude,account_analytic_account.name from ag_poi
+left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
+where ft_etat = '1' and atr_caff_traitant_id = ? and ft_longitude is not null and ft_longitude != 0
+");
+$req->execute(array($idCaff));
+while($data = $req->fetch())
+{
+
+	$poi = (object) array();
+	$poi->position = (object) array();
+	$poi->position->lat = floatval($data['ft_longitude']);
+	$poi->position->lng = floatval($data['ft_latitude']);
+	$poi->title = $data['ft_numero_oeie'];
+	$poi->icon = (object) array();
+	$poi->icon->path = 0;
+	$poi->icon->fillColor = '#'.$color;
+	$poi->icon->fillOpacity = 1;
+	$poi->icon->strokeColor = 'black';
+	$poi->icon->strokeWeight = 1;
+	$poi->icon->scale = 5;
+
+	// path: google.maps.SymbolPath.CIRCLE,
+	// fillColor: color,
+	// fillOpacity: 1,
+	// strokeColor: strokecolorpoi,
+	// strokeWeight: strokeweightpoi,
+	// scale: scalepoi,
+
+	array_push($listpoi,$poi);
+}
+return json_encode($listpoi);
+	}
+
 ?>

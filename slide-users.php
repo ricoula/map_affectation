@@ -24,6 +24,7 @@
         <?php
         foreach($caffs as $caff)
         {
+
             if($caff->id != 326)
             {
                 if($caff->ag_coeff_traitement != null)
@@ -39,16 +40,17 @@
                     $caff->ag_coeff_traitement = "0%";
                 }
                 $formation = getFormationCaff($caff->id);
+                $list_comp = json_decode(getCompetenceByCaffId($caff->id));
                 $caff->ui = json_decode(getUiBySite($caff->site));
                 ?>
                 <div class="input-group users-card-caff card-<?php echo $caff->ui->ft_zone ?>" id="<?php echo urlencode(json_encode($caff)) ?>" >
                     <label class="input-group-addon imageCaff" style='background-image: url("img/inconnu.jpg"); background-size: 100px 100px; width:100px; height:100px;' id="imageCaff-<?php echo $caff->id ?>" ></label>
                     <div class="card-block users-card-info" id="">
-                        <h4 class="users-name"><?php echo $caff->name_related ?></span><?php if(in_array($caff->id, $listeCaffsConges)){ ?><span class="label label-warning pull-right users-state">Congé</span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
+                        <h4 class="users-name"><?php echo $caff->name_related ?> <?php foreach($list_comp as $comp){echo '<label class="comp_1 comp_'.$comp.'" data-toggle="tooltip" data-placement="top" title="'.$comp.'"></label>';}?></span><?php if(in_array($caff->id, $listeCaffsConges)){ ?><span class="label label-warning pull-right users-state">Congé</span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
                         <h6 class="users-site"><?php echo $caff->site ?><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
                         <!--<h6 class="users-charge">Charge: <span class="label label-danger users-charge-count">123</span><button class="btn btn-info btn-xs pull-right users-button-poi" id="<?php /*echo $caff->id*/ ?>">Afficher POI</button></h6>-->
                         <h6 class="users-charge">Charge: <span data-toggle="tooltip" data-placement="top" title="(nb_poi_reactives + (nb_poi_non_reactives * coef_poi_non_reactives)) * (1 / coef_charge)
-                        = (<?php echo $caff->reactive ?> + (<?php echo $caff->non_reactive ?> * <?php echo $_GET["coefCharge"] ?>)) * (1 / <?php echo $caff->coefTraitement ?>)" class="label label-danger users-charge-count"><?php echo $caff->chargeInit ?></span><span class="label label-info coef-charge" data-toggle="tooltip" data-placement="right" title="Coef. charge"><?php echo $caff->ag_coeff_traitement ?></span><button id="btnAfficherPoiCaff-<?php echo urlencode($caff->name_related) ?>" class="btn btn-info btn-xs pull-right btnAfficherPoiCaff">Afficher POI</button></h6>
+                        = (<?php echo $caff->reactive ?> + (<?php echo $caff->non_reactive ?> * <?php echo $_GET["coefCharge"] ?>)) * (1 / <?php echo $caff->coefTraitement ?>)" class="label label-danger users-charge-count"><?php echo $caff->chargeInit ?></span><span class="label label-info coef-charge" data-toggle="tooltip" data-placement="right" title="Coef. charge"><?php echo $caff->ag_coeff_traitement ?></span><button id="btnAfficherPoiCaff-<?php echo urlencode($caff->name_related) ?>" caff_id="<?php echo $caff->id; ?>" class="btn btn-info btn-xs pull-right users-button-poi">Afficher POI</button></h6>
                     </div>
                 </div>
                 <?php
@@ -62,12 +64,12 @@
 $('[data-toggle="tooltip"]').tooltip(); 
 </script>
 <script>
-    $(".btnAfficherPoiCaff").click(function(){
-        var caffName = $(this).attr("id").split("-")[1];
-        $("#divlistePoiCaff").load("modaleAfficherAllPoiCaff.php?caff_name=" + caffName, function(){
-            $("#listePoiCaff").modal("show");
-        });
-    });
+    // $(".btnAfficherPoiCaff").click(function(){
+    //     var caffName = $(this).attr("id").split("-")[1];
+    //     $("#divlistePoiCaff").load("modaleAfficherAllPoiCaff.php?caff_name=" + caffName, function(){
+    //         $("#listePoiCaff").modal("show");
+    //     });
+    // });
     $("#allUi").click(function(){
         if($(this).hasClass("btn-success"))
         {
@@ -110,27 +112,64 @@ $('[data-toggle="tooltip"]').tooltip();
     });
 </script>
 <script>
+    var list_markers = new Object();
 $(".users-button-poi").click(function(){
     var caff_id = $(this).attr("caff_id");
+
     if($(this).hasClass("btn btn-info")){
         $(this).removeClass("btn btn-info");
         $(this).addClass("btn btn-default");
         $(this).text("Cacher POI");
-        // var myLatLng = new google.maps.LatLng(28.617161,77.208111);
-        // var marker = new google.maps.Marker({
-        //   position:  myLatLng,
-        //   map: map,
-        //   title: 'Hello World!'
-        // });
+        
+        $.post( "API/getActivePoiByCaffId.php",{caff_id: caff_id}, function(data) {
+            var test = JSON.parse(data);
+            test.forEach(function(poi){
+                console.log(poi);
+               var marker = new google.maps.Marker(poi);
+               console.log(marker);
+               if(list_markers[caff_id] == null)
+               {
+                    list_markers[caff_id] = new Array();
+               }
+               list_markers[caff_id].push(marker);
+              
+            });
+            for(var key in list_markers)
+            {
+                if(key == caff_id)
+                {
+                    list_markers[key].forEach(function(mkr){
+                        mkr.setMap(map);
+                    });
+                }
+                
+            }
+            /*list_markers[caff_id].forEach(function(mkr){
+                mkr.setMap(map);
+            })*/
+            
+        })
     }
     else
     {
         $(this).removeClass("btn btn-default");
         $(this).addClass("btn btn-info");
         $(this).text("Afficher POI");
+        for(var key in list_markers)
+            {
+                if(key == caff_id)
+                {
+                    list_markers[key].forEach(function(mkr){
+                        mkr.setMap(null);
+                    });
+                }
+                
+            }
+        /*markers.forEach(function(mkr){
+                mkr.setMap(null);
+            })*/
     }
-    //console.log(caff_id);
-    $.getJSON("get")
+    console.log(caff_id);
 });
 </script>
 <script>
@@ -152,4 +191,14 @@ $(".users-formation").click(function(){
         $.post("API/addRemoveFormationByCaffId.php", {caff_id: caff_id, state:"NON"});
         }
 })
+</script>
+<script>
+  $.post('API/getConfigById.php', {utilisateur_id: $("#user_id").val()},function(data){
+    config = JSON.parse(JSON.parse(data));
+  });
+    $(".comp_Client").css({"backgroundColor":config.filtercolorclient});
+    $(".comp_Immo").css({"backgroundColor":config.filtercolorimmo});
+    $(".comp_Focu").css({"backgroundColor":config.filtercolorfocu});
+    $(".comp_Dissi").css({"backgroundColor":config.filtercolordissi});
+    $(".comp_Coordi").css({"backgroundColor":config.filtercolorcoord});
 </script>
