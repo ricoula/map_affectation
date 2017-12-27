@@ -20,9 +20,9 @@
       <input type="hidden" id="coefPoiProxi" name="coefPoiProxi" value="<?php echo $config->coef_rayon_new ?>" />
       <input type="hidden" id="coefPoiClient" name="coefPoiClient" value="<?php echo $config->coef_react ?>" />
       <input type="hidden" id="coefCharge" name="coefCharge" value="<?php echo $config->coef_non_react ?>" />
-      <input type="hidden" id="limiteAffectationJour" name="limiteAffectationJour" value="3" />
-      <input type="hidden" id="limiteAffectationSemaine" name="limiteAffectationSemaine" value="10" />
-      <input type="hidden" id="limiteMaxCalcul" name="limiteMaxCalcul" value="20" />
+      <input type="hidden" id="limiteAffectationJour" name="limiteAffectationJour" value="<?php echo $config->max_day ?>" />
+      <input type="hidden" id="limiteAffectationSemaine" name="limiteAffectationSemaine" value="<?php echo $config->max_week ?>" />
+      <input type="hidden" id="limiteMaxCalcul" name="limiteMaxCalcul" value="<?php echo $config->max_rayon_new ?>" />
       <?php
     }
     else{
@@ -111,9 +111,9 @@
          <div class="modal-body">
             <h4>Algorithme de calcul de charge</h4>
             <p class="color-red">Attention la modification de ce calcul influencera les affectations futures</p>
-            <p>((NbPoiReactive * <label class="color-grey coef_react" id="coef_react">0.8</label> + NbPoiNonReactive * <label class="color-purple coef_non_react" id="coef_non_react">0.1</label>) * CoefCaff) + (%Retard * NbPoiReactive * <label class="color-grey coef_react" id="coef_react">0.8</label>) - (NbPoiRayon(<label class="color-red" id="rayon_km">20</label>km) * <label class="color-yellow" id="coef_rayon">0.5</label>)->MAX(<label class="color-green" id="max_rayon">20</label>) + (NbPoiReactiveSimu * <label class="color-grey coef_react" id="coef_react">0.8</label> + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react">0.1</label>) </p>
-            <p>Nombre de POI réactive MAX par jour: <label id="max_day">5</label></p>
-            <p>Nombre de POI réactive MAX par semaine: <label id="max_week">15</label></p>
+            <p>((NbPoiReactive * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label> + NbPoiNonReactive * <label class="color-purple coef_non_react" id="coef_non_react"><?php echo $config->coef_non_react ?></label>) * CoefCaff) + (%Retard * NbPoiReactive * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label>) - (NbPoiRayon(<label class="color-red" id="rayon_km"><?php echo $config->max_rayon_new ?></label>km) * <label class="color-yellow" id="coef_rayon"><?php echo $config->coef_rayon_new ?></label>)->MAX(<label class="color-green" id="max_rayon"><?php echo $config->max_rayon_new ?></label>) + (NbPoiReactiveSimu * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label> + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react"><?php echo $config->coef_non_react ?></label>) </p>
+            <p>Nombre de POI réactive MAX par jour: <label id="max_day"><?php echo $config->max_day ?></label></p>
+            <p>Nombre de POI réactive MAX par semaine: <label id="max_week"><?php echo $config->max_week ?></label></p>
 
          </div>
          <div class="modal-footer">
