@@ -24,6 +24,7 @@
         <?php
         foreach($caffs as $caff)
         {
+
             if($caff->id != 326)
             {
                 if($caff->ag_coeff_traitement != null)
@@ -39,12 +40,13 @@
                     $caff->ag_coeff_traitement = "0%";
                 }
                 $formation = getFormationCaff($caff->id);
+                $list_comp = json_decode(getCompetenceByCaffId($caff->id));
                 $caff->ui = json_decode(getUiBySite($caff->site));
                 ?>
                 <div class="input-group users-card-caff card-<?php echo $caff->ui->ft_zone ?>" id="<?php echo urlencode(json_encode($caff)) ?>" >
                     <label class="input-group-addon imageCaff" style='background-image: url("img/inconnu.jpg"); background-size: 100px 100px; width:100px; height:100px;' id="imageCaff-<?php echo $caff->id ?>" ></label>
                     <div class="card-block users-card-info" id="">
-                        <h4 class="users-name"><?php echo $caff->name_related ?></span><?php if(in_array($caff->id, $listeCaffsConges)){ ?><span class="label label-warning pull-right users-state">Congé</span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
+                        <h4 class="users-name"><?php echo $caff->name_related ?> <?php foreach($list_comp as $comp){echo '<label class="comp_1 comp_'.$comp.'" data-toggle="tooltip" data-placement="top" title="'.$comp.'"></label>';}?></span><?php if(in_array($caff->id, $listeCaffsConges)){ ?><span class="label label-warning pull-right users-state">Congé</span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
                         <h6 class="users-site"><?php echo $caff->site ?><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
                         <!--<h6 class="users-charge">Charge: <span class="label label-danger users-charge-count">123</span><button class="btn btn-info btn-xs pull-right users-button-poi" id="<?php /*echo $caff->id*/ ?>">Afficher POI</button></h6>-->
                         <h6 class="users-charge">Charge: <span data-toggle="tooltip" data-placement="top" title="(nb_poi_reactives + (nb_poi_non_reactives * coef_poi_non_reactives)) * (1 / coef_charge)
@@ -152,4 +154,14 @@ $(".users-formation").click(function(){
         $.post("API/addRemoveFormationByCaffId.php", {caff_id: caff_id, state:"NON"});
         }
 })
+</script>
+<script>
+  $.post('API/getConfigById.php', {utilisateur_id: $("#user_id").val()},function(data){
+    config = JSON.parse(JSON.parse(data));
+  });
+    $(".comp_Client").css({"backgroundColor":config.filtercolorclient});
+    $(".comp_Immo").css({"backgroundColor":config.filtercolorimmo});
+    $(".comp_Focu").css({"backgroundColor":config.filtercolorfocu});
+    $(".comp_Dissi").css({"backgroundColor":config.filtercolordissi});
+    $(".comp_Coordi").css({"backgroundColor":config.filtercolorcoord});
 </script>

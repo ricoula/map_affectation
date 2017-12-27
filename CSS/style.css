@@ -341,3 +341,12 @@ color: grey;
 {
     width:1480px;
 }
+.comp_1
+{
+  width:10px;
+  height:10px;
+  border:1px solid black;
+  border-radius:25%;  
+  margin-right:2px;
+  opacity:0.9;
+}

@@ -1263,4 +1263,21 @@
 		}
 	}
 
+	function getCompetenceByCaffId($idCaff)
+	{
+		include("connexionBddErp.php");
+		$listcomp = array();
+		$req = $bddErp->prepare("SELECT employee_id,competence_id,name as competence_name FROM m2m__hr_employee__ag_competence
+		left join ag_competence on m2m__hr_employee__ag_competence.competence_id = ag_competence.id
+		where employee_id = ?");
+		$req->execute(array($idCaff));
+		while($data = $req->fetch())
+		{
+			if($data['competence_name'] == 'Fo & Cu'){
+				$data['competence_name'] = 'Focu';
+			}
+			array_push($listcomp,$data['competence_name']);
+		}
+		return json_encode($listcomp);
+	}
 ?>
