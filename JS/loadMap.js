@@ -131,7 +131,7 @@
                     });
                 });
 
-          $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val()}, function(data){
+          $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val()}, function(data){
             //console.log(data);
             var caff = JSON.parse(data);
             $("#rightClickPoi_" + marker.poi_id).removeClass("glyphicon glyphicon-refresh gly-spin").addClass("label label-info").text(caff.name_related);
@@ -287,12 +287,13 @@
                                 listeLiensPoi += " <span class='glyphicon glyphicon-link' data-toggle='tooltip' title='" + thisTitle + "' data-placement='right'></span><sup>" + tab.length + "</sup>";
                             }
                               y++;
-                              
+
                             $.ajax({
                                 type: 'POST',
                                 url: "API/getAffectationAuto.php",
-                                data: {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_poi_client: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val()},// liste_caffs_simulation: listeCaffsSimulation},
+                                data: {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val()},// liste_caffs_simulation: listeCaffsSimulation},
                                 success: function(data2){
+                                    console.log(data2);
                                     i++;
                                     
                                     //console.log(data2);
@@ -330,14 +331,14 @@
                                                     {
                                                         //console.log("AVANT +1 :", caffSimu.charge_totale);
                                                         caffSimu.charge_totale = Number(caffSimu.charge_totale);
-                                                        caffSimu.charge_totale += 1;
+                                                        caffSimu.charge_totale += Number($("#coefPoiClient").val());
                                                         //console.log("APRES +1 :", caffSimu.charge_totale);
                                                         if(caffSimu.charge_simu == null)
                                                         {
-                                                            caffSimu.charge_simu = 1;
+                                                            caffSimu.charge_simu = Number($("#coefPoiClient").val());
                                                         }
                                                         else{
-                                                            caffSimu.charge_simu += 1;
+                                                            caffSimu.charge_simu += Number($("#coefPoiClient").val());
                                                         }
                                                     }
                                                     else{
@@ -347,10 +348,10 @@
                                                         //console.log("APRES +0.5 :", caffSimu.charge_totale)
                                                         if(caffSimu.charge_simu == null)
                                                         {
-                                                            caffSimu.charge_simu = 0.1;
+                                                            caffSimu.charge_simu = Number($("#coefCharge").val());
                                                         }
                                                         else{
-                                                            caffSimu.charge_simu += 0.1;
+                                                            caffSimu.charge_simu += Number($("#coefCharge").val());
                                                         }
                                                     }
                                                 });
@@ -386,14 +387,14 @@
                                             {
                                                 if(poi.affectationAuto.listePoiTitulaire != null)
                                                 {
-                                                    optionElt += "<option value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
+                                                    optionElt += "<option value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
                                                 }
                                                 else{
-                                                    optionElt += "<option value='caff-" + ceCaff.id + "' selected style='color:black' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
+                                                    optionElt += "<option value='caff-" + ceCaff.id + "' selected style='color:black' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
                                                 }
                                             }
                                             else{
-                                                optionElt += "<option value='caff-" + ceCaff.id + "' style='color:black' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
+                                                optionElt += "<option value='caff-" + ceCaff.id + "' style='color:black' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
                                             }
 
                                         //}

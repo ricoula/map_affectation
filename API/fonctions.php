@@ -893,10 +893,11 @@
 		return json_encode($caff);
 	}
 	
-	function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefNbPoiClient, $coefCharge, $limiteJour, $limiteSemaine)//, $listeCaffsSimulation) // $listeCaffsSimulation (facultatif) = array en json
+	function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefChargeReactive, $coefCharge, $limiteJour, $limiteSemaine, $limiteMaxCalcul)//, $listeCaffsSimulation) // $listeCaffsSimulation (facultatif) = array en json
 	{
 		include("connexionBddErp.php");
 		include("connexionBdd.php");
+		include("connexionBddMailAuto.php");
 		
 		$caffAuto = null;
 		
@@ -905,6 +906,15 @@
 		/*$coefNbPoiProimite = 0.5;
 		$coefNbPoiClient = 0.8;
 		$coefCharge = 0.5;*/
+		
+		$listePoiBleues = array();
+        $req = $bddMail->query("select poi from relance where date_expiration >= NOW()");
+        while($data = $req->fetch())
+        {
+            array_push($listePoiBleues, $data["poi"]);
+        }
+        
+        $listePoiBleues = implode(", ", $listePoiBleues);
 		
 		$poi = json_decode(getPoiById($idPoi));
 		
@@ -921,9 +931,33 @@
 		
 		$caffTitulaireAuto = false; //Pour savoir si un caff est affilié ou non au titulaire de la poi
 		
-		$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, ((reactive + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement)) charge_initiale, ((reactive + (non_reactive * ".$coefCharge.")) 
-        - ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.")
-		+ ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND \"ft_numero_demande_42C\" = '".$poi->ft_titulaire_client."' AND \"ft_numero_demande_42C\" IS NOT NULL AND \"ft_numero_demande_42C\" != '' AND \"ft_numero_demande_42C\" != 'suppr. CNIL') * ".$coefNbPoiClient.")
+		$globalDebut = "select atr.atr_caff_traitant_id, atr.atr_sous_domaine_id,atr.id,atr.atr_ui,atr.partner,atr.ft_numero_oeie,atr.ft_oeie_dre,atr.name as domaine,account_analytic_account.name as sous_domaine,atr.ft_pg, CASE WHEN LENGTH(ft_sous_justification_oeie) = 2 THEN ft_sous_justification_oeie ELSE 'Pas de SJ' END AS ft_sous_justification_oeie, atr.ft_libelle_commune,atr.ft_libelle_de_voie,atr.name_related,atr.work_email,atr.mobile_phone,atr.ft_commentaire_creation_oeie from(
+                select ag_poi.atr_caff_traitant_id, ag_poi.atr_sous_domaine_id,ag_poi.id,ag_poi.atr_ui,res_partner.name as partner,ag_poi.ft_oeie_dre,ag_poi.ft_numero_oeie,account_analytic_account.name,ag_poi.ft_pg,ag_poi.ft_sous_justification_oeie,ag_poi.ft_libelle_commune,ag_poi.ft_libelle_de_voie,hr_employee.name_related,hr_employee.work_email,hr_employee.mobile_phone,ag_poi.ft_commentaire_creation_oeie from ag_poi
+                left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
+                left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
+                left join res_partner on ag_poi.res_partner_id = res_partner.id
+                where ft_etat = '1' and name_related is not null and ag_poi.atr_caff_traitant_id = ";
+		//idCaff entre
+		$globalFin = " and work_email is not null and ag_poi.ft_numero_oeie not like '%MBB%')atr
+                left join account_analytic_account on atr.atr_sous_domaine_id = account_analytic_account.id
+                order by ft_oeie_dre";
+		
+		if($listePoiBleues != null && $listePoiBleues != "")
+        {
+            /*$requeteRetard = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) and id not in (".$listePoiBleues.") then 1 end as dre_ko,case when ft_oeie_dre > NOW() or id in (".$listePoiBleues.") then 1 end as dre_ok from (".$global.")dre)dre2 group by atr_caff_traitant_id)";*/
+			$debRequete = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) and id not in (".$listePoiBleues.") then 1 end as dre_ko,case when ft_oeie_dre > NOW() or id in (".$listePoiBleues.") then 1 end as dre_ok from (";
+			//global entre
+			$finRequete = ")dre)dre2 group by atr_caff_traitant_id)";
+        }
+        else{
+            /*$requeteRetard = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) then 1 end as dre_ko,case when ft_oeie_dre > NOW() then 1 end as dre_ok from (".$global.")dre)dre2 group by atr_caff_traitant_id)";*/
+			$debRequete = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) then 1 end as dre_ko,case when ft_oeie_dre > NOW() then 1 end as dre_ok from (";
+			//global entre
+			$finRequete = ")dre)dre2 group by atr_caff_traitant_id)";
+        }
+		
+		$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, (((reactive * ".$coefChargeReactive.") + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement)) charge_initiale, (CASE WHEN ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") > ".$limiteMaxCalcul." THEN ".$limiteMaxCalcul." ELSE ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") END)charge_rayon, ((((reactive * ".$coefChargeReactive.") + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement))
+        - CASE WHEN ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") > ".$limiteMaxCalcul." THEN ".$limiteMaxCalcul." ELSE ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") END
         )charge_totale 
 		FROM (select id, t3.ag_coeff_traitement, t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.site_id, t3.agence,case when t3.reactive is null then 0 else t3.reactive end,
 		case when t3.non_reactive is null then 0 else t3.non_reactive end from
@@ -960,12 +994,15 @@
 				$caff->agence = $data["agence"];
 				$caff->reactive = $data["reactive"];
 				$caff->non_reactive = $data["non_reactive"];
+				$caff->charge_rayon = $data["charge_rayon"];
 				$caff->charge_totale = $data["charge_totale"];
+				$caff->tauxRetard = (json_decode(getStatsCaff($data["id"])) * $caff->reactive * $coefChargeReactive);
+				$caff->charge_totale += $caff->tauxRetard;
 				$caff->charge_initiale = $data["charge_initiale"];
 				$caff->id = $data["id"];
 				
 				$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
-				$nbPoiEnRetard = 0;
+				/*$nbPoiEnRetard = 0;
 				$dateAjd = new DateTime("now");
 				foreach($listePoi as $lPoi)
 				{
@@ -982,7 +1019,7 @@
 				else{
 					$tauxDre = 0;
 				}
-				$caff->charge_totale += ($tauxDre * $caff->reactive);
+				$caff->charge_totale += ($tauxDre * $caff->reactive);*/
 
 				$listeCaffsTitulaireAffectationAuto = array();
 				$listeCaffsTitulaireAffectationAutoNot1 = array();
@@ -1099,6 +1136,8 @@
 									$ceCaff->charge_initiale = $caff->charge_initiale;
 									$ceCaff->name_related = $caff->name_related;
 									$ceCaff->charge_totale = $caff->charge_totale;
+									$ceCaff->tauxRetard = $caff->tauxRetard;
+									$ceCaff->charge_rayon = $caff->charge_rayon;
 									array_push($listeCaffs, $ceCaff);
 
 									/*$caff = (object) array();
@@ -1262,5 +1301,50 @@
 			return "NON";
 		}
 	}
+	
+	
+	function getStatsCaff($idCaff)
+    {
+        include("connexionBddMailAuto.php");
+        include("connexionBddErp.php");
+		$statistique = 0;
+        $global = "select atr.atr_caff_traitant_id, atr.atr_sous_domaine_id,atr.id,atr.atr_ui,atr.partner,atr.ft_numero_oeie,atr.ft_oeie_dre,atr.name as domaine,account_analytic_account.name as sous_domaine,atr.ft_pg, CASE WHEN LENGTH(ft_sous_justification_oeie) = 2 THEN ft_sous_justification_oeie ELSE 'Pas de SJ' END AS ft_sous_justification_oeie, atr.ft_libelle_commune,atr.ft_libelle_de_voie,atr.name_related,atr.work_email,atr.mobile_phone,atr.ft_commentaire_creation_oeie from(
+                select ag_poi.atr_caff_traitant_id, ag_poi.atr_sous_domaine_id,ag_poi.id,ag_poi.atr_ui,res_partner.name as partner,ag_poi.ft_oeie_dre,ag_poi.ft_numero_oeie,account_analytic_account.name,ag_poi.ft_pg,ag_poi.ft_sous_justification_oeie,ag_poi.ft_libelle_commune,ag_poi.ft_libelle_de_voie,hr_employee.name_related,hr_employee.work_email,hr_employee.mobile_phone,ag_poi.ft_commentaire_creation_oeie from ag_poi
+                left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
+                left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
+                left join res_partner on ag_poi.res_partner_id = res_partner.id
+                where ft_etat = '1' and name_related is not null and ag_poi.atr_caff_traitant_id = ".$idCaff." and work_email is not null and ag_poi.ft_numero_oeie not like '%MBB%' AND account_analytic_account.name IN ('Client', 'FO & CU'))atr
+                left join account_analytic_account on atr.atr_sous_domaine_id = account_analytic_account.id
+                order by ft_oeie_dre";
+        
+        $listePoiBleues = array();
+        $req = $bddMail->query("select poi from relance where date_expiration >= NOW()");
+        while($data = $req->fetch())
+        {
+            array_push($listePoiBleues, $data["poi"]);
+        }
+        
+        $listePoiBleues = implode(", ", $listePoiBleues);
+
+        if($listePoiBleues != null && $listePoiBleues != "")
+        {
+            $req = $bddErp->query("select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) and id not in (".$listePoiBleues.") then 1 end as dre_ko,case when ft_oeie_dre > NOW() or id in (".$listePoiBleues.") then 1 end as dre_ok from (".$global.")dre)dre2 group by atr_caff_traitant_id");
+            while($data = $req->fetch())
+            {
+                $statistique = round($data["dre_ko"]/($data["dre_ko"] + $data["dre_ok"]), 2);
+            }
+        }
+        else{
+            $req = $bddErp->query("select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) then 1 end as dre_ko,case when ft_oeie_dre > NOW() then 1 end as dre_ok from (".$global.")dre)dre2 group by atr_caff_traitant_id");
+            while($data = $req->fetch())
+            {
+                $statistique = round($data["dre_ko"]/($data["dre_ko"] + $data["dre_ok"]), 2);
+            }
+        }
+        
+        return json_encode($statistique);
+    }
+	
+	
 
 ?>
