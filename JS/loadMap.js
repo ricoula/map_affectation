@@ -359,8 +359,13 @@
                                         listeCaffsSimulation.forEach(function(caffSimul){
                                             if(unCaff.id == caffSimul.id)
                                             {
-                                                unCaff.nbAffectationsJour += caffSimul.listePoiSimulation.length;
-                                                unCaff.nbAffectationsSemaine += caffSimul.listePoiSimulation.length;
+                                                caffSimul.listePoiSimulation.forEach(function(poiSim){
+                                                    if(poi.domaine.toUpperCase() == "FO & CU" || poi.domaine.toUpperCase() == "CLIENT")
+                                                    {
+                                                        unCaff.nbAffectationsJour ++;
+                                                        unCaff.nbAffectationsSemaine ++;
+                                                    }
+                                                });
 
                                                 if(unCaff.nbAffectationsJour > $("#limiteAffectationJour").val() || unCaff.nbAffectationsSemaine > $("#limiteAffectationSemaine").val())
                                                 {
