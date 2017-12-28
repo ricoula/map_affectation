@@ -1128,7 +1128,7 @@
 				}
 					
 									
-					$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= (NOW() - interval '1 day')");
+					$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= (NOW() - interval '1 day') AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
 					$req3->execute(array($data["id"]));
 					if($data3 = $req3->fetch())
 					{
@@ -1136,7 +1136,7 @@
 						{
 							$lastMonday = date("Y-m-d",strtotime("last Monday"));
 							
-							$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ?");
+							$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ? AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
 							$req4->execute(array($data["id"], $lastMonday));
 							if($data4 = $req4->fetch())
 							{
@@ -1216,7 +1216,7 @@
 						else{
 							$lastMonday = date("Y-m-d",strtotime("last Monday"));
 							
-							$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ?");
+							$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ? AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
 							$req4->execute(array($data["id"], $lastMonday));
 							if($data4 = $req4->fetch())
 							{
