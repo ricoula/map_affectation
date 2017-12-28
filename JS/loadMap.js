@@ -246,6 +246,7 @@
                         var i = 0;
                         var y = 0;
                         var listeCaffsSimulation = new Array();
+                        var listeClientsAvecListePoiLiee = new Array();
                         listePoi.forEach(function(poi){
                             var listeLiensPoi = "";
                             var nbPoiLien = 0;
@@ -289,6 +290,30 @@
                                 data: {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val()},// liste_caffs_simulation: listeCaffsSimulation},
                                 success: function(data2){
                                     i++;
+                                    var clientDejaDansTab = false;
+
+
+                                    listeClientsAvecListePoiLiee.forEach(function(client){
+                                        if(client.libelle == poi.ft_titulaire_client)
+                                        {
+                                            clientDejaDansTab = true;
+                                        }
+                                    });
+                                    if(clientDejaDansTab)
+                                    {
+                                        listeClientsAvecListePoiLiee.forEach(function(client){
+                                            if(client.libelle == poi.ft_titulaire_client)
+                                            {
+                                                client.listePoi.push(poi.id);
+                                            }
+                                        });
+                                    }
+                                    else{
+                                        var listePoiClient = new Array();
+                                        listePoiClient.push(poi.id);
+                                        var client = {libelle: poi.ft_titulaire_client, listePoi: listePoiClient};
+                                        listeClientsAvecListePoiLiee.push(client);
+                                    }
 
                                     progress = Math.round(((i) / listePoi.length) * 100);  
                                     $("#progress_bar_affect").attr("aria-valuenow", progress);
@@ -376,43 +401,72 @@
                                     });
 
                                     var compare = function(a, b){
-                                        if(a.nbAffectationsJour <= $("#limiteAffectationJour").val() && a.nbAffectationsSemaine <= $("#limiteAffectationSemaine").val())
+                                        if(clientDejaDansTab)
                                         {
-                                            if(a.charge_totale < b.charge_totale)
+                                            listeClientsAvecListePoiLiee.forEach(function(client){
+                                                if(client.libelle == poi.ft_titulaire_client)
+                                                {
+                                                    if(a.id == client.caffAffecte)
+                                                    {
+                                                        return -1;
+                                                    }
+                                                    else{
+                                                        if(b.id == client.caffAffecte)
+                                                        {
+                                                            return 1;
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        }
+                                            if(poi.affectationAuto.listePoiTitulaire != null && (a.id == poi.affectationAuto.id || b.id == poi.affectationAuto.id))
+                                        {
+                                            if(a.id == poi.affectationAuto.id)
                                             {
                                                 return -1;
-                                            }
-                                            else if(a.charge_totale == b.charge_totale)
-                                            {
-                                                return 0;
                                             }
                                             else{
                                                 return 1;
                                             }
                                         }
                                         else{
-                                            if(b.nbAffectationsJour <= $("#limiteAffectationJour").val() && b.nbAffectationsSemaine <= $("#limiteAffectationSemaine").val())
-                                            {
-                                                return 1;
-                                            }
-                                            else{
-                                                if(a.charge_totale < b.charge_totale)
+                                                if(a.nbAffectationsJour <= $("#limiteAffectationJour").val() && a.nbAffectationsSemaine <= $("#limiteAffectationSemaine").val())
                                                 {
-                                                    return -1;
-                                                }
-                                                else if(a.charge_totale == b.charge_totale)
-                                                {
-                                                    return 0;
+                                                    if(a.charge_totale < b.charge_totale)
+                                                    {
+                                                        return -1;
+                                                    }
+                                                    else if(a.charge_totale == b.charge_totale)
+                                                    {
+                                                        return 0;
+                                                    }
+                                                    else{
+                                                        return 1;
+                                                    }
                                                 }
                                                 else{
-                                                    return 1;
+                                                    if(b.nbAffectationsJour <= $("#limiteAffectationJour").val() && b.nbAffectationsSemaine <= $("#limiteAffectationSemaine").val())
+                                                    {
+                                                        return 1;
+                                                    }
+                                                    else{
+                                                        if(a.charge_totale < b.charge_totale)
+                                                        {
+                                                            return -1;
+                                                        }
+                                                        else if(a.charge_totale == b.charge_totale)
+                                                        {
+                                                            return 0;
+                                                        }
+                                                        else{
+                                                            return 1;
+                                                        }
+                                                    }
                                                 }
                                             }
-                                        }
                                         
                                     };
-
-                                   
+                                    
                                     poi.affectationAuto.listeAutresCaffs.sort(compare);
     
                                     cpt = 0;
@@ -445,7 +499,15 @@
                                             }
                                         }
                                         else{
-                                            optionElt += "<option value='caff-" + ceCaff.id + "' style='color:" + color + "' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                            if(poi.affectationAuto.listePoiTitulaire != null)
+                                            {
+                                                optionElt += "<option value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                                //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
+                                            }
+                                            else{
+                                                optionElt += "<option value='caff-" + ceCaff.id + "' style='color:" + color + "' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                            }
+                                            
                                         }
 
                                     //}
@@ -544,6 +606,17 @@
                                             {
                                                 trouve = true;
                                                 caff.listePoiSimulation.push(poi);
+                                                if(!clientDejaDansTab)
+                                                {
+                                                    listeClientsAvecListePoiLiee.forEach(function(client){
+                                                        client.listePoi.forEach(function(poiClient){
+                                                            if(poiClient == poi.id)
+                                                            {
+                                                                client.caffAffecte = caff.id;
+                                                            }
+                                                        });
+                                                    });
+                                                }
                                                 //console.log("POI " + poi.ft_numero_oeie + " : " + caff.name_related);
                                             }
                                         });
@@ -554,6 +627,17 @@
                                         caff.listePoiSimulation = new Array(poi);
                                         //console.log("POI " + poi.ft_numero_oeie + " : " + caff.name_related);
                                         listeCaffsSimulation.push(caff);
+                                        if(!clientDejaDansTab)
+                                        {
+                                            listeClientsAvecListePoiLiee.forEach(function(client){
+                                                client.listePoi.forEach(function(poiClient){
+                                                    if(poiClient == poi.id)
+                                                    {
+                                                        client.caffAffecte = caff.id;
+                                                    }
+                                                });
+                                            });
+                                        }
                                     }
                                 },
                                 async:true
