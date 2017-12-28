@@ -154,16 +154,17 @@
                 aria-valuemin="0" aria-valuemax="100" style="width:0%">
                   0%
                 </div>
-                
               </div>
               <div id="percent">0%</div>
-              
             </div>
             <div id="divListePoiNAUi">
-              
-
                 <div id="resultatsListePoiNA">
                 </div>
+                <div id="affect_btn">
+                <button id="affectationListePoiNA"><span>Affecter </span></button>
+
+                </div>
+                
             </div>
           </div>
         </div>
