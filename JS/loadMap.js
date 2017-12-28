@@ -360,7 +360,7 @@
                                             if(unCaff.id == caffSimul.id)
                                             {
                                                 caffSimul.listePoiSimulation.forEach(function(poiSim){
-                                                    if(poi.domaine.toUpperCase() == "FO & CU" || poi.domaine.toUpperCase() == "CLIENT")
+                                                    if(poiSim.domaine.toUpperCase() == "FO & CU" || poiSim.domaine.toUpperCase() == "CLIENT")
                                                     {
                                                         unCaff.nbAffectationsJour ++;
                                                         unCaff.nbAffectationsSemaine ++;
