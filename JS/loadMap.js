@@ -407,11 +407,8 @@
                                         
                                     };
 
-                                    console.log("/////////////////////");
-                                    console.log(poi.affectationAuto.listeAutresCaffs);
+                                   
                                     poi.affectationAuto.listeAutresCaffs.sort(compare);
-                                    console.log(poi.affectationAuto.listeAutresCaffs);
-                                    console.log("/////////////////////\n\n");
     
                                     cpt = 0;
                                     poi.affectationAuto.listeAutresCaffs.forEach(function(ceCaff){
