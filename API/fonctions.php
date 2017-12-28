@@ -1126,7 +1126,8 @@
 						
 					}
 				}
-				
+					
+									
 					$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= (NOW() - interval '1 day')");
 					$req3->execute(array($data["id"]));
 					if($data3 = $req3->fetch())
@@ -1148,6 +1149,9 @@
 									$ceCaff->charge_totale = $caff->charge_totale;
 									$ceCaff->tauxRetard = $caff->tauxRetard;
 									$ceCaff->charge_rayon = $caff->charge_rayon;
+									$ceCaff->limiteAtteinte = false;
+									$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
+									$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
 									array_push($listeCaffs, $ceCaff);
 
 									/*$caff = (object) array();
@@ -1194,10 +1198,49 @@
 									}
 									
 								}
+								else{
+									$ceCaff = (object) array();
+									$ceCaff->id = $caff->id;
+									$ceCaff->charge_initiale = $caff->charge_initiale;
+									$ceCaff->name_related = $caff->name_related;
+									$ceCaff->charge_totale = $caff->charge_totale;
+									$ceCaff->tauxRetard = $caff->tauxRetard;
+									$ceCaff->charge_rayon = $caff->charge_rayon;
+									$ceCaff->limiteAtteinte = true;
+									$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
+									$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
+									array_push($listeCaffs, $ceCaff);
+								}
+							}
+						}
+						else{
+							$lastMonday = date("Y-m-d",strtotime("last Monday"));
+							
+							$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ?");
+							$req4->execute(array($data["id"], $lastMonday));
+							if($data4 = $req4->fetch())
+							{
+								$ceCaff = (object) array();
+								$ceCaff->id = $caff->id;
+								$ceCaff->charge_initiale = $caff->charge_initiale;
+								$ceCaff->name_related = $caff->name_related;
+								$ceCaff->charge_totale = $caff->charge_totale;
+								$ceCaff->tauxRetard = $caff->tauxRetard;
+								$ceCaff->charge_rayon = $caff->charge_rayon;
+								$ceCaff->limiteAtteinte = true;
+								$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
+								$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
+								array_push($listeCaffs, $ceCaff);
 							}
 						}
 					}
-				
+				if($caffTitulaireAuto == false)
+				{
+					if($caffAuto == null)
+					{
+						$caffAuto = $caff;
+					}
+				}
 			}
 			
 		}
@@ -1206,17 +1249,40 @@
 		if($caffAuto != null)
 		{
 			function comparer($a, $b) {
-				if($a->charge_totale < $b->charge_totale)
+				if($a->limiteAtteinte)
 				{
-					return -1;
-				}
-				elseif($a->charge_totale == $b->charge_totale)
-				{
-					return 0;
+					if($b->limiteAtteinte)
+					{
+						if($a->charge_totale < $b->charge_totale)
+						{
+							return -1;
+						}
+						elseif($a->charge_totale == $b->charge_totale)
+						{
+							return 0;
+						}
+						else{
+							return 1;
+						}
+					}
+					else{
+						return 1;
+					}
 				}
 				else{
-					return 1;
+					if($a->charge_totale < $b->charge_totale)
+					{
+						return -1;
+					}
+					elseif($a->charge_totale == $b->charge_totale)
+					{
+						return 0;
+					}
+					else{
+						return 1;
+					}
 				}
+				
 			}
 			usort($listeCaffs, 'comparer');
 			
@@ -1224,6 +1290,30 @@
 		}
 		
 		return json_encode($caffAuto);
+	}
+	
+	function getNbAffectationsCaffById($idCaff)
+	{
+		include("connexionBdd.php");
+		
+		$nbAffectations = (object) array();
+		
+		$req = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= (NOW() - interval '1 day')");
+		$req->execute(array($idCaff));
+		if($data = $req->fetch())
+		{
+			$nbAffectations->jour = $data["nb_affectations_jour"];
+		}
+
+		$lastMonday = date("Y-m-d",strtotime("last Monday"));				
+		$req = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ?");
+		$req->execute(array($idCaff, $lastMonday));
+		if($data = $req->fetch())
+		{
+			$nbAffectations->semaine = $data["nb_affectations_semaine"];
+		}
+		
+		return json_encode($nbAffectations);
 	}
 	
 	function getPoiNAByUi($ui) //ft_zone

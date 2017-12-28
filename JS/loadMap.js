@@ -296,6 +296,7 @@
                                     $("#progress_bar_affect").css("width", progress+"%");
                                      $("#percent").html(progress+"%");
 
+                                    //console.log(data2);
                                     poi.affectationAuto = JSON.parse(data2);
                                     /*if(poi.affectationAuto == null)
                                     {
@@ -353,49 +354,100 @@
                                                 }
                                             });
                                     });
-        
+
+                                    poi.affectationAuto.listeAutresCaffs.forEach(function(unCaff){
+                                        listeCaffsSimulation.forEach(function(caffSimul){
+                                            if(unCaff.id == caffSimul.id)
+                                            {
+                                                unCaff.nbAffectationsJour += caffSimul.listePoiSimulation.length;
+                                                unCaff.nbAffectationsSemaine += caffSimul.listePoiSimulation.length;
+
+                                                if(unCaff.nbAffectationsJour > $("#limiteAffectationJour").val() || unCaff.nbAffectationsSemaine > $("#limiteAffectationSemaine").val())
+                                                {
+                                                    unCaff.limiteAtteinte = true;
+                                                }
+                                            }
+                                        });
+                                    });
+
                                     var compare = function(a, b){
-                                        if(a.charge_totale < b.charge_totale)
+                                        if(a.nbAffectationsJour <= $("#limiteAffectationJour").val() && a.nbAffectationsSemaine <= $("#limiteAffectationSemaine").val())
                                         {
-                                            return -1;
-                                        }
-                                        else if(a.charge_totale == b.charge_totale)
-                                        {
-                                            return 0;
+                                            if(a.charge_totale < b.charge_totale)
+                                            {
+                                                return -1;
+                                            }
+                                            else if(a.charge_totale == b.charge_totale)
+                                            {
+                                                return 0;
+                                            }
+                                            else{
+                                                return 1;
+                                            }
                                         }
                                         else{
-                                            return 1;
+                                            if(b.nbAffectationsJour <= $("#limiteAffectationJour").val() && b.nbAffectationsSemaine <= $("#limiteAffectationSemaine").val())
+                                            {
+                                                return 1;
+                                            }
+                                            else{
+                                                if(a.charge_totale < b.charge_totale)
+                                                {
+                                                    return -1;
+                                                }
+                                                else if(a.charge_totale == b.charge_totale)
+                                                {
+                                                    return 0;
+                                                }
+                                                else{
+                                                    return 1;
+                                                }
+                                            }
                                         }
+                                        
                                     };
-        
+
+                                    console.log("/////////////////////");
+                                    console.log(poi.affectationAuto.listeAutresCaffs);
                                     poi.affectationAuto.listeAutresCaffs.sort(compare);
+                                    console.log(poi.affectationAuto.listeAutresCaffs);
+                                    console.log("/////////////////////\n\n");
     
                                     cpt = 0;
                                     poi.affectationAuto.listeAutresCaffs.forEach(function(ceCaff){
                                         cpt++;
-                                            if(ceCaff.charge_simu == null)
+                                        if(ceCaff.limiteAtteinte)
+                                        {
+                                            color = "red";
+                                        }
+                                        else{
+                                            color = "black";
+                                        }
+
+                                        if(ceCaff.charge_simu == null)
+                                        {
+                                            ceCaff.charge_simu = 0;
+                                        }
+                                        //console.log("Global = " + ceCaff.chargeGlobale);
+                                        //if(poi.affectationAuto.id == ceCaff.id)
+                                        if(cpt == 1)
+                                        {
+                                            if(poi.affectationAuto.listePoiTitulaire != null)
                                             {
-                                                ceCaff.charge_simu = 0;
-                                            }
-                                            //console.log("Global = " + ceCaff.chargeGlobale);
-                                            //if(poi.affectationAuto.id == ceCaff.id)
-                                            if(cpt == 1)
-                                            {
-                                                if(poi.affectationAuto.listePoiTitulaire != null)
-                                                {
-                                                    optionElt += "<option value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
-                                                    //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
-                                                }
-                                                else{
-                                                    optionElt += "<option value='caff-" + ceCaff.id + "' selected style='color:black' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
-                                                    //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
-                                                }
+                                                optionElt += "<option value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                                //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
                                             }
                                             else{
-                                                optionElt += "<option value='caff-" + ceCaff.id + "' style='color:black' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                                optionElt += "<option value='caff-" + ceCaff.id + "' selected class='" + color + "' style='color:" + color + "' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                                //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
                                             }
+                                        }
+                                        else{
+                                            optionElt += "<option value='caff-" + ceCaff.id + "' style='color:" + color + "' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                        }
 
-                                        //}
+                                    //}
+
                                     });
                                     if(poi.ft_titulaire_client != null && poi.ft_titulaire_client != "")
                                     {
@@ -421,7 +473,13 @@
                                                 $(this).css("color", "green");
                                             }
                                             else{
-                                                $(this).css("color", "black");
+                                                if($(this).children("option:selected").hasClass("red"))
+                                                {
+                                                    $(this).css("color", "red");
+                                                }
+                                                else{
+                                                    $(this).css("color", "black");
+                                                }
                                             }
                                         });
                                         /*if($(".selectAffectationAutoPoi option:selected").hasClass("caffTitulaireAffectAuto"))
@@ -447,7 +505,13 @@
                                                             $(this).css("color", "green");
                                                         }
                                                         else{
-                                                            $(this).css("color", "black");
+                                                            if($(this).children("option:selected").hasClass("red"))
+                                                            {
+                                                                $(this).css("color", "red");
+                                                            }
+                                                            else{
+                                                                $(this).css("color", "black");
+                                                            }
                                                         }
                                                     }
                                                 });
@@ -457,7 +521,13 @@
                                                 $(this).css("color", "green");
                                             }
                                             else{
-                                                $(this).css("color", "black");
+                                                if($(this).children("option:selected").hasClass("red"))
+                                                {
+                                                    $(this).css("color", "red");
+                                                }
+                                                else{
+                                                    $(this).css("color", "black");
+                                                }
                                             }
 
                                             
