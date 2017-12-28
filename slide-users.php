@@ -123,10 +123,11 @@ $(".users-button-poi").click(function(){
         
         $.post( "API/getActivePoiByCaffId.php",{caff_id: caff_id}, function(data) {
             var test = JSON.parse(data);
+        
             test.forEach(function(poi){
-                console.log(poi);
+               
                var marker = new google.maps.Marker(poi);
-               console.log(marker);
+              
                if(list_markers[caff_id] == null)
                {
                     list_markers[caff_id] = new Array();
@@ -149,6 +150,7 @@ $(".users-button-poi").click(function(){
             })*/
             
         })
+        
     }
     else
     {
