@@ -4,7 +4,6 @@
   var mapElement = document.getElementById('map');
   map = new google.maps.Map(mapElement, { center: new google.maps.LatLng(45.6930369, 4.9989082), zoom: 8 });
   //document.getElementById("mapJson").value = JSON.stringify(map);
-  ////console.log(document.getElementById("mapJson").value);
   //$("#mapJson").val(JSON.stringify(map));
   var iw = new google.maps.InfoWindow();
   
@@ -133,22 +132,17 @@
                 });
 
           $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val()}, function(data){
-            //console.log(data);
             var caff = JSON.parse(data);
             $("#rightClickPoi_" + marker.poi_id).removeClass("glyphicon glyphicon-refresh gly-spin").addClass("label label-info").text(caff.name_related);
           });
   
           });
           google.maps.event.addListener(marker, 'spider_click', function(e) {  // 'spider_rightclick', not plain 'click'
-          console.log(marker.poi_id);
           var myUrl = window.location.href;
           myUrl = myUrl.split("?")[0];
           var newUrl = myUrl + "?poi=" + marker.poi_id;
-          //console.log(newUrl);
           history.pushState(null, null, newUrl);
-          
-          
-          //console.log(marker.poi_id);
+
           $("#side_bar").animate({left:'0px'},500);
           $("#glyph").animate({left:'500px'},500);
           
@@ -294,18 +288,16 @@
                                 url: "API/getAffectationAuto.php",
                                 data: {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val()},// liste_caffs_simulation: listeCaffsSimulation},
                                 success: function(data2){
-                                    console.log(data2);
                                     i++;
-                                    
-                                    //console.log(data2);
+
                                     progress = Math.round(((i) / listePoi.length) * 100);  
                                     $("#progress_bar_affect").attr("aria-valuenow", progress);
   
                                     $("#progress_bar_affect").css("width", progress+"%");
                                      $("#percent").html(progress+"%");
-                                     //console.log(progress);
+
                                     poi.affectationAuto = JSON.parse(data2);
-                                    if(poi.affectationAuto == null)
+                                    /*if(poi.affectationAuto == null)
                                     {
                                         console.log(poi);
                                     }
@@ -315,7 +307,7 @@
                                         console.log(poi.affectationAuto);
                                         console.log(poi);
                                         console.log("////////////////////////////////\n\n");
-                                    }
+                                    }*/
 
                                     var optionElt = "";
                                     
@@ -327,6 +319,7 @@
                                             poi.affectationAuto.listeAutresCaffs.forEach(function(caffSimu){
                                                 if(caffSimu.id == caffSimulation.id)
                                                 {
+                                                    
                                                     caffSimulation.listePoiSimulation.forEach(function(poiSimulation){
                                                     if(poiSimulation.reactive)
                                                     {
@@ -376,22 +369,26 @@
                                     };
         
                                     poi.affectationAuto.listeAutresCaffs.sort(compare);
-        
+    
+                                    cpt = 0;
                                     poi.affectationAuto.listeAutresCaffs.forEach(function(ceCaff){
-
+                                        cpt++;
                                             if(ceCaff.charge_simu == null)
                                             {
                                                 ceCaff.charge_simu = 0;
                                             }
                                             //console.log("Global = " + ceCaff.chargeGlobale);
-                                            if(poi.affectationAuto.id == ceCaff.id)
+                                            //if(poi.affectationAuto.id == ceCaff.id)
+                                            if(cpt == 1)
                                             {
                                                 if(poi.affectationAuto.listePoiTitulaire != null)
                                                 {
                                                     optionElt += "<option value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                                    //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
                                                 }
                                                 else{
                                                     optionElt += "<option value='caff-" + ceCaff.id + "' selected style='color:black' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                                    //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
                                                 }
                                             }
                                             else{
@@ -475,15 +472,15 @@
                                             {
                                                 trouve = true;
                                                 caff.listePoiSimulation.push(poi);
+                                                //console.log("POI " + poi.ft_numero_oeie + " : " + caff.name_related);
                                             }
                                         });
                                     }
                                     if(!trouve)
                                     {
                                         var caff = poi.affectationAuto.listeAutresCaffs[0];
-                                        //console.log("NOUVEAU CAFF: " + poi.affectationAuto.listeAutresCaffs[0].name_related);
-                                        //console.log(caff.name_related + " = " + caff.charge_totale);
                                         caff.listePoiSimulation = new Array(poi);
+                                        //console.log("POI " + poi.ft_numero_oeie + " : " + caff.name_related);
                                         listeCaffsSimulation.push(caff);
                                     }
                                 },

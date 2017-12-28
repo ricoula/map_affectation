@@ -917,6 +917,13 @@
         $listePoiBleues = implode(", ", $listePoiBleues);
 		
 		$poi = json_decode(getPoiById($idPoi));
+		if($poi->domaine == "Focu" || $poi->domaine == "FO & CU")
+		{
+			$competence = "Fo & Cu";
+		}
+		else{
+			$competence = $poi->domaine;
+		}
 		
 		$listeSites = json_decode(getSitesByUi($poi->atr_ui));
 		
@@ -974,11 +981,14 @@
 		full join ag_site on hr_employee.ag_site_id = ag_site.id
 		full join ag_agence on hr_employee.ag_agence_id = ag_agence.id
 		full join hr_job on hr_employee.job_id = hr_job.id
-		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
+		FULL JOIN m2m__hr_employee__ag_competence cmp ON cmp.employee_id = hr_employee.id
+		FULL JOIN ag_competence ON ag_competence.id = cmp.competence_id
+		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE') and ag_competence.name = '".$competence."') t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
 		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, t1.site_id, t1.ag_coeff_traitement) t2
 		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name, t2.site_id, t2.ag_coeff_traitement ) t3
 		where name_related is not null AND site_id IN(".$listeIdSites."))caff
         ORDER BY charge_totale");
+		
 		while($data = $req->fetch())
 		{
 			$req2 = $bdd->prepare("SELECT id FROM cds_formation WHERE caff_id = ?");
@@ -1191,6 +1201,7 @@
 			}
 			
 		}
+
 		
 		if($caffAuto != null)
 		{
