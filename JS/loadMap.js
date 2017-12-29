@@ -678,5 +678,26 @@
                 })
             });
           });
+          $("#affectationListePoiNA").click(function(){
+              $("#resultatsListePoiNA").find(".selectAffectationAutoPoi").each(function(){
+                poi_id = $(this).find(":selected").attr("poi_id");
+                poi_num = $(this).find(":selected").attr("poi_num");
+                caff_id = $(this).find(":selected").attr("caff_id");
+                caff_name = $(this).find(":selected").attr("caff_name");
+                poi_domaine = $(this).find(":selected").attr("poi_domaine");
+                postPoiAffect = 0;
+                $.post("API/addPoiAffect.php",{poi_id: poi_id, poi_num: poi_num, poi_domaine: poi_domaine, caff_id: caff_id, caff_name: caff_name}, function(){
+                    postPoiAffect++;
+                    if(postPoiAffect == $(".selectAffectationAutoPoi").length)
+                    {
+                        location.reload();
+                    }
+                });
+                
+            //    console.log(poi_id + " " + poi_num + " " + poi_domaine + " " + caff_id + " " + caff_name);
+                
+                          })
+                          
+          })
     }
     

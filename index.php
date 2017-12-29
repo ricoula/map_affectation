@@ -111,7 +111,7 @@
          <div class="modal-body">
             <h4>Algorithme de calcul de charge</h4>
             <p class="color-red">Attention la modification de ce calcul influencera les affectations futures</p>
-            <p>((NbPoiReactive * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label> + NbPoiNonReactive * <label class="color-purple coef_non_react" id="coef_non_react"><?php echo $config->coef_non_react ?></label>) * CoefCaff) + (%Retard * NbPoiReactive * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label>) - (NbPoiRayon(<label class="color-red" id="rayon_km"><?php echo $config->max_rayon_new ?></label>km) * <label class="color-yellow" id="coef_rayon"><?php echo $config->coef_rayon_new ?></label>)->MAX(<label class="color-green" id="max_rayon"><?php echo $config->max_rayon_new ?></label>) + (NbPoiReactiveSimu * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label> + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react"><?php echo $config->coef_non_react ?></label>) </p>
+            <p>((NbPoiReactive * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label> + NbPoiNonReactive * <label class="color-purple coef_non_react" id="coef_non_react"><?php echo $config->coef_non_react ?></label>) * CoefCaff) + (%Retard * NbPoiReactive * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label>) - (NbPoiRayon(<label class="color-red" id="rayon_km"><?php echo $config->rayon_km_new ?></label>km) * <label class="color-yellow" id="coef_rayon"><?php echo $config->coef_rayon_new ?></label>)->MAX(<label class="color-green" id="max_rayon"><?php echo $config->max_rayon_new ?></label>) + (NbPoiReactiveSimu * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label> + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react"><?php echo $config->coef_non_react ?></label>) </p>
             <p>Nombre de POI réactive MAX par jour: <label id="max_day"><?php echo $config->max_day ?></label></p>
             <p>Nombre de POI réactive MAX par semaine: <label id="max_week"><?php echo $config->max_week ?></label></p>
 
@@ -154,16 +154,17 @@
                 aria-valuemin="0" aria-valuemax="100" style="width:0%">
                   0%
                 </div>
-                
               </div>
               <div id="percent">0%</div>
-              
             </div>
             <div id="divListePoiNAUi">
-              
-
                 <div id="resultatsListePoiNA">
                 </div>
+                <div id="affect_btn">
+                <button id="affectationListePoiNA"><span>Affecter </span></button>
+
+                </div>
+                
             </div>
           </div>
         </div>
