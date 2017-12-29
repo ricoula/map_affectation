@@ -2,13 +2,16 @@
 	function getPoiNA()
 	{
 		include("connexionBddErp.php");
-		
+		$list_poi_affect = implode(',',json_decode(getPoiAffect()));
 		$listePoi = array();
+		if($list_poi_affect == ''){
+			$list_poi_affect = 0;
+		}
 		
 		$req = $bddErp->query("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.\"ft_numero_demande_42C\" numero_demande, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
 		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
-		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1'");
+		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1' and ag_poi.id not in ('".$list_poi_affect."')");
 		
 		while($data = $req->fetch())
 		{
@@ -1531,5 +1534,13 @@ return json_encode($listpoi);
 		
 	}
 	
-
+	function getPoiAffect(){
+		include("connexionBdd.php");
+		$liste_poi = array();
+		$req = $bdd->query("SELECT erp_poi_id from cds_affectation");
+		while($data = $req->fetch()){
+			array_push($liste_poi,$data["erp_poi_id"]);
+		}
+		return json_encode($liste_poi);
+	}
 ?>
