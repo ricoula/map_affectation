@@ -425,36 +425,18 @@
                                             });
                                         }
                                             if(poi.affectationAuto.listePoiTitulaire != null && (a.id == poi.affectationAuto.id || b.id == poi.affectationAuto.id))
-                                        {
-                                            if(a.id == poi.affectationAuto.id)
                                             {
-                                                return -1;
-                                            }
-                                            else{
-                                                return 1;
-                                            }
-                                        }
-                                        else{
-                                                if(a.nbAffectationsJour <= $("#limiteAffectationJour").val() && a.nbAffectationsSemaine <= $("#limiteAffectationSemaine").val())
+                                                if(a.id == poi.affectationAuto.id)
                                                 {
-                                                    if(a.charge_totale < b.charge_totale)
-                                                    {
-                                                        return -1;
-                                                    }
-                                                    else if(a.charge_totale == b.charge_totale)
-                                                    {
-                                                        return 0;
-                                                    }
-                                                    else{
-                                                        return 1;
-                                                    }
+                                                    return -1;
                                                 }
                                                 else{
-                                                    if(b.nbAffectationsJour <= $("#limiteAffectationJour").val() && b.nbAffectationsSemaine <= $("#limiteAffectationSemaine").val())
+                                                    return 1;
+                                                }
+                                            }
+                                            else{
+                                                    if(a.nbAffectationsJour <= $("#limiteAffectationJour").val() && a.nbAffectationsSemaine <= $("#limiteAffectationSemaine").val() && a.enConges == false)
                                                     {
-                                                        return 1;
-                                                    }
-                                                    else{
                                                         if(a.charge_totale < b.charge_totale)
                                                         {
                                                             return -1;
@@ -467,8 +449,26 @@
                                                             return 1;
                                                         }
                                                     }
+                                                    else{
+                                                        if(b.nbAffectationsJour <= $("#limiteAffectationJour").val() && b.nbAffectationsSemaine <= $("#limiteAffectationSemaine").val() && b.enConges == false)
+                                                        {
+                                                            return 1;
+                                                        }
+                                                        else{
+                                                            if(a.charge_totale < b.charge_totale)
+                                                            {
+                                                                return -1;
+                                                            }
+                                                            else if(a.charge_totale == b.charge_totale)
+                                                            {
+                                                                return 0;
+                                                            }
+                                                            else{
+                                                                return 1;
+                                                            }
+                                                        }
+                                                    }
                                                 }
-                                            }
                                         
                                     };
                                     
@@ -478,12 +478,18 @@
                                     cpt = 0;
                                     poi.affectationAuto.listeAutresCaffs.forEach(function(ceCaff){
                                         cpt++;
-                                        if(ceCaff.limiteAtteinte)
+                                        if(ceCaff.enConges)
                                         {
-                                            color = "red";
+                                            color = "orange";
                                         }
                                         else{
-                                            color = "black";
+                                            if(ceCaff.limiteAtteinte)
+                                            {
+                                                color = "red";
+                                            }
+                                            else{
+                                                color = "black";
+                                            }
                                         }
 
                                         if(ceCaff.charge_simu == null)
@@ -548,7 +554,13 @@
                                                     $(this).css("color", "red");
                                                 }
                                                 else{
-                                                    $(this).css("color", "black");
+                                                    if($(this).children("option:selected").hasClass("orange"))
+                                                    {
+                                                        $(this).css("color", "orange");
+                                                    }
+                                                    else{
+                                                        $(this).css("color", "black");
+                                                    }
                                                 }
                                             }
                                         });
@@ -580,7 +592,13 @@
                                                                 $(this).css("color", "red");
                                                             }
                                                             else{
-                                                                $(this).css("color", "black");
+                                                                if($(this).children("option:selected").hasClass("orange"))
+                                                                {
+                                                                    $(this).css("color", "orange");
+                                                                }
+                                                                else{
+                                                                    $(this).css("color", "black");
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -596,7 +614,13 @@
                                                     $(this).css("color", "red");
                                                 }
                                                 else{
-                                                    $(this).css("color", "black");
+                                                    if($(this).children("option:selected").hasClass("orange"))
+                                                    {
+                                                        $(this).css("color", "orange");
+                                                    }
+                                                    else{
+                                                        $(this).css("color", "black");
+                                                    }
                                                 }
                                             }
 

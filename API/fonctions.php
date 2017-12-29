@@ -995,6 +995,25 @@
 			$req2->execute(array($data["id"]));
 			if(!$data2 = $req2->fetch())
 			{
+				$enConges = false; // = en conges actuellement ou bientot en conges (moins de 5 jours)
+				
+				$conges = json_decode(getProchainesConges($data["id"]));
+				if($conges != null)
+				{
+					if($conges->temps_avant <= strtotime(60*60*24*5))
+					{
+						$enConges = true;
+					}
+				}
+				if(!$enConges)
+				{
+					$enConges = false;
+					if(array_search($data["id"], json_decode(getListIdEmployesConges())) != false)
+					{
+						$enConges = true;
+					}
+				}
+				
 				$caff = (object) array();
 				$caff->name_related = $data["name_related"];
 				$caff->mobile_phone = $data["mobile_phone"];
@@ -1142,59 +1161,77 @@
 							{
 								if($data4["nb_affectations_semaine"] <= $limiteSemaine)
 								{
-									$ceCaff = (object) array();
-									$ceCaff->id = $caff->id;
-									$ceCaff->charge_initiale = $caff->charge_initiale;
-									$ceCaff->name_related = $caff->name_related;
-									$ceCaff->charge_totale = $caff->charge_totale;
-									$ceCaff->tauxRetard = $caff->tauxRetard;
-									$ceCaff->charge_rayon = $caff->charge_rayon;
-									$ceCaff->limiteAtteinte = false;
-									$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
-									$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
-									array_push($listeCaffs, $ceCaff);
+									if(!$enConges)
+									{
+										$ceCaff = (object) array();
+										$ceCaff->id = $caff->id;
+										$ceCaff->charge_initiale = $caff->charge_initiale;
+										$ceCaff->name_related = $caff->name_related;
+										$ceCaff->charge_totale = $caff->charge_totale;
+										$ceCaff->tauxRetard = $caff->tauxRetard;
+										$ceCaff->charge_rayon = $caff->charge_rayon;
+										$ceCaff->limiteAtteinte = false;
+										$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
+										$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
+										$ceCaff->enConges = $enConges;
+										array_push($listeCaffs, $ceCaff);
 
-									/*$caff = (object) array();
-									$caff->name_related = $data["name_related"];
-									$caff->mobile_phone = $data["mobile_phone"];
-									$caff->work_email = $data["work_email"];
-									$caff->site = $data["site"];
-									$caff->site_id = $data["site_id"];
-									$caff->agence = $data["agence"];
-									$caff->reactive = $data["reactive"];
-									$caff->non_reactive = $data["non_reactive"];
-									$caff->charge_totale = $data["charge_totale"];
-									$caff->charge_initiale = $data["charge_initiale"];
-									$caff->id = $data["id"];
-									
-									$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
-									$nbPoiEnRetard = 0;
-									$dateAjd = new DateTime("now");
-									foreach($listePoi as $poi)
-									{
-										$dre = new DateTime($poi->ft_oeie_dre);
-										if($dateAjd > $dre)
+										/*$caff = (object) array();
+										$caff->name_related = $data["name_related"];
+										$caff->mobile_phone = $data["mobile_phone"];
+										$caff->work_email = $data["work_email"];
+										$caff->site = $data["site"];
+										$caff->site_id = $data["site_id"];
+										$caff->agence = $data["agence"];
+										$caff->reactive = $data["reactive"];
+										$caff->non_reactive = $data["non_reactive"];
+										$caff->charge_totale = $data["charge_totale"];
+										$caff->charge_initiale = $data["charge_initiale"];
+										$caff->id = $data["id"];
+										
+										$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
+										$nbPoiEnRetard = 0;
+										$dateAjd = new DateTime("now");
+										foreach($listePoi as $poi)
 										{
-											$nbPoiEnRetard++;
+											$dre = new DateTime($poi->ft_oeie_dre);
+											if($dateAjd > $dre)
+											{
+												$nbPoiEnRetard++;
+											}
 										}
-									}
-									if(sizeof($listePoi) > 0)
-									{
-										$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
+										if(sizeof($listePoi) > 0)
+										{
+											$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
+										}
+										else{
+											$tauxDre = 0;
+										}
+										$caff->charge_totale += ($tauxDre * $caff->reactive);*/
+										if($caffTitulaireAuto == false)
+										{
+											if($caffAuto == null)
+											{
+												$caffAuto = $caff;
+											}
+											elseif($caffAuto->charge_totale > $caff->charge_totale){
+												$caffAuto = $caff;
+											}
+										}
 									}
 									else{
-										$tauxDre = 0;
-									}
-									$caff->charge_totale += ($tauxDre * $caff->reactive);*/
-									if($caffTitulaireAuto == false)
-									{
-										if($caffAuto == null)
-										{
-											$caffAuto = $caff;
-										}
-										elseif($caffAuto->charge_totale > $caff->charge_totale){
-											$caffAuto = $caff;
-										}
+										$ceCaff = (object) array();
+										$ceCaff->id = $caff->id;
+										$ceCaff->charge_initiale = $caff->charge_initiale;
+										$ceCaff->name_related = $caff->name_related;
+										$ceCaff->charge_totale = $caff->charge_totale;
+										$ceCaff->tauxRetard = $caff->tauxRetard;
+										$ceCaff->charge_rayon = $caff->charge_rayon;
+										$ceCaff->limiteAtteinte = true;
+										$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
+										$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
+										$ceCaff->enConges = $enConges;
+										array_push($listeCaffs, $ceCaff);
 									}
 									
 								}
@@ -1209,6 +1246,7 @@
 									$ceCaff->limiteAtteinte = true;
 									$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
 									$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
+									$ceCaff->enConges = $enConges;
 									array_push($listeCaffs, $ceCaff);
 								}
 							}
@@ -1230,6 +1268,7 @@
 								$ceCaff->limiteAtteinte = true;
 								$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
 								$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
+								$ceCaff->enConges = $enConges;
 								array_push($listeCaffs, $ceCaff);
 							}
 						}
@@ -1510,16 +1549,18 @@ return json_encode($listpoi);
 		include("connexionBddErp.php");
 		$conges = null;
 		
-		$req = $bdd->prepare("SELECT date_to, date_from, (NOW() - date_to) jours_av_conges, (NOW() - date_from) jours_restant FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
+		$req = $bddErp->prepare("SELECT date_to, date_from, (date_from - NOW()) jours_av_conges, (NOW() - date_to) jours_restant FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
 		$req->execute(array($idEmploye));
 		if($data = $req->fetch())
 		{
 			$conges = (object) array();
-			$conges->date_debut = $data["date_to"];
-			$conges->date_fin = $data["date_from"];
-			$conges->nb_jours_avant = $data["jours_av_conges"];
-			$conges->nb_jours_restant = $data["jours_restant"];
+			$conges->date_debut = $data["date_from"];
+			$conges->date_fin = $data["date_to"];
+			$conges->temps_avant = strtotime($data["jours_av_conges"]);
+			$conges->temps_restant = strtotime($data["jours_restant"]);
 		}
+		
+		return json_encode($conges);
 	}
 
 ?>
