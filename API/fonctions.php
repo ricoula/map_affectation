@@ -11,7 +11,7 @@
 		$req = $bddErp->query("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.\"ft_numero_demande_42C\" numero_demande, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
 		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
-		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1' and ag_poi.id not in ('".$list_poi_affect."')");
+		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1' and ag_poi.id not in (".$list_poi_affect.")");
 		
 		while($data = $req->fetch())
 		{
@@ -1526,34 +1526,6 @@ return json_encode($listpoi);
 		}
 	}
 
-
-	
-	function getProchainesConges($idEmploye)
-	{
-		include("connexionBddErp.php");
-		$conges = null;
-		
-		$req = $bdd->prepare("SELECT date_to, date_from, (NOW() - date_to) jours_av_conges, (NOW() - date_from) jours_restant FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
-		$req->execute(array($idEmploye));
-		if($data = $req->fetch())
-		{
-			$conges = (object) array();
-			$conges->date_debut = $data["date_to"];
-			$conges->date_fin = $data["date_from"];
-			$conges->nb_jours_avant = $data["jours_av_conges"];
-			$conges->nb_jours_restant = $data["jours_restant"];
-		}
-	}
-	function addPoiAffect($poi_id,$poi_num,$poi_domaine,$caff_id,$caff_name){
-
-		$state = 1;
-		$pilote = 'unknow';
-		include("connexionBdd.php");
-		$req = $bdd->prepare("INSERT INTO cds_affectation (erp_poi_id,erp_caff_name,erp_pilote_name,cds_affectation_date,cds_affectation_state_id,erp_poi,caff_id,erp_poi_domaine) VALUES (?,?,?,NOW(),?,?,?,?)");
-		$req->execute(array($poi_id,$caff_name,$pilote,$state,$poi_num,$caff_id,$poi_domaine));
-		
-	}
-	
 	function getPoiAffect(){
 		include("connexionBdd.php");
 		$liste_poi = array();
@@ -1563,4 +1535,14 @@ return json_encode($listpoi);
 		}
 		return json_encode($liste_poi);
 	}
+
+	function addPoiAffect($poi_id,$poi_num,$poi_domaine,$caff_id,$caff_name){
+		
+				$state = 1;
+				$pilote = 'unknow';
+				include("connexionBdd.php");
+				$req = $bdd->prepare("INSERT INTO cds_affectation (erp_poi_id,erp_caff_name,erp_pilote_name,cds_affectation_date,cds_affectation_state_id,erp_poi,caff_id,erp_poi_domaine) VALUES (?,?,?,NOW(),?,?,?,?)");
+				$req->execute(array($poi_id,$caff_name,$pilote,$state,$poi_num,$caff_id,$poi_domaine));
+				
+			}
 ?>
