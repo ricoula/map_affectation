@@ -1504,5 +1504,22 @@ while($data = $req->fetch())
 }
 return json_encode($listpoi);
 	}
+	
+	function getProchainesConges($idEmploye)
+	{
+		include("connexionBddErp.php");
+		$conges = null;
+		
+		$req = $bdd->prepare("SELECT date_to, date_from, (NOW() - date_to) jours_av_conges, (NOW() - date_from) jours_restant FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
+		$req->execute(array($idEmploye));
+		if($data = $req->fetch())
+		{
+			$conges = (object) array();
+			$conges->date_debut = $data["date_to"];
+			$conges->date_fin = $data["date_from"];
+			$conges->nb_jours_avant = $data["jours_av_conges"];
+			$conges->nb_jours_restant = $data["jours_restant"];
+		}
+	}
 
 ?>
