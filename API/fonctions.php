@@ -1552,18 +1552,71 @@ return json_encode($listpoi);
 		include("connexionBddErp.php");
 		$conges = null;
 		
-		$req = $bddErp->prepare("SELECT date_to, date_from, (date_from - NOW()) jours_av_conges, (NOW() - date_to) jours_restant FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
+		//$req = $bddErp->prepare("SELECT date_to, date_from, (date_from - NOW()) jours_av_conges, (NOW() - date_to) jours_restant FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
+		$req = $bddErp->prepare("SELECT date_from FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
 		$req->execute(array($idEmploye));
 		if($data = $req->fetch())
 		{
 			$conges = (object) array();
+			$dateDebut = $data["date_from"];
+			$conges->dateDebut = $dateDebut;
+			
+			$continue = true;
+			$nbJoursConges = 0;
+			$dateDebutSimu = $dateDebut;
+			while($continue)
+			{
+				$dateDebutSimu = new DateTime($dateDebutSimu);
+				$req2 = $bddErp->prepare("SELECT name FROM training_holiday_period WHERE ? >= date_start AND ? <= date_stop");
+				$req2->execute(array($dateDebutSimu->format('Y-m-d H:i:s'), $dateDebutSimu->format('Y-m-d H:i:s')));
+				if($data2 = $req2->fetch())
+				{
+					if(!strstr(strtoupper($data2["name"]), "WEEK")) //si ce n'est pas un jour de week-end (c'est donc un jour férié)
+					{
+						$nbJoursConges++;
+					}
+				}
+				else{
+					$req2 = $bddErp->prepare("SELECT id FROM hr_holidays WHERE date_from >= ? AND date_to <= ?");
+					$req2->execute(array($dateDebutSimu->format('Y-m-d H:i:s'), $dateDebutSimu->format('Y-m-d H:i:s')));
+					if($data2 = $req2->fetch())
+					{
+						$nbJoursConges++;
+					}
+					else{
+						$continue = false;
+					}
+				}
+				
+				$dateDebutSimu = $dateDebutSimu->modify("+1 day");
+			}
+			$conges->nbJoursConges = $nbJoursConges;
+			
+			/*$conges = (object) array();
 			$conges->date_debut = $data["date_from"];
 			$conges->date_fin = $data["date_to"];
 			$conges->temps_avant = strtotime($data["jours_av_conges"]);
 			$conges->temps_restant = strtotime($data["jours_restant"]);
+			
+			$joursApresFinConges = true;
+			$newDateFin = $conges->date_fin;
+			$nbJoursConges = 0; //jours de conges + jours feries = +1, mais jour Week-End = +0
+			$jourDebut = new DateTime($conges->date_debut);
+			while($joursApresFinConges)
+			{
+				$jourFin = $jourFin->modify('+1 day');
+				$timestampJourFin = strtotime($jourFin);
+				$req2 = $bddErp->prepare("SELECT (? + interval '1 day') jour_suivant)");
+				$req2->execute($newDateFin);
+				if($data2 = $req2->fetch())
+				{
+					
+				}
+			}*/
 		}
 		
 		return json_encode($conges);
 	}
+	
 
 ?>
