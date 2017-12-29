@@ -493,22 +493,26 @@
                                         {
                                             if(poi.affectationAuto.listePoiTitulaire != null)
                                             {
-                                                optionElt += "<option caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+
+                                                optionElt += "<option poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
                                                 //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
                                             }
                                             else{
-                                                optionElt += "<option caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='" + color + "' style='color:" + color + "' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                                optionElt += "<option poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='" + color + "' style='color:" + color + "' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+
                                                 //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
                                             }
                                         }
                                         else{
                                             if(poi.affectationAuto.listePoiTitulaire != null)
                                             {
-                                                optionElt += "<option caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+
+                                                optionElt += "<option poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
                                                 //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
                                             }
                                             else{
-                                                optionElt += "<option caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' style='color:" + color + "' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                                optionElt += "<option poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' style='color:" + color + "' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+
                                             }
                                             
                                         }
@@ -518,12 +522,14 @@
                                     });
                                     if(poi.ft_titulaire_client != null && poi.ft_titulaire_client != "")
                                     {
-                                        html += "<tr poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' ><td>" + poi.ft_numero_oeie + listeLiensPoi + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select id='selectAffectationAutoPoi-" + poi.id + "' class='selectAffectationAutoPoi numAff numAffaire-" + poi.ft_titulaire_client + "'>" + optionElt + "</select></td></tr>";
-                                        console.log("<tr poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' ><td>" + poi.ft_numero_oeie + listeLiensPoi + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select id='selectAffectationAutoPoi-" + poi.id + "' class='selectAffectationAutoPoi numAff numAffaire-" + poi.ft_titulaire_client + "'>" + optionElt + "</select></td></tr>");
+
+                                        html += "<tr><td>" + poi.ft_numero_oeie + listeLiensPoi + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select id='selectAffectationAutoPoi-" + poi.id + "' class='selectAffectationAutoPoi numAff numAffaire-" + poi.ft_titulaire_client + "'>" + optionElt + "</select></td></tr>";
+                                     //   console.log("<tr poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' ><td>" + poi.ft_numero_oeie + listeLiensPoi + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select id='selectAffectationAutoPoi-" + poi.id + "' class='selectAffectationAutoPoi numAff numAffaire-" + poi.ft_titulaire_client + "'>" + optionElt + "</select></td></tr>");
                                     }
                                     else{
-                                        html += "<tr poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' ><td>" + poi.ft_numero_oeie + listeLiensPoi + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select id='selectAffectationAutoPoi-" + poi.id + "' class='selectAffectationAutoPoi'>" + optionElt + "</select></td></tr>";
-                                        console.log("<tr poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' ><td>" + poi.ft_numero_oeie + listeLiensPoi + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select id='selectAffectationAutoPoi-" + poi.id + "' class='selectAffectationAutoPoi'>" + optionElt + "</select></td></tr>");
+                                        html += "<tr><td>" + poi.ft_numero_oeie + listeLiensPoi + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select id='selectAffectationAutoPoi-" + poi.id + "' class='selectAffectationAutoPoi'>" + optionElt + "</select></td></tr>";
+                                       // console.log("<tr poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' ><td>" + poi.ft_numero_oeie + listeLiensPoi + "</td><td>" + poi.domaine + "</td><td>" + poi.ft_oeie_dre + "</td><td>" + poi.ft_sous_justification_oeie + "</td><td><select id='selectAffectationAutoPoi-" + poi.id + "' class='selectAffectationAutoPoi'>" + optionElt + "</select></td></tr>");
+
                                     }
                                     
                                     $("#btnCaffAffectAuto-" + poi.id).click();
@@ -653,5 +659,18 @@
                 })
             });
           });
+          $("#affectationListePoiNA").click(function(){
+              $("#resultatsListePoiNA").find(".selectAffectationAutoPoi").each(function(){
+                poi_id = $(this).find(":selected").attr("poi_id")
+                poi_num = $(this).find(":selected").attr("poi_num")
+                caff_id = $(this).find(":selected").attr("caff_id")
+                caff_name = $(this).find(":selected").attr("caff_name")
+                poi_domaine = $(this).find(":selected").attr("poi_domaine")
+                $.post("API/addPoiAffect.php",{poi_id: poi_id, poi_num: poi_num, poi_domaine: poi_domaine, caff_id: caff_id, caff_name: caff_name})
+                location.reload();
+            //    console.log(poi_id + " " + poi_num + " " + poi_domaine + " " + caff_id + " " + caff_name);
+                
+                          })
+          })
     }
     
