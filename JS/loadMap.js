@@ -437,16 +437,22 @@
                                             else{
                                                     if(a.nbAffectationsJour <= $("#limiteAffectationJour").val() && a.nbAffectationsSemaine <= $("#limiteAffectationSemaine").val() && a.enConges == false)
                                                     {
-                                                        if(a.charge_totale < b.charge_totale)
+                                                        if(b.nbAffectationsJour <= $("#limiteAffectationJour").val() && b.nbAffectationsSemaine <= $("#limiteAffectationSemaine").val() && b.enConges == false)
                                                         {
-                                                            return -1;
-                                                        }
-                                                        else if(a.charge_totale == b.charge_totale)
-                                                        {
-                                                            return 0;
+                                                            if(a.charge_totale < b.charge_totale)
+                                                            {
+                                                                return -1;
+                                                            }
+                                                            else if(a.charge_totale == b.charge_totale)
+                                                            {
+                                                                return 0;
+                                                            }
+                                                            else{
+                                                                return 1;
+                                                            }
                                                         }
                                                         else{
-                                                            return 1;
+                                                            return -1;
                                                         }
                                                     }
                                                     else{
