@@ -133,7 +133,11 @@ $(".users-button-poi").click(function(){
                     list_markers[caff_id] = new Array();
                }
                list_markers[caff_id].push(marker);
-              
+               marker.addListener('mouseover', function() {
+          infowindow.open(map, marker);
+            });
+            marker.addListener('mouseout', function() {
+          infowindow.close(map, marker);
             });
             for(var key in list_markers)
             {
@@ -148,7 +152,11 @@ $(".users-button-poi").click(function(){
             /*list_markers[caff_id].forEach(function(mkr){
                 mkr.setMap(map);
             })*/
-            
+            var infowindow = new google.maps.InfoWindow({
+          content: "<h4>"+ marker.title + "</h4><span class='list-group-item'>" + marker.commentaire + "</span>"
+        });
+        
+        });
         })
         
     }
