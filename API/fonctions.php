@@ -1553,19 +1553,21 @@ return json_encode($listpoi);
 		$conges = null;
 		
 		//$req = $bddErp->prepare("SELECT date_to, date_from, (date_from - NOW()) jours_av_conges, (NOW() - date_to) jours_restant FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
-		$req = $bddErp->prepare("SELECT date_from FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
+		$req = $bddErp->prepare("SELECT date_from, date_to FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
 		$req->execute(array($idEmploye));
 		if($data = $req->fetch())
 		{
 			$conges = (object) array();
 			$dateDebut = $data["date_from"];
 			$conges->dateDebut = $dateDebut;
+			$conges->dateFin = $data["date_to"];
 			
 			$continue = true;
 			$nbJoursConges = 0;
 			$dateDebutSimu = $dateDebut;
 			while($continue)
 			{
+				echo $nbJoursConges;
 				$dateDebutSimu = new DateTime($dateDebutSimu);
 				$req2 = $bddErp->prepare("SELECT name FROM training_holiday_period WHERE ? >= date_start AND ? <= date_stop");
 				$req2->execute(array($dateDebutSimu->format('Y-m-d H:i:s'), $dateDebutSimu->format('Y-m-d H:i:s')));
@@ -1577,10 +1579,11 @@ return json_encode($listpoi);
 					}
 				}
 				else{
-					$req2 = $bddErp->prepare("SELECT id FROM hr_holidays WHERE date_from >= ? AND date_to <= ?");
-					$req2->execute(array($dateDebutSimu->format('Y-m-d H:i:s'), $dateDebutSimu->format('Y-m-d H:i:s')));
+					$req2 = $bddErp->prepare("SELECT id FROM hr_holidays WHERE date_from <= ? AND date_to >= ? AND employee_id = ?");
+					$req2->execute(array($dateDebutSimu->format('Y-m-d H:i:s'), $dateDebutSimu->format('Y-m-d H:i:s'), $idEmploye));
 					if($data2 = $req2->fetch())
 					{
+						
 						$nbJoursConges++;
 					}
 					else{
@@ -1589,6 +1592,7 @@ return json_encode($listpoi);
 				}
 				
 				$dateDebutSimu = $dateDebutSimu->modify("+1 day");
+				$dateDebutSimu = $dateDebutSimu->format('Y-m-d H:i:s');
 			}
 			$conges->nbJoursConges = $nbJoursConges;
 			
