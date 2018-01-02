@@ -6,7 +6,7 @@
     include("API/fonctions.php");
     $caffs = json_decode(getInfosCaff());
     $listeUi = json_decode(getUi());
-    $listeCaffsConges = json_decode(getListIdEmployesConges());
+    //$listeCaffsConges = json_decode(getListIdEmployesConges());
     ?>
         <span class="glyphicon glyphicon-remove pull-right slide-close"></span><br/>
         <h1 id="home-poi" class="well">Information Caff</h1>
@@ -46,7 +46,7 @@
                 <div class="input-group users-card-caff card-<?php echo $caff->ui->ft_zone ?>" id="<?php echo urlencode(json_encode($caff)) ?>" >
                     <label class="input-group-addon imageCaff" style='background-image: url("img/inconnu.jpg"); background-size: 100px 100px; width:100px; height:100px;' id="imageCaff-<?php echo $caff->id ?>" ></label>
                     <div class="card-block users-card-info" id="">
-                        <h4 class="users-name"><?php echo $caff->name_related ?> <?php foreach($list_comp as $comp){echo '<label class="comp_1 comp_'.$comp.'" data-toggle="tooltip" data-placement="top" title="'.$comp.'"></label>';}?></span><?php if(in_array($caff->id, $listeCaffsConges)){ ?><span class="label label-warning pull-right users-state">Congé</span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
+                        <h4 class="users-name"><?php echo $caff->name_related ?> <?php foreach($list_comp as $comp){echo '<label class="comp_1 comp_'.$comp.'" data-toggle="tooltip" data-placement="top" title="'.$comp.'"></label>';}?></span><?php if($caff->enConge){ ?><span class="label label-warning pull-right users-state" >Congé <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="<?php echo $caff->conges->nbJoursCongesRestant." jour(s) restant(s)" ?>"></span></span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
                         <h6 class="users-site"><?php echo $caff->site ?><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
                         <!--<h6 class="users-charge">Charge: <span class="label label-danger users-charge-count">123</span><button class="btn btn-info btn-xs pull-right users-button-poi" id="<?php /*echo $caff->id*/ ?>">Afficher POI</button></h6>-->
                         <h6 class="users-charge">Charge: <span data-toggle="tooltip" data-placement="top" title="(nb_poi_reactives + (nb_poi_non_reactives * coef_poi_non_reactives)) * (1 / coef_charge)
@@ -133,7 +133,11 @@ $(".users-button-poi").click(function(){
                     list_markers[caff_id] = new Array();
                }
                list_markers[caff_id].push(marker);
-              
+               marker.addListener('mouseover', function() {
+          infowindow.open(map, marker);
+            });
+            marker.addListener('mouseout', function() {
+          infowindow.close(map, marker);
             });
             for(var key in list_markers)
             {
@@ -148,7 +152,11 @@ $(".users-button-poi").click(function(){
             /*list_markers[caff_id].forEach(function(mkr){
                 mkr.setMap(map);
             })*/
-            
+            var infowindow = new google.maps.InfoWindow({
+          content: "<h4>"+ marker.title + "</h4><span class='list-group-item'>" + marker.commentaire + "</span>"
+        });
+        
+        });
         })
         
     }

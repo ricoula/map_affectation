@@ -3,12 +3,23 @@
 	{
 		include("connexionBddErp.php");
 		
+		$listePoiAffect = json_decode(getPoiAffect());
+		if(sizeof($listePoiAffect) > 0)
+		{
+			$listePoiAffect = implode(",", $listePoiAffect);
+			$listePoiAffect = " AND ag_poi.id NOT IN(".$listePoiAffect.")";
+		}
+		else{
+			$listePoiAffect = "";
+		}
+		
+		
 		$listePoi = array();
 		
 		$req = $bddErp->query("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.\"ft_numero_demande_42C\" numero_demande, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
 		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
-		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1'");
+		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1'".$listePoiAffect);
 		
 		while($data = $req->fetch())
 		{
@@ -121,6 +132,15 @@
 			$caff->agence = $data["agence"];
 			$caff->reactive = $data["reactive"];
 			$caff->non_reactive = $data["non_reactive"];
+			$caff->conges = json_decode(getProchainesConges($caff->id));
+			
+			if($caff->conges != null && $caff->conges->temps_avant <= 0)
+			{
+				$caff->enConge = true;
+			}
+			else{
+				$caff->enConge = false;
+			}
 			
 			array_push($listeCaff, $caff);
 		}
@@ -1002,7 +1022,7 @@
 					$conges = json_decode(getProchainesConges($data["id"]));
 					if($conges != null)
 					{
-						if($conges->temps_avant <= strtotime(60*60*24*5))
+						if($conges->temps_avant <= strtotime(60*60*24*5) && $conges->nbJoursCongesRestant >= 5) // Si le caff est en congé dans moins de 5 jours et que ces congés durent au moins 5 jours (sans compter les week_end) ou si le caff est actuellement en congés et que le nombre de jours de conges restant est d'au moins 5 jours
 						{
 							$enConges = true;
 						}
@@ -1361,11 +1381,23 @@
 	function getPoiNAByUi($ui) //ft_zone
 	{
 		include("connexionBddErp.php");
+		
+		$listePoiAffect = json_decode(getPoiAffect());
+		if(sizeof($listePoiAffect) > 0)
+		{
+			$listePoiAffect = implode(",", $listePoiAffect);
+			$listePoiAffect = " AND ag_poi.id NOT IN(".$listePoiAffect.")";
+		}
+		else{
+			$listePoiAffect = "";
+		}
+		
 		$listePoi = array();
+		
 		$req = $bddErp->prepare("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.\"ft_numero_demande_42C\" numero_demande, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
 		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
-		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1' AND ag_poi.atr_ui = ?");
+		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1' AND ag_poi.atr_ui = ?".$listePoiAffect);
 		$req->execute(array($ui));
 		while($data = $req->fetch())
 		{
@@ -1514,7 +1546,7 @@
 		$color = str_pad($color,6,'0');
 		include("connexionBddErp.php");
 		$listpoi = array();
-		$req = $bddErp->prepare("select ag_poi.id,ft_numero_oeie,ft_longitude,ft_latitude,account_analytic_account.name from ag_poi
+		$req = $bddErp->prepare("select ag_poi.id,ft_commentaire_creation_oeie,ft_numero_oeie,ft_longitude,ft_latitude,account_analytic_account.name from ag_poi
 left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
 where ft_etat = '1' and atr_caff_traitant_id = ? and ft_longitude is not null and ft_longitude != 0
 ");
@@ -1527,6 +1559,7 @@ while($data = $req->fetch())
 	$poi->position->lat = floatval($data['ft_longitude']);
 	$poi->position->lng = floatval($data['ft_latitude']);
 	$poi->title = $data['ft_numero_oeie'];
+	$poi->commentaire = htmlspecialchars($data['ft_commentaire_creation_oeie']);
 	$poi->icon = (object) array();
 	$poi->icon->path = 0;
 	$poi->icon->fillColor = '#'.$color;
@@ -1552,18 +1585,108 @@ return json_encode($listpoi);
 		include("connexionBddErp.php");
 		$conges = null;
 		
-		$req = $bddErp->prepare("SELECT date_to, date_from, (date_from - NOW()) jours_av_conges, (NOW() - date_to) jours_restant FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
+		//$req = $bddErp->prepare("SELECT date_to, date_from, (date_from - NOW()) jours_av_conges, (NOW() - date_to) jours_restant FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
+		$req = $bddErp->prepare("SELECT date_from, date_to FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() ORDER BY date_to LIMIT 1");
 		$req->execute(array($idEmploye));
 		if($data = $req->fetch())
 		{
 			$conges = (object) array();
+			$conges->temps_avant = strtotime($data["date_from"]) - time();
+			$conges->dateDebut = $data["date_from"];
+			$conges->dateFin = $data["date_to"];
+			
+			$continue = true;
+			$nbJoursConges = 0;
+			if($conges->temps_avant <= 0)
+			{
+				$dateDebutSimu = date("Y-m-d H:i:s");
+			}
+			else{
+				$dateDebutSimu = $conges->dateDebut;
+			}
+			while($continue)
+			{
+				//echo $nbJoursConges;
+				if(strtotime($dateDebutSimu) > strtotime($conges->dateFin))
+				{
+					$conges->dateFin = $dateDebutSimu;
+				}
+				$dateDebutSimu = new DateTime($dateDebutSimu);
+				$req2 = $bddErp->prepare("SELECT name FROM training_holiday_period WHERE ? >= date_start AND ? <= date_stop");
+				$req2->execute(array($dateDebutSimu->format('Y-m-d H:i:s'), $dateDebutSimu->format('Y-m-d H:i:s')));
+				if($data2 = $req2->fetch())
+				{
+					if(strstr(strtoupper($data2["name"]), "WEEK") == false) //si ce n'est pas un jour de week-end (c'est donc un jour férié)
+					{
+						//echo "Ferie";
+						$nbJoursConges++;
+					}
+					//echo "WEEK";
+				}
+				else{
+					$req2 = $bddErp->prepare("SELECT id FROM hr_holidays WHERE date_from <= ? AND date_to >= ? AND employee_id = ?");
+					$req2->execute(array($dateDebutSimu->format('Y-m-d H:i:s'), $dateDebutSimu->format('Y-m-d H:i:s'), $idEmploye));
+					if($data2 = $req2->fetch())
+					{
+						//echo "conge";
+						$nbJoursConges++;
+					}
+					else{
+						$continue = false;
+					}
+				}
+				
+				$dateDebutSimu = $dateDebutSimu->modify("+1 day");
+				$dateDebutSimu = $dateDebutSimu->format('Y-m-d H:i:s');
+			}
+			$conges->nbJoursCongesRestant = $nbJoursConges;
+			
+			/*$conges = (object) array();
 			$conges->date_debut = $data["date_from"];
 			$conges->date_fin = $data["date_to"];
 			$conges->temps_avant = strtotime($data["jours_av_conges"]);
 			$conges->temps_restant = strtotime($data["jours_restant"]);
+			
+			$joursApresFinConges = true;
+			$newDateFin = $conges->date_fin;
+			$nbJoursConges = 0; //jours de conges + jours feries = +1, mais jour Week-End = +0
+			$jourDebut = new DateTime($conges->date_debut);
+			while($joursApresFinConges)
+			{
+				$jourFin = $jourFin->modify('+1 day');
+				$timestampJourFin = strtotime($jourFin);
+				$req2 = $bddErp->prepare("SELECT (? + interval '1 day') jour_suivant)");
+				$req2->execute($newDateFin);
+				if($data2 = $req2->fetch())
+				{
+					
+				}
+			}*/
 		}
 		
 		return json_encode($conges);
 	}
+	
+	
+	
+	function getPoiAffect(){
+		include("connexionBdd.php");
+		$liste_poi = array();
+		$req = $bdd->query("SELECT erp_poi_id from cds_affectation");
+		while($data = $req->fetch()){
+			array_push($liste_poi,$data["erp_poi_id"]);
+		}
+		return json_encode($liste_poi);
+	}
+
+	function addPoiAffect($poi_id,$poi_num,$poi_domaine,$caff_id,$caff_name){
+		
+				$state = 1;
+				$pilote = 'unknow';
+				include("connexionBdd.php");
+				$req = $bdd->prepare("INSERT INTO cds_affectation (erp_poi_id,erp_caff_name,erp_pilote_name,cds_affectation_date,cds_affectation_state_id,erp_poi,caff_id,erp_poi_domaine) VALUES (?,?,?,NOW(),?,?,?,?)");
+				$req->execute(array($poi_id,$caff_name,$pilote,$state,$poi_num,$caff_id,$poi_domaine));
+				
+			}
 
 ?>

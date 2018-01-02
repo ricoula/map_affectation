@@ -19,7 +19,7 @@
       $listePoiLien = "";
     }
 ?>
-
+<input type="hidden" id="poiModaleAffecterA" name="poiModaleAffecterA" value="<?php echo urlencode(json_encode($poi)) ?>" />
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal">&times;</button>
   <h1>Affectation de la POI: <?php echo $poi->ft_numero_oeie.$listePoiLien ?></h1>
@@ -132,7 +132,7 @@
 <script>
   $(".caffAffectation").click(function(){
       var caff = $(this).children(".caffjson").first().val();
-      $("#divInfosCaffAffectation").load("modaleInfosCaffAffectation.php?caff=" + caff, function(){
+      $("#divInfosCaffAffectation").load("modaleInfosCaffAffectation.php?caff=" + caff  + "&poi=" + $("#poiModaleAffecterA").val(), function(){
           $('#modaleInfosCaffAffectation').modal('show');
       });
   });
@@ -141,7 +141,7 @@
   $('#searchCaff').on('change', function(evt, params) {
     if($("#searchCaff").val() != "search")
     {
-      $("#divInfosCaffAffectation").load("modaleInfosCaffAffectation.php?caff=" + $("#searchCaff").val(), function(){
+      $("#divInfosCaffAffectation").load("modaleInfosCaffAffectation.php?caff=" + $("#searchCaff").val() + "&poi=" + $("#poiModaleAffecterA").val(), function(){
           $('#modaleInfosCaffAffectation').modal('show');
       });
     }

@@ -351,7 +351,7 @@ color: grey;
   opacity:0.9;
 }
 
-#affectationListePoiNA {
+.affectationListePoiNA {
   border-radius: 4px;
   background-color: #008603;
   border: none;
@@ -365,14 +365,14 @@ color: grey;
   margin: 5px;
 }
 
-#affectationListePoiNA span {
+.affectationListePoiNA span {
   cursor: pointer;
   display: inline-block;
   position: relative;
   transition: 0.5s;
 }
 
-#affectationListePoiNA span:after {
+.affectationListePoiNA span:after {
   content: '\00bb';
   position: absolute;
   opacity: 0;
@@ -381,15 +381,15 @@ color: grey;
   transition: 0.5s;
 }
 
-#affectationListePoiNA:hover span {
+.affectationListePoiNA:hover span {
   padding-right: 25px;
 }
 
-#affectationListePoiNA:hover span:after {
+.affectationListePoiNA:hover span:after {
   opacity: 1;
   right: 0;
 }
-#affect_btn
+.affect_btn
 {
   display:flex;
   justify-content:flex-end;
