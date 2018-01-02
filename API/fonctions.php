@@ -121,6 +121,15 @@
 			$caff->agence = $data["agence"];
 			$caff->reactive = $data["reactive"];
 			$caff->non_reactive = $data["non_reactive"];
+			$caff->conges = json_decode(getProchainesConges($caff->id));
+			
+			if($caff->conges != null && $caff->conges->temps_avant <= 0)
+			{
+				$caff->enConge = true;
+			}
+			else{
+				$caff->enConge = false;
+			}
 			
 			array_push($listeCaff, $caff);
 		}
@@ -1002,7 +1011,7 @@
 					$conges = json_decode(getProchainesConges($data["id"]));
 					if($conges != null)
 					{
-						if($conges->temps_avant <= strtotime(60*60*24*5))
+						if($conges->temps_avant <= strtotime(60*60*24*5) && $conges->nbJoursCongesRestant >= 5) // Si le caff est en congé dans moins de 5 jours et que ces congés durent au moins 5 jours (sans compter les week_end) ou si le caff est actuellement en congés et que le nombre de jours de conges restant est d'au moins 5 jours
 						{
 							$enConges = true;
 						}
@@ -1553,37 +1562,49 @@ return json_encode($listpoi);
 		$conges = null;
 		
 		//$req = $bddErp->prepare("SELECT date_to, date_from, (date_from - NOW()) jours_av_conges, (NOW() - date_to) jours_restant FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
-		$req = $bddErp->prepare("SELECT date_from, date_to FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() OR date_from >= NOW() ORDER BY date_to LIMIT 1");
+		$req = $bddErp->prepare("SELECT date_from, date_to FROM hr_holidays WHERE employee_id = ? AND date_to >= NOW() ORDER BY date_to LIMIT 1");
 		$req->execute(array($idEmploye));
 		if($data = $req->fetch())
 		{
 			$conges = (object) array();
-			$dateDebut = $data["date_from"];
-			$conges->dateDebut = $dateDebut;
+			$conges->temps_avant = strtotime($data["date_from"]) - time();
+			$conges->dateDebut = $data["date_from"];
 			$conges->dateFin = $data["date_to"];
 			
 			$continue = true;
 			$nbJoursConges = 0;
-			$dateDebutSimu = $dateDebut;
+			if($conges->temps_avant <= 0)
+			{
+				$dateDebutSimu = date("Y-m-d H:i:s");
+			}
+			else{
+				$dateDebutSimu = $conges->dateDebut;
+			}
 			while($continue)
 			{
-				echo $nbJoursConges;
+				//echo $nbJoursConges;
+				if(strtotime($dateDebutSimu) > strtotime($conges->dateFin))
+				{
+					$conges->dateFin = $dateDebutSimu;
+				}
 				$dateDebutSimu = new DateTime($dateDebutSimu);
 				$req2 = $bddErp->prepare("SELECT name FROM training_holiday_period WHERE ? >= date_start AND ? <= date_stop");
 				$req2->execute(array($dateDebutSimu->format('Y-m-d H:i:s'), $dateDebutSimu->format('Y-m-d H:i:s')));
 				if($data2 = $req2->fetch())
 				{
-					if(!strstr(strtoupper($data2["name"]), "WEEK")) //si ce n'est pas un jour de week-end (c'est donc un jour férié)
+					if(strstr(strtoupper($data2["name"]), "WEEK") == false) //si ce n'est pas un jour de week-end (c'est donc un jour férié)
 					{
+						//echo "Ferie";
 						$nbJoursConges++;
 					}
+					//echo "WEEK";
 				}
 				else{
 					$req2 = $bddErp->prepare("SELECT id FROM hr_holidays WHERE date_from <= ? AND date_to >= ? AND employee_id = ?");
 					$req2->execute(array($dateDebutSimu->format('Y-m-d H:i:s'), $dateDebutSimu->format('Y-m-d H:i:s'), $idEmploye));
 					if($data2 = $req2->fetch())
 					{
-						
+						//echo "conge";
 						$nbJoursConges++;
 					}
 					else{
@@ -1594,7 +1615,7 @@ return json_encode($listpoi);
 				$dateDebutSimu = $dateDebutSimu->modify("+1 day");
 				$dateDebutSimu = $dateDebutSimu->format('Y-m-d H:i:s');
 			}
-			$conges->nbJoursConges = $nbJoursConges;
+			$conges->nbJoursCongesRestant = $nbJoursConges;
 			
 			/*$conges = (object) array();
 			$conges->date_debut = $data["date_from"];
