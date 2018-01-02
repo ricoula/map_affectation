@@ -1523,7 +1523,7 @@
 		$color = str_pad($color,6,'0');
 		include("connexionBddErp.php");
 		$listpoi = array();
-		$req = $bddErp->prepare("select ag_poi.id,ft_numero_oeie,ft_longitude,ft_latitude,account_analytic_account.name from ag_poi
+		$req = $bddErp->prepare("select ag_poi.id,ft_commentaire_creation_oeie,ft_numero_oeie,ft_longitude,ft_latitude,account_analytic_account.name from ag_poi
 left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
 where ft_etat = '1' and atr_caff_traitant_id = ? and ft_longitude is not null and ft_longitude != 0
 ");
@@ -1536,6 +1536,7 @@ while($data = $req->fetch())
 	$poi->position->lat = floatval($data['ft_longitude']);
 	$poi->position->lng = floatval($data['ft_latitude']);
 	$poi->title = $data['ft_numero_oeie'];
+	$poi->commentaire = htmlspecialchars($data['ft_commentaire_creation_oeie']);
 	$poi->icon = (object) array();
 	$poi->icon->path = 0;
 	$poi->icon->fillColor = '#'.$color;
