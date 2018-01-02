@@ -160,10 +160,7 @@
             <div id="divListePoiNAUi">
                 <div id="resultatsListePoiNA">
                 </div>
-                <div id="affect_btn">
-                <button id="affectationListePoiNA"><span>Affecter </span></button>
-
-                </div>
+                
                 
             </div>
           </div>
