@@ -558,7 +558,7 @@
                                     $("#btnCaffAffectAuto-" + poi.id).click();
                                     if(i == listePoi.length)
                                     {
-                                        html += "</tbody></table><div id='affect_btn'><button id='affectationListePoiNA'><span>Affecter </span></button></div>";
+                                        html += "</tbody></table><div class='affect_btn' id='affect_btn'><button id='affectationListePoiNA' class='affectationListePoiNA'><span>Affecter </span></button></div>";
                                      
                                         document.getElementById("resultatsListePoiNA").innerHTML = html;
                                         $("#resultatsListePoiNA").show();
