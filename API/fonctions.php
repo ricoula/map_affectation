@@ -3,12 +3,23 @@
 	{
 		include("connexionBddErp.php");
 		
+		$listePoiAffect = json_decode(getPoiAffect());
+		if(sizeof($listePoiAffect) > 0)
+		{
+			$listePoiAffect = implode(",", $listePoiAffect);
+			$listePoiAffect = " AND ag_poi.id NOT IN(".$listePoiAffect.")";
+		}
+		else{
+			$listePoiAffect = "";
+		}
+		
+		
 		$listePoi = array();
 		
 		$req = $bddErp->query("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.\"ft_numero_demande_42C\" numero_demande, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
 		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
-		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1'");
+		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1'".$listePoiAffect);
 		
 		while($data = $req->fetch())
 		{
@@ -1370,11 +1381,23 @@
 	function getPoiNAByUi($ui) //ft_zone
 	{
 		include("connexionBddErp.php");
+		
+		$listePoiAffect = json_decode(getPoiAffect());
+		if(sizeof($listePoiAffect) > 0)
+		{
+			$listePoiAffect = implode(",", $listePoiAffect);
+			$listePoiAffect = " AND ag_poi.id NOT IN(".$listePoiAffect.")";
+		}
+		else{
+			$listePoiAffect = "";
+		}
+		
 		$listePoi = array();
+		
 		$req = $bddErp->prepare("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.\"ft_numero_demande_42C\" numero_demande, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
 		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
-		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1' AND ag_poi.atr_ui = ?");
+		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1' AND ag_poi.atr_ui = ?".$listePoiAffect);
 		$req->execute(array($ui));
 		while($data = $req->fetch())
 		{
