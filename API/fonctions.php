@@ -1644,5 +1644,26 @@ return json_encode($listpoi);
 		return json_encode($conges);
 	}
 	
+	
+	
+	function getPoiAffect(){
+		include("connexionBdd.php");
+		$liste_poi = array();
+		$req = $bdd->query("SELECT erp_poi_id from cds_affectation");
+		while($data = $req->fetch()){
+			array_push($liste_poi,$data["erp_poi_id"]);
+		}
+		return json_encode($liste_poi);
+	}
+
+	function addPoiAffect($poi_id,$poi_num,$poi_domaine,$caff_id,$caff_name){
+		
+				$state = 1;
+				$pilote = 'unknow';
+				include("connexionBdd.php");
+				$req = $bdd->prepare("INSERT INTO cds_affectation (erp_poi_id,erp_caff_name,erp_pilote_name,cds_affectation_date,cds_affectation_state_id,erp_poi,caff_id,erp_poi_domaine) VALUES (?,?,?,NOW(),?,?,?,?)");
+				$req->execute(array($poi_id,$caff_name,$pilote,$state,$poi_num,$caff_id,$poi_domaine));
+				
+			}
 
 ?>

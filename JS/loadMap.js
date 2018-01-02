@@ -1,6 +1,6 @@
 
  window.onload = function() {
-   
+ 
   var mapElement = document.getElementById('map');
   map = new google.maps.Map(mapElement, { center: new google.maps.LatLng(45.6930369, 4.9989082), zoom: 8 });
   //document.getElementById("mapJson").value = JSON.stringify(map);
@@ -82,7 +82,8 @@
                     scale: scalepoi,
                   },
             poi_id: poi.id,
-            title: poi.ft_numero_oeie
+            title: poi.ft_numero_oeie,
+            poi_domaine: poi.domaine
           });
           
           google.maps.event.addListener(map, 'click', function(e){
@@ -135,6 +136,16 @@
             console.log(data);
             var caff = JSON.parse(data);
             $("#rightClickPoi_" + marker.poi_id).removeClass("glyphicon glyphicon-refresh gly-spin").addClass("label label-info").text(caff.name_related);
+            $("#win_info_affecter_auto").click(function(){
+                var repUser = confirm("Attribuer " + marker.title + " à " + caff.name_related + "?");
+                if(repUser)
+                {
+                    $.post("API/addPoiAffect.php", {poi_id: marker.poi_id, poi_num: marker.title, poi_domaine: marker.poi_domaine, caff_id: caff.id, caff_name: caff.name_related}, function(data2){
+                        $("#cardBox-" + marker.poi_id).hide();
+                        marker.setMap(null);
+                    });
+                }
+            });
           });
   
           });
