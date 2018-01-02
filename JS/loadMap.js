@@ -127,7 +127,11 @@
                       });
                   });
                   $("#win_info_affecter_a").click(function(){
+                    $("#divAffecterA").html("");
+                    $("#loadingDivAffecterA").show();
+                    $('#modaleAffecterA').modal('show');
                     $("#divAffecterA").load("modaleAffecterA.php?poi_id=" + poi.id, function(){
+                        $("#loadingDivAffecterA").hide();
                         $('#modaleAffecterA').modal('show');
                     });
                 });

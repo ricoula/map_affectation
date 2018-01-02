@@ -88,7 +88,10 @@
     </div>
     <div class="modal fade" id="modaleAffecterA">
         <div class="modal-dialog modal-lg"> 
-          <div class="modal-content" id="divAffecterA"></div>  
+          <div class="modal-content">
+          <div id="divAffecterA"></div>
+          <div id="loadingDivAffecterA" style="text-align: center"><img src="img/loading.gif" /></div>
+          </div>  
         </div> 
     </div>
     <div class="modal fade" id="modaleInfosCaffAffectation">
