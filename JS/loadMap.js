@@ -1,6 +1,6 @@
 
  window.onload = function() {
-   
+ 
   var mapElement = document.getElementById('map');
   map = new google.maps.Map(mapElement, { center: new google.maps.LatLng(45.6930369, 4.9989082), zoom: 8 });
   //document.getElementById("mapJson").value = JSON.stringify(map);
@@ -82,7 +82,8 @@
                     scale: scalepoi,
                   },
             poi_id: poi.id,
-            title: poi.ft_numero_oeie
+            title: poi.ft_numero_oeie,
+            poi_domaine: poi.domaine
           });
           
           google.maps.event.addListener(map, 'click', function(e){
@@ -126,14 +127,29 @@
                       });
                   });
                   $("#win_info_affecter_a").click(function(){
+                    $("#divAffecterA").html("");
+                    $("#loadingDivAffecterA").show();
+                    $('#modaleAffecterA').modal('show');
                     $("#divAffecterA").load("modaleAffecterA.php?poi_id=" + poi.id, function(){
+                        $("#loadingDivAffecterA").hide();
                         $('#modaleAffecterA').modal('show');
                     });
                 });
 
           $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val()}, function(data){
+            console.log(data);
             var caff = JSON.parse(data);
             $("#rightClickPoi_" + marker.poi_id).removeClass("glyphicon glyphicon-refresh gly-spin").addClass("label label-info").text(caff.name_related);
+            $("#win_info_affecter_auto").click(function(){
+                var repUser = confirm("Attribuer " + marker.title + " à " + caff.name_related + "?");
+                if(repUser)
+                {
+                    $.post("API/addPoiAffect.php", {poi_id: marker.poi_id, poi_num: marker.title, poi_domaine: marker.poi_domaine, caff_id: caff.id, caff_name: caff.name_related}, function(data2){
+                        $("#cardBox-" + marker.poi_id).hide();
+                        marker.setMap(null);
+                    });
+                }
+            });
           });
   
           });
@@ -508,22 +524,22 @@
                                         {
                                             if(poi.affectationAuto.listePoiTitulaire != null)
                                             {
-                                                optionElt += "<option poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                                optionElt += "<option poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") = ("+ Number(ceCaff.charge_initiale).toFixed(1) + ") + (" + Number(ceCaff.tauxRetard).toFixed(1) + ") - (" + Number(ceCaff.charge_rayon).toFixed(1) + ") + (" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
                                                 //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
                                             }
                                             else{
-                                                optionElt += "<option poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='" + color + "' style='color:" + color + "' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                                optionElt += "<option poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='" + color + "' style='color:" + color + "' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") = ("+ Number(ceCaff.charge_initiale).toFixed(1) + ") + (" + Number(ceCaff.tauxRetard).toFixed(1) + ") - (" + Number(ceCaff.charge_rayon).toFixed(1) + ") + (" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
                                                 //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
                                             }
                                         }
                                         else{
                                             if(poi.affectationAuto.listePoiTitulaire != null)
                                             {
-                                                optionElt += "<option poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                                optionElt += "<option poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") = ("+ Number(ceCaff.charge_initiale).toFixed(1) + ") + (" + Number(ceCaff.tauxRetard).toFixed(1) + ") - (" + Number(ceCaff.charge_rayon).toFixed(1) + ") + (" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
                                                 //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
                                             }
                                             else{
-                                                optionElt += "<option poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' style='color:" + color + "' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") ("+ Number(ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.chargeGlobale - ceCaff.charge_initiale).toFixed(1) + ")(" + Number(ceCaff.charge_simu).toFixed(1) + ")(" + Number(ceCaff.tauxRetard).toFixed(1) + ")(" + Number(ceCaff.charge_rayon).toFixed(1) + ")</option>";
+                                                optionElt += "<option poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' style='color:" + color + "' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") = ("+ Number(ceCaff.charge_initiale).toFixed(1) + ") + (" + Number(ceCaff.tauxRetard).toFixed(1) + ") - (" + Number(ceCaff.charge_rayon).toFixed(1) + ") + (" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
                                             }
                                             
                                         }
@@ -542,7 +558,7 @@
                                     $("#btnCaffAffectAuto-" + poi.id).click();
                                     if(i == listePoi.length)
                                     {
-                                        html += "</tbody></table>";
+                                        html += "</tbody></table><div class='affect_btn' id='affect_btn'><button id='affectationListePoiNA' class='affectationListePoiNA'><span>Affecter </span></button></div>";
                                      
                                         document.getElementById("resultatsListePoiNA").innerHTML = html;
                                         $("#resultatsListePoiNA").show();

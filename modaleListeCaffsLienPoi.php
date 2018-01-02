@@ -5,6 +5,7 @@
     $liensVoie = json_decode(getCaffsEnLienAvecPoiByVoie($poi->ft_libelle_de_voie, $poi->ft_libelle_commune, $poi->atr_ui));
     $liensCommune = json_decode(getCaffsEnLienAvecPoiByCommune($poi->ft_libelle_commune, $poi->atr_ui));
 ?>
+<input type="hidden" name="idPoiModaleListeCaffsLienPoi" id="idPoiModaleListeCaffsLienPoi" value="<?php echo $poi->id ?>" />
 
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -148,7 +149,7 @@
                 }
             }
         });
-        var url = "modaleListePoiCaff.php?liaison_name=" + liaisonName + "&caff_name=" + nameCaff + "&caff_id=" + idCaff + "&titulaire=" + titulaire + "&voie=" + voie + "&commune=" + commune + "&ui=" + ui;
+        var url = "modaleListePoiCaff.php?liaison_name=" + liaisonName + "&caff_name=" + nameCaff + "&caff_id=" + idCaff + "&titulaire=" + titulaire + "&voie=" + voie + "&commune=" + commune + "&ui=" + ui + "&poi_id=" + $("#idPoiModaleListeCaffsLienPoi").val();
         $("#divListePoiLienByCaff").load(url, function(){
             $('#modaleListePoiLienByCaff').modal('show');
         });
@@ -172,7 +173,7 @@
                 }
             }
         });
-        var url = "modaleListePoiCaff.php?liaison_name=" + liaisonName + "&caff_name=" + nameCaff + "&caff_id=" + idCaff + "&titulaire=" + titulaire + "&voie=" + voie + "&commune=" + commune + "&ui=" + ui;
+        var url = "modaleListePoiCaff.php?liaison_name=" + liaisonName + "&caff_name=" + nameCaff + "&caff_id=" + idCaff + "&titulaire=" + titulaire + "&voie=" + voie + "&commune=" + commune + "&ui=" + ui + "&poi_id=" + $("#idPoiModaleListeCaffsLienPoi").val();
         $("#divListePoiLienByCaff").load(url, function(){
             $('#modaleListePoiLienByCaff').modal('show');
         });
@@ -196,7 +197,7 @@
                 }
             }
         });
-        var url = "modaleListePoiCaff.php?liaison_name=" + liaisonName + "&caff_name=" + nameCaff + "&caff_id=" + idCaff + "&titulaire=" + titulaire + "&voie=" + voie + "&commune=" + commune + "&ui=" + ui;
+        var url = "modaleListePoiCaff.php?liaison_name=" + liaisonName + "&caff_name=" + nameCaff + "&caff_id=" + idCaff + "&titulaire=" + titulaire + "&voie=" + voie + "&commune=" + commune + "&ui=" + ui + "&poi_id=" + $("#idPoiModaleListeCaffsLienPoi").val();
         $("#divListePoiLienByCaff").load(url, function(){
             $('#modaleListePoiLienByCaff').modal('show');
         });

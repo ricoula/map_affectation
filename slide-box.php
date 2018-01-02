@@ -22,7 +22,7 @@
         foreach($poiNa as $poi)
         {
             ?>
-            <div class="card-box well cardBox-<?php echo $poi->atr_ui ?>">
+            <div id="cardBox-<?php echo $poi->id ?>" class="card-box well cardBox-<?php echo $poi->atr_ui ?>">
                 <input type="hidden" class="longitude" value="<?php echo $poi->ft_longitude ?>" />
                 <input type="hidden" class="latitude" value="<?php echo $poi->ft_latitude ?>" />
                 <div class="card-block">

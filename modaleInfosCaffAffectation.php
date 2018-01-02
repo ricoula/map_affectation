@@ -1,6 +1,12 @@
 <?php
     $caff = json_decode(urldecode($_GET["caff"]));
+    $poi = json_decode(urldecode($_GET["poi"]));
 ?>
+<input type="hidden" name="idCaffModaleInfosCaffAffectation" id="idCaffModaleInfosCaffAffectation" value="<?php echo $caff->id ?>" />
+<input type="hidden" name="nameCaffModaleInfosCaffAffectation" id="nameCaffModaleInfosCaffAffectation" value="<?php echo $caff->name_related ?>" />
+<input type="hidden" name="idPoiModaleInfosCaffAffectation" id="idPoiModaleInfosCaffAffectation" value="<?php echo $poi->id ?>" />
+<input type="hidden" name="domainePoiModaleInfosCaffAffectation" id="domainePoiModaleInfosCaffAffectation" value="<?php echo $poi->domaine ?>" />
+<input type="hidden" name="numPoiModaleInfosCaffAffectation" id="numPoiModaleInfosCaffAffectation" value="<?php echo $poi->ft_numero_oeie ?>" />
 
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -37,4 +43,17 @@
         <td><?php echo $caff->non_reactive ?></td>
     </tr>
   </table>
+  <div class='affect_btn'>
+      <button id="btnAffectationCaff" class='affectationListePoiNA'><span>Affecter </span></button>
+    </div>
 </div>
+
+<script>
+    $(function(){
+        $("#btnAffectationCaff").click(function(){
+            $.post("API/addPoiAffect.php", {poi_id: $("#idPoiModaleInfosCaffAffectation").val(), poi_num: $("#numPoiModaleInfosCaffAffectation").val(), poi_domaine: $("#domainePoiModaleInfosCaffAffectation").val(), caff_id: $("#idCaffModaleInfosCaffAffectation").val(), caff_name: $("#idCaffModaleInfosCaffAffectation").val()}, function(data2){
+                window.location.reload();
+            });
+        });
+    });
+</script>

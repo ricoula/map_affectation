@@ -13,7 +13,16 @@
     break;
     default : $listePoi = array();
   }
+  $caff = json_decode(getCaffById($_GET["caff_id"]));
+  $poi = json_decode(getPoiById($_GET["poi_id"]));
 ?>
+
+<input type="hidden" name="idCaffModaleListePoiCaff" id="idCaffModaleListePoiCaff" value="<?php echo $caff->id ?>" />
+<input type="hidden" name="nameCaffModaleListePoiCaff" id="nameCaffModaleListePoiCaff" value="<?php echo $caff->name_related ?>" />
+<input type="hidden" name="idPoiModaleListePoiCaff" id="idPoiModaleListePoiCaff" value="<?php echo $poi->id ?>" />
+<input type="hidden" name="domainePoiModaleListePoiCaff" id="domainePoiModaleListePoiCaff" value="<?php echo $poi->domaine ?>" />
+<input type="hidden" name="numPoiModaleListePoiCaff" id="numPoiModaleListePoiCaff" value="<?php echo $poi->ft_numero_oeie ?>" />
+
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal">&times;</button>
   <h1>Liste des Poi de <?php echo $_GET["caff_name"] ?> liées à <?php echo $nameLiaison ?></h1>
@@ -56,4 +65,17 @@
     <?php
   }
   ?>
+  <div class='affect_btn'>
+    <button id="btnAffectationCaffPoiLien" class='affectationListePoiNA'><span>Affecter </span></button>
+  </div>
 </div>
+
+<script>
+  $(function(){
+    $("#btnAffectationCaffPoiLien").click(function(){
+      $.post("API/addPoiAffect.php", {poi_id: $("#idPoiModaleListePoiCaff").val(), poi_num: $("#numPoiModaleListePoiCaff").val(), poi_domaine: $("#domainePoiModaleListePoiCaff").val(), caff_id: $("#idCaffModaleListePoiCaff").val(), caff_name: $("#idCaffModaleListePoiCaff").val()}, function(data2){
+          window.location.reload();
+      });
+    });
+  });
+</script>
