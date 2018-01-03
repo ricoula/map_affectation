@@ -913,7 +913,7 @@
 		return json_encode($caff);
 	}
 	
-	function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefChargeReactive, $coefCharge, $limiteJour, $limiteSemaine, $limiteMaxCalcul)//, $listeCaffsSimulation) // $listeCaffsSimulation (facultatif) = array en json
+	function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefChargeReactive, $coefCharge, $limiteJour, $limiteSemaine, $limiteMaxCalcul, $nbJoursAvantConges, $nbJoursConges)//, $listeCaffsSimulation) // $listeCaffsSimulation (facultatif) = array en json
 	{
 		include("connexionBddErp.php");
 		include("connexionBdd.php");
@@ -1022,7 +1022,7 @@
 					$conges = json_decode(getProchainesConges($data["id"]));
 					if($conges != null)
 					{
-						if($conges->temps_avant <= strtotime(60*60*24*5) && $conges->nbJoursCongesRestant >= 5) // Si le caff est en congé dans moins de 5 jours et que ces congés durent au moins 5 jours (sans compter les week_end) ou si le caff est actuellement en congés et que le nombre de jours de conges restant est d'au moins 5 jours
+						if($conges->temps_avant <= strtotime(60*60*24*$nbJoursAvantConges) && $conges->nbJoursCongesRestant >= $nbJoursConges) // Si le caff est en congé dans moins de 5 jours et que ces congés durent au moins 5 jours (sans compter les week_end) ou si le caff est actuellement en congés et que le nombre de jours de conges restant est d'au moins 5 jours
 						{
 							$enConges = true;
 						}
@@ -1547,37 +1547,37 @@
 		include("connexionBddErp.php");
 		$listpoi = array();
 		$req = $bddErp->prepare("select ag_poi.id,ft_commentaire_creation_oeie,ft_numero_oeie,ft_longitude,ft_latitude,account_analytic_account.name from ag_poi
-left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
-where ft_etat = '1' and atr_caff_traitant_id = ? and ft_longitude is not null and ft_longitude != 0
-");
-$req->execute(array($idCaff));
-while($data = $req->fetch())
-{
+		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
+		where ft_etat = '1' and atr_caff_traitant_id = ? and ft_longitude is not null and ft_longitude != 0
+		");
+		$req->execute(array($idCaff));
+		while($data = $req->fetch())
+		{
 
-	$poi = (object) array();
-	$poi->position = (object) array();
-	$poi->position->lat = floatval($data['ft_longitude']);
-	$poi->position->lng = floatval($data['ft_latitude']);
-	$poi->title = $data['ft_numero_oeie'];
-	$poi->commentaire = htmlspecialchars($data['ft_commentaire_creation_oeie']);
-	$poi->icon = (object) array();
-	$poi->icon->path = 0;
-	$poi->icon->fillColor = '#'.$color;
-	$poi->icon->fillOpacity = 1;
-	$poi->icon->strokeColor = 'black';
-	$poi->icon->strokeWeight = 1;
-	$poi->icon->scale = 5;
+			$poi = (object) array();
+			$poi->position = (object) array();
+			$poi->position->lat = floatval($data['ft_longitude']);
+			$poi->position->lng = floatval($data['ft_latitude']);
+			$poi->title = $data['ft_numero_oeie'];
+			$poi->commentaire = htmlspecialchars($data['ft_commentaire_creation_oeie']);
+			$poi->icon = (object) array();
+			$poi->icon->path = 0;
+			$poi->icon->fillColor = '#'.$color;
+			$poi->icon->fillOpacity = 1;
+			$poi->icon->strokeColor = 'black';
+			$poi->icon->strokeWeight = 1;
+			$poi->icon->scale = 5;
 
-	// path: google.maps.SymbolPath.CIRCLE,
-	// fillColor: color,
-	// fillOpacity: 1,
-	// strokeColor: strokecolorpoi,
-	// strokeWeight: strokeweightpoi,
-	// scale: scalepoi,
+			// path: google.maps.SymbolPath.CIRCLE,
+			// fillColor: color,
+			// fillOpacity: 1,
+			// strokeColor: strokecolorpoi,
+			// strokeWeight: strokeweightpoi,
+			// scale: scalepoi,
 
-	array_push($listpoi,$poi);
-}
-return json_encode($listpoi);
+			array_push($listpoi,$poi);
+		}
+		return json_encode($listpoi);
 	}
 	
 	function getProchainesConges($idEmploye)
@@ -1681,12 +1681,12 @@ return json_encode($listpoi);
 
 	function addPoiAffect($poi_id,$poi_num,$poi_domaine,$caff_id,$caff_name){
 		
-				$state = 1;
-				$pilote = 'unknow';
-				include("connexionBdd.php");
-				$req = $bdd->prepare("INSERT INTO cds_affectation (erp_poi_id,erp_caff_name,erp_pilote_name,cds_affectation_date,cds_affectation_state_id,erp_poi,caff_id,erp_poi_domaine) VALUES (?,?,?,NOW(),?,?,?,?)");
-				$req->execute(array($poi_id,$caff_name,$pilote,$state,$poi_num,$caff_id,$poi_domaine));
-				
-			}
+		$state = 1;
+		$pilote = 'unknow';
+		include("connexionBdd.php");
+		$req = $bdd->prepare("INSERT INTO cds_affectation (erp_poi_id,erp_caff_name,erp_pilote_name,cds_affectation_date,cds_affectation_state_id,erp_poi,caff_id,erp_poi_domaine) VALUES (?,?,?,NOW(),?,?,?,?)");
+		$req->execute(array($poi_id,$caff_name,$pilote,$state,$poi_num,$caff_id,$poi_domaine));
+		
+	}
 
 ?>

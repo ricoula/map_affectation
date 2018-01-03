@@ -177,7 +177,10 @@ $(".color-picker").spectrum({
               var max_rayon = $("#max_rayon").text();
               var max_day = $("#max_day").text();
               var max_week = $("#max_week").text();
-$("#config_modify").click(function(){
+              var jours_avant_conges = $("#max_avant_conges").text();
+              var jours_conges = $("#max_conges").text();
+
+    $("#config_modify").click(function(){
                coef_non_react = $("#coef_non_react").text();
                coef_react = $("#coef_react").text();
                rayon_km = $("#rayon_km").text();
@@ -185,6 +188,8 @@ $("#config_modify").click(function(){
                max_rayon = $("#max_rayon").text();
                max_day = $("#max_day").text();
                max_week = $("#max_week").text();
+               jours_avant_conges = $("#max_avant_conges").text();
+               jours_conges = $("#max_conges").text();
               $(".coef_non_react").html("<input class='input_modif coef_non_react_change' type='number' value='"+ coef_non_react +"'>");
               $("#rayon_km").html("<input type='number' class='input_modif' value='"+ rayon_km +"'>");
               $(".coef_react").html("<input type='number' class='input_modif coef_react_change' value='"+ coef_react +"'>");
@@ -192,6 +197,8 @@ $("#config_modify").click(function(){
               $("#max_rayon").html("<input type='number' class='input_modif' value='"+ max_rayon +"'>");
               $("#max_day").html("<input type='number' class='input_modif' value='"+ max_day +"'>");
               $("#max_week").html("<input type='number' class='input_modif' value='"+ max_week +"'>");
+              $("#max_avant_conges").html("<input type='number' class='input_modif' value='"+ jours_avant_conges +"'>");
+              $("#max_conges").html("<input type='number' class='input_modif' value='"+ jours_conges +"'>");
               $("#config_modify").addClass("hide");
               $("#config_valid").removeClass("hide");
               $("#config_cancel").removeClass("hide");
@@ -203,6 +210,7 @@ $("#config_modify").click(function(){
                 });
 
             });
+
             $("#config_valid").click(function(){
                 
                var coef_non_react_new =  $("#coef_non_react").children().val();
@@ -212,6 +220,8 @@ $("#config_modify").click(function(){
                var max_rayon_new = $("#max_rayon").children().val();
                var max_day_new = $("#max_day").children().val();
                var max_week_new = $("#max_week").children().val();
+               var jours_avant_conges_new = $("#max_avant_conges").children().val();
+               var jours_conges_new = $("#max_conges").children().val();
                 $(".coef_non_react").html(coef_non_react_new);
               $("#rayon_km").html(rayon_km_new);
               $(".coef_react").html(coef_react_new);
@@ -219,6 +229,8 @@ $("#config_modify").click(function(){
               $("#max_rayon").html(max_rayon_new);
               $("#max_week").html(max_week_new);
               $("#max_day").html(max_day_new);
+              $("#max_avant_conges").html(jours_avant_conges_new);
+              $("#max_conges").html(jours_conges_new);
               $("#config_modify").removeClass("hide");
               $("#config_valid").addClass("hide");
               $("#config_cancel").addClass("hide");
@@ -229,7 +241,9 @@ $("#config_modify").click(function(){
                   coef_rayon_new: coef_rayon_new,
                   max_rayon_new: max_rayon_new,
                   max_day: max_day_new,
-                  max_week: max_week_new
+                  max_week: max_week_new,
+                  jours_avant_conges: jours_avant_conges_new,
+                  jours_conges: jours_conges_new
               };
               var modif_json_string = JSON.stringify(modif_json);
               console.log(modif_json_string);
@@ -247,6 +261,8 @@ $("#config_modify").click(function(){
               $("#max_rayon").html(max_rayon);
               $("#max_day").html(max_day);
               $("#max_week").html(max_week);
+              $("#max_avant_conges").html(jours_avant_conges);
+              $("#max_conges").html(jours_conges);
               $("#config_modify").removeClass("hide");
               $("#config_valid").addClass("hide");
               $("#config_cancel").addClass("hide");   

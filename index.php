@@ -23,6 +23,8 @@
       <input type="hidden" id="limiteAffectationJour" name="limiteAffectationJour" value="<?php echo $config->max_day ?>" />
       <input type="hidden" id="limiteAffectationSemaine" name="limiteAffectationSemaine" value="<?php echo $config->max_week ?>" />
       <input type="hidden" id="limiteMaxCalcul" name="limiteMaxCalcul" value="<?php echo $config->max_rayon_new ?>" />
+      <input type="hidden" id="nbJoursAvantCongesMax" name="nbJoursAvantCongesMax" value="<?php echo $config->jours_avant_conges ?>" />
+      <input type="hidden" id="nbJoursCongesMax" name="nbJoursCongesMax" value="<?php echo $config->jours_conges ?>" />
       <?php
     }
     else{
@@ -34,6 +36,8 @@
       <input type="hidden" id="limiteAffectationJour" name="limiteAffectationJour" value="3" />
       <input type="hidden" id="limiteAffectationSemaine" name="limiteAffectationSemaine" value="10" />
       <input type="hidden" id="limiteMaxCalcul" name="limiteMaxCalcul" value="20" />
+      <input type="hidden" id="nbJoursAvantCongesMax" name="nbJoursAvantCongesMax" value="5" />
+      <input type="hidden" id="nbJoursCongesMax" name="nbJoursCongesMax" value="5" />
       <?php
     }
     ?>
@@ -117,6 +121,8 @@
             <p>((NbPoiReactive * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label> + NbPoiNonReactive * <label class="color-purple coef_non_react" id="coef_non_react"><?php echo $config->coef_non_react ?></label>) * CoefCaff) + (%Retard * NbPoiReactive * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label>) - (NbPoiRayon(<label class="color-red" id="rayon_km"><?php echo $config->rayon_km_new ?></label>km) * <label class="color-yellow" id="coef_rayon"><?php echo $config->coef_rayon_new ?></label>)->MAX(<label class="color-green" id="max_rayon"><?php echo $config->max_rayon_new ?></label>) + (NbPoiReactiveSimu * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label> + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react"><?php echo $config->coef_non_react ?></label>) </p>
             <p>Nombre de POI réactive MAX par jour: <label id="max_day"><?php echo $config->max_day ?></label></p>
             <p>Nombre de POI réactive MAX par semaine: <label id="max_week"><?php echo $config->max_week ?></label></p>
+            <p>Nombre de jours MAX avant congés: <label id="max_avant_conges"><?php echo $config->jours_avant_conges ?></label></p>
+            <p>Nombre de jours de congés MAX: <label id="max_conges"><?php echo $config->jours_conges ?></label></p>
 
          </div>
          <div class="modal-footer">
