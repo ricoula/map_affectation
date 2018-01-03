@@ -728,6 +728,12 @@
                 $(this).val(0);
               }
           });
+          $("#nbPoiSimuAvance").blur(function(){
+            if(!isNaN($(this).val()) || $(this).val() < 0)
+            {
+              $(this).val(0);
+            }
+        });
 
           $("#btnValiderModalSimulation").click(function(){
               $.post("API/addListePoiSimu.php", {nb_poi: $("#nbPoiSimu").val(), ui: $("#selectUiSimu").val()}, function(){
