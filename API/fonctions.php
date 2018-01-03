@@ -1708,7 +1708,7 @@
 		include("connexionBddErp.php");
 		for($i = 0; $i < $nb; $i++)
 		{
-			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 where atr_caff_traitant_id IN(SELECT id FROM hr_employee WHERE name_related IN('MATHIASIN Celine','AFFECTATION')) and ft_etat != '1' AND atr_ui = ?");
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 WHERE ft_etat != '1' AND atr_ui = ?");
 			$req->execute(array($ui));
 		}
 	}
