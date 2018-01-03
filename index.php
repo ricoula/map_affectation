@@ -121,8 +121,97 @@
           <div class="modal-body">
             Ajouter <input type="number" name="nbPoiSimu" id="nbPoiSimu" value="0" /> POI sur <select id="selectUiSimu" name="selectUiSimu"><?php foreach($listeUi as $ui){ ?><option value="<?php echo $ui->ft_zone ?>"><?php echo $ui->libelle ?></option><?php } ?><select></select>
           </div>
+          <div>
+            <button class="btn btn-primary" data-toggle="modal" href="#modaleSimulationPOIAvance">Avancé</button>
+          </div>
           <div class="modal-footer">
             <button class="btn btn-success" id="btnValiderModalSimulation">Valider</button>
+            <button class="btn btn-info" data-dismiss="modal">Fermer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modaleSimulationPOIAvance">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">x</button>
+            <h4 class="modal-title">Ajouter des POI (Avancé)</h4>
+          </div>
+          <div class="modal-body">
+            Ajouter <input type="number" name="nbPoiSimuAvance" id="nbPoiSimuAvance" value="0" /> POI sur <select id="selectUiSimuAvance" name="selectUiSimuAvance"><?php foreach($listeUi as $ui){ ?><option value="<?php echo $ui->ft_zone ?>"><?php echo $ui->libelle ?></option><?php } ?><select></select>
+            <div class="form-group">
+              <label>ft_sous_justification_oeie</label>
+              <input type="text" class="form-control" name="ft_sous_justification_oeie" id="ft_sous_justification_oeie"/>
+            </div>
+            <!-- <div class="form-group">
+              <label>atr_ui</label>
+              <input type="text" class="form-control" name="atr_ui" id="atr_ui"/>
+            </div> -->
+            <div class="form-group">
+              <label>ft_numero_oeie</label>
+              <input type="text" class="form-control" name="ft_numero_oeie" id="ft_numero_oeie"/>
+            </div>
+            <div class="form-group">
+              <label>ft_numero_demande_42C</label>
+              <input type="text" class="form-control" name="ft_numero_demande_42C" id="ft_numero_demande_42C"/>
+            </div>
+            <div class="form-group">
+              <label>ft_libelle_commune</label>
+              <input type="text" class="form-control" name="ft_libelle_commune" id="ft_libelle_commune"/>
+            </div>
+            <div class="form-group">
+              <label>ft_libelle_de_voie</label>
+              <input type="text" class="form-control" name="ft_libelle_de_voie" id="ft_libelle_de_voie"/>
+            </div>
+            <div class="form-group">
+              <label>ft_pg</label>
+              <input type="text" class="form-control" name="ft_pg" id="ft_pg"/>
+            </div>
+            <div class="form-group">
+              <label>ft_oeie_dre</label>
+              <input type="text" class="form-control" name="ft_oeie_dre" id="ft_oeie_dre"/>
+            </div>
+            <div class="form-group">
+              <label>ft_latitude</label>
+              <input type="text" class="form-control" name="ft_latitude" id="ft_latitude"/>
+            </div>
+            <div class="form-group">
+              <label>ft_longitude</label>
+              <input type="text" class="form-control" name="ft_longitude" id="ft_longitude"/>
+            </div>
+            <div class="form-group">
+              <label>insee_code</label>
+              <input type="text" class="form-control" name="insee_code" id="insee_code"/>
+            </div>
+            <div class="form-group">
+              <label>ft_libelle_affaire</label>
+              <input type="text" class="form-control" name="ft_libelle_affaire" id="ft_libelle_affaire"/>
+            </div>
+            <div class="form-group">
+              <label>ft_date_limite_realisation</label>
+              <input type="text" class="form-control" name="ft_date_limite_realisation" id="ft_date_limite_realisation"/>
+            </div>
+            <div class="form-group">
+              <label>create_date</label>
+              <input type="text" class="form-control" name="create_date" id="create_date"/>
+            </div>
+            <div class="form-group">
+              <label>ft_etat</label>
+              <input type="text" class="form-control" name="ft_etat" id="ft_etat"/>
+            </div>
+            <div class="form-group">
+              <label>atr_domaine_id</label>
+              <input type="text" class="form-control" name="atr_domaine_id" id="atr_domaine_id"/>
+            </div>
+            <div class="form-group">
+              <label>atr_caff_traitant_id</label>
+              <input type="text" class="form-control" name="atr_caff_traitant_id" id="atr_caff_traitant_id"/>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-success" id="btnValiderModalSimulationAvance">Valider</button>
             <button class="btn btn-info" data-dismiss="modal">Fermer</button>
           </div>
         </div>

@@ -1712,5 +1712,30 @@
 			$req->execute(array($ui));
 		}
 	}
+	
+	function getPositionAleatoireByUi($ui) //$ui = ft_zone (FC4, JR4...)
+	{
+		include("connexionBddErp.php");
+		$position = null;
+		$req = $bddErp->prepare("SELECT ft_libelle_commune, ft_libelle_de_voie, ft_latitude, ft_longitude FROM ag_poi 
+								WHERE atr_ui = ?
+								AND ft_etat != '1' 
+								AND ft_libelle_commune != '' AND ft_libelle_commune IS NOT NULL 
+								AND  ft_libelle_de_voie != '' AND ft_libelle_de_voie IS NOT NULL
+								AND ft_latitude IS NOT NULL
+								AND ft_longitude IS NOT NULL
+								ORDER BY random() LIMIT 1");
+		$req->execute(array($ui));
+		if($data = $req->fetch())
+		{
+			$position = (object) array();
+			$position->commune = $data["ft_libelle_commune"];
+			$position->voie = $data["ft_libelle_de_voie"];
+			$position->longitude = $data["ft_longitude"];
+			$position->latitude = $data["ft_latitude"];
+		}
+		
+		return json_encode($position);
+	}
 
 ?>
