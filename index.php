@@ -3,6 +3,7 @@
     include("API/fonctions.php");
     $_SESSION["user_id"] = 1;
     $config = json_decode(getAdvancedConfig());
+    $listeUi = json_decode(getUi());
 ?>
 <!DOCTYPE html>
 <html>
@@ -62,7 +63,7 @@
             </div>
           </div>
         </div>
-
+        <button data-toggle="modal" href="#modaleSimulationPOI" class="btn btn-info btn-lg">Simulation</button>
       </div>
   <div id="side_bar">
     <div id="div-slide-users" class="slide"></div>
@@ -108,6 +109,27 @@
           <div class="modal-content" id="divlistePoiCaff"></div>  
         </div> 
     </div>
+
+
+    <div class="modal" id="modaleSimulationPOI">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">x</button>
+            <h4 class="modal-title">Ajouter des POI</h4>
+          </div>
+          <div class="modal-body">
+            Ajouter <input type="number" name="nbPoiSimu" id="nbPoiSimu" value="0" /> POI sur <select id="selectUiSimu" name="selectUiSimu"><?php foreach($listeUi as $ui){ ?><option value="<?php echo $ui->ft_zone ?>"><?php echo $ui->libelle ?></option><?php } ?><select></select>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-success" id="btnValiderModalSimulation">Valider</button>
+            <button class="btn btn-info" data-dismiss="modal">Fermer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     <div class="modal fade" id="advancedsettings">
      <div class="modal-dialog modal-lg" id="modal_advanced_config">
        <div class="modal-content">
@@ -148,7 +170,6 @@
               <select id="selectUi" name="selectUi">
                 <option disabled selected value>Séléctionner une UI</option>
                 <?php
-                $listeUi = json_decode(getUi());
                 foreach($listeUi as $ui)
                 {
                   ?>

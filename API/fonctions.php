@@ -1688,5 +1688,29 @@
 		$req->execute(array($poi_id,$caff_name,$pilote,$state,$poi_num,$caff_id,$poi_domaine));
 		
 	}
+	
+	function addPoiSimu($ft_sous_justification_oeie, $atr_ui, $ft_numero_oeie, $ft_numero_demande_42C, $ft_libelle_commune, $ft_libelle_de_voie, $ft_pg, $ft_oeie_dre, $ft_latitude, $insee_code, $ft_longitude, $ft_libelle_affaire, $ft_date_limite_realisation, $create_date, $ft_etat, $atr_domaine_id, $atr_caff_traitant_id)
+	{
+		include("connexionBddErp.php");
+		$reponse = false;
+		
+		try{
+			$req = $bddErp->prepare("INSERT INTO ag_poi(ft_sous_justification_oeie, atr_ui, ft_numero_oeie, \"ft_numero_demande_42C\", ft_libelle_commune, ft_libelle_de_voie, ft_pg, ft_oeie_dre, ft_latitude, insee_code, ft_longitude, ft_libelle_affaire, ft_date_limite_realisation, create_date, ft_etat, atr_domaine_id, atr_caff_traitant_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			$reponse = $req->execute(array($ft_sous_justification_oeie, $atr_ui, $ft_numero_oeie, $ft_numero_demande_42C, $ft_libelle_commune, $ft_libelle_de_voie, $ft_pg, $ft_oeie_dre, $ft_latitude, $insee_code, $ft_longitude, $ft_libelle_affaire, $ft_date_limite_realisation, $create_date, $ft_etat, $atr_domaine_id, $atr_caff_traitant_id));
+		}catch(Exception $e){
+			$reponse = false;
+		}
+		return json_encode($reponse);
+	}
+	
+	function addListePoiSimu($nb, $ui) //$ui = ft_zone (FC4, JR4...)
+	{
+		include("connexionBddErp.php");
+		for($i = 0; $i < $nb; $i++)
+		{
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 where atr_caff_traitant_id IN(SELECT id FROM hr_employee WHERE name_related IN('MATHIASIN Celine','AFFECTATION')) and ft_etat != '1' AND atr_ui = ?");
+			$req->execute(array($ui));
+		}
+	}
 
 ?>
