@@ -743,5 +743,34 @@
                   document.location.reload();
               });
           });
+          $("#advancedConfigUI").click(function(e){
+              e.stopPropagation();
+              console.log("ok2");
+          })
+          $("#advancedConfigAddUI").click(function(){
+            var advancedSelectedUI = $('#advancedConfigUI').find(":selected").attr('value');
+            if(advancedSelectedUI != "null"){
+                console.log(advancedSelectedUI)
+                $.post("API/addAdvancedConfigUI.php",{ui : advancedSelectedUI}, function(data){
+                    if(data == true){
+                        document.location.reload();
+                    }
+                    else
+                    {
+                        alert("La configuration de l'ui existe déjà");
+                    }
+                })
+            }
+       
+          })
+          $(".remove_advanced_ui").click(function(){
+              var ui = $(this).attr('ui');
+              var result = confirm("Voulez vous vraiment supprimer la configuration de l'ui "+ui);
+              if(result==true){
+                  $.post("API/removeAdvancedConfigUI.php",{ui: ui},function(){
+                    $("#advancedConfig-"+ui).html("");
+                  })
+              }
+          })
     }
     

@@ -394,3 +394,11 @@ color: grey;
   display:flex;
   justify-content:flex-end;
 }
+#advancedConfigUI
+{
+  color:black;
+}
+.advanced_config_ui
+{
+  display:-webkit-inline-box;
+}
