@@ -140,24 +140,61 @@
             <h4 class="modal-title">Ajouter des POI (Avancé)</h4>
           </div>
           <div class="modal-body">
-            Ajouter <input type="number" name="nbPoiSimuAvance" id="nbPoiSimuAvance" value="0" /> POI sur <select id="selectUiSimuAvance" name="selectUiSimuAvance"><?php foreach($listeUi as $ui){ ?><option value="<?php echo $ui->ft_zone ?>"><?php echo $ui->libelle ?></option><?php } ?><select></select>
-            <div class="form-group">
+            <!-- <div class="form-group">
               <label>ft_sous_justification_oeie</label>
               <input type="text" class="form-control" name="ft_sous_justification_oeie" id="ft_sous_justification_oeie"/>
-            </div>
+            </div> -->
             <!-- <div class="form-group">
               <label>atr_ui</label>
               <input type="text" class="form-control" name="atr_ui" id="atr_ui"/>
             </div> -->
             <div class="form-group">
-              <label>ft_numero_oeie</label>
-              <input type="text" class="form-control" name="ft_numero_oeie" id="ft_numero_oeie"/>
+              <label>UI</label>
+              <select id="selectUiSimuAvance" name="selectUiSimuAvance" class="form-control" ><?php foreach($listeUi as $ui){ ?><option value="<?php echo $ui->ft_zone ?>"><?php echo $ui->libelle ?></option><?php } ?></select>
             </div>
-            <div class="form-group">
-              <label>ft_numero_demande_42C</label>
-              <input type="text" class="form-control" name="ft_numero_demande_42C" id="ft_numero_demande_42C"/>
-            </div>
-            <div class="form-group">
+            <table>
+            <tr>
+              <th>
+                <label>Dissi</label>
+              </th>
+              <td>
+                <input type="number" class="numberNegatif" name="dissiSimu" id="dissiSimu" value="0" />
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <label>Immo</label>
+              </th>
+              <td>
+                <input type="number" class="numberNegatif" name="immoSimu" id="immoSimu" value="0" />
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <label>FO & CU</label>
+              </th>
+              <td>
+                <input type="number" class="numberNegatif" name="focuSimu" id="focuSimu" value="0" />
+              </td>
+           </tr>
+            <tr>
+              <th>
+                <label>Client</label>
+              </th>
+              <td>
+                <input type="number" class="numberNegatif" name="clientSimu" id="clientSimu" value="0" />
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <label>Coordi</label>
+              </th>
+              <td>
+                <input type="number" class="numberNegatif" name="coordiSimu" id="coordiSimu" value="0" />
+              </td>
+            </tr>
+            </table>
+            <!-- <div class="form-group">
               <label>ft_libelle_commune</label>
               <input type="text" class="form-control" name="ft_libelle_commune" id="ft_libelle_commune"/>
             </div>
@@ -208,7 +245,7 @@
             <div class="form-group">
               <label>atr_caff_traitant_id</label>
               <input type="text" class="form-control" name="atr_caff_traitant_id" id="atr_caff_traitant_id"/>
-            </div>
+            </div> -->
           </div>
           <div class="modal-footer">
             <button class="btn btn-success" id="btnValiderModalSimulationAvance">Valider</button>

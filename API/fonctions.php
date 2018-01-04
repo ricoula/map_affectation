@@ -1708,9 +1708,40 @@
 		include("connexionBddErp.php");
 		for($i = 0; $i < $nb; $i++)
 		{
-			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 WHERE ft_etat != '1' AND atr_ui = ?");
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 AND atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE ft_etat != '1' AND atr_ui = ?");
 			$req->execute(array($ui));
 		}
+	}
+
+	function addListePoiSimuDomaines($nbDissi, $nbClient, $nbImmo, $nbFocu, $nbCoordi, $ui) //$ui = ft_zone (FC4, JR4...)
+	{
+		include("connexionBddErp.php");
+		for($i = 0; $i < $nbDissi; $i++)
+		{
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 AND atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE ft_etat != '1' AND atr_ui = ? AND atr_domaine_id = (SELECT id FROM account_analytic_account WHERE UPPER(name) = 'DISSI' LIMIT 1)");
+			$req->execute(array($ui));
+		}
+		for($i = 0; $i < $nbClient; $i++)
+		{
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 AND atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE ft_etat != '1' AND atr_ui = ? AND atr_domaine_id = (SELECT id FROM account_analytic_account WHERE UPPER(name) = 'CLIENT' LIMIT 1)");
+			$req->execute(array($ui));
+		}
+		for($i = 0; $i < $nbImmo; $i++)
+		{
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 AND atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE ft_etat != '1' AND atr_ui = ? AND atr_domaine_id = (SELECT id FROM account_analytic_account WHERE UPPER(name) = 'IMMO' LIMIT 1)");
+			$req->execute(array($ui));
+		}
+		for($i = 0; $i < $nbFocu; $i++)
+		{
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 AND atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE ft_etat != '1' AND atr_ui = ? AND atr_domaine_id = (SELECT id FROM account_analytic_account WHERE UPPER(name) = 'FO & CU' LIMIT 1)");
+			$req->execute(array($ui));
+		}
+		for($i = 0; $i < $nbCoordi; $i++)
+		{
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 AND atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE ft_etat != '1' AND atr_ui = ? AND atr_domaine_id = (SELECT id FROM account_analytic_account WHERE UPPER(name) = 'COORDI' LIMIT 1)");
+			$req->execute(array($ui));
+		}
+		
 	}
 	
 	function getPositionAleatoireByUi($ui) //$ui = ft_zone (FC4, JR4...)

@@ -731,7 +731,8 @@
                 $(this).val(0);
               }
           });
-          $("#nbPoiSimuAvance").blur(function(){
+          
+          $(".numberNegatif").blur(function(){
             if(!isNaN($(this).val()) || $(this).val() < 0)
             {
               $(this).val(0);
@@ -743,5 +744,11 @@
                   document.location.reload();
               });
           });
+
+          $("#btnValiderModalSimulationAvance").click(function(){
+            $.post("API/addListePoiSimuDomaines.php", {nbDissi: $("#dissiSimu").val(), nbClient: $("#clientSimu").val(), nbImmo: $("#immoSimu").val(), nbFocu: $("#focuSimu").val(), nbCoordi: $("#coordiSimu").val(), ui: $("#selectUiSimuAvance").val()}, function(){
+                document.location.reload();
+            });
+        });
     }
     
