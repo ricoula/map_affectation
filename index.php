@@ -239,7 +239,7 @@
             <button class="btn btn-primary pull-left config_modify" ui="defaut">Modifier</button>
          <button class="btn btn-success pull-left hide config_valid" ui="defaut">Valider</button>
          <button class="btn btn-primary pull-left hide config_cancel" ui="defaut">Annuler</button>
-            </div></br></br>
+         </br></br></div>
             <?php 
               foreach($listeUi as $ui){
                 $config = json_decode(getAdvancedConfig($ui->ft_zone));
@@ -255,7 +255,7 @@
             <button class="btn btn-primary pull-left config_modify" ui="<?php echo $ui->ft_zone; ?>">Modifier</button>
          <button class="btn btn-success pull-left hide config_valid" ui="<?php echo $ui->ft_zone; ?>">Valider</button>
          <button class="btn btn-primary pull-left hide config_cancel" ui="<?php echo $ui->ft_zone; ?>">Annuler</button>
-            </div></br></br>
+         </br></br></div>
                   <?php
                 }
               }
