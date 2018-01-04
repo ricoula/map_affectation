@@ -3,6 +3,7 @@
     include("API/fonctions.php");
     $_SESSION["user_id"] = 1;
     $config = json_decode(getAdvancedConfig());
+    $listeUi = json_decode(getUi());
 ?>
 <!DOCTYPE html>
 <html>
@@ -23,6 +24,8 @@
       <input type="hidden" id="limiteAffectationJour" name="limiteAffectationJour" value="<?php echo $config->max_day ?>" />
       <input type="hidden" id="limiteAffectationSemaine" name="limiteAffectationSemaine" value="<?php echo $config->max_week ?>" />
       <input type="hidden" id="limiteMaxCalcul" name="limiteMaxCalcul" value="<?php echo $config->max_rayon_new ?>" />
+      <input type="hidden" id="nbJoursAvantCongesMax" name="nbJoursAvantCongesMax" value="<?php echo $config->jours_avant_conges ?>" />
+      <input type="hidden" id="nbJoursCongesMax" name="nbJoursCongesMax" value="<?php echo $config->jours_conges ?>" />
       <?php
     }
     else{
@@ -34,6 +37,8 @@
       <input type="hidden" id="limiteAffectationJour" name="limiteAffectationJour" value="3" />
       <input type="hidden" id="limiteAffectationSemaine" name="limiteAffectationSemaine" value="10" />
       <input type="hidden" id="limiteMaxCalcul" name="limiteMaxCalcul" value="20" />
+      <input type="hidden" id="nbJoursAvantCongesMax" name="nbJoursAvantCongesMax" value="5" />
+      <input type="hidden" id="nbJoursCongesMax" name="nbJoursCongesMax" value="5" />
       <?php
     }
     ?>
@@ -58,7 +63,7 @@
             </div>
           </div>
         </div>
-
+        <button data-toggle="modal" href="#modaleSimulationPOI" class="btn btn-info btn-lg">Simulation</button>
       </div>
   <div id="side_bar">
     <div id="div-slide-users" class="slide"></div>
@@ -104,6 +109,116 @@
           <div class="modal-content" id="divlistePoiCaff"></div>  
         </div> 
     </div>
+
+
+    <div class="modal" id="modaleSimulationPOI">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">x</button>
+            <h4 class="modal-title">Ajouter des POI</h4>
+          </div>
+          <div class="modal-body">
+            Ajouter <input type="number" name="nbPoiSimu" id="nbPoiSimu" value="0" /> POI sur <select id="selectUiSimu" name="selectUiSimu"><?php foreach($listeUi as $ui){ ?><option value="<?php echo $ui->ft_zone ?>"><?php echo $ui->libelle ?></option><?php } ?><select></select>
+          </div>
+          <div>
+            <button class="btn btn-primary" data-toggle="modal" href="#modaleSimulationPOIAvance">Avancé</button>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-success" id="btnValiderModalSimulation">Valider</button>
+            <button class="btn btn-info" data-dismiss="modal">Fermer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modaleSimulationPOIAvance">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">x</button>
+            <h4 class="modal-title">Ajouter des POI (Avancé)</h4>
+          </div>
+          <div class="modal-body">
+            Ajouter <input type="number" name="nbPoiSimuAvance" id="nbPoiSimuAvance" value="0" /> POI sur <select id="selectUiSimuAvance" name="selectUiSimuAvance"><?php foreach($listeUi as $ui){ ?><option value="<?php echo $ui->ft_zone ?>"><?php echo $ui->libelle ?></option><?php } ?><select></select>
+            <div class="form-group">
+              <label>ft_sous_justification_oeie</label>
+              <input type="text" class="form-control" name="ft_sous_justification_oeie" id="ft_sous_justification_oeie"/>
+            </div>
+            <!-- <div class="form-group">
+              <label>atr_ui</label>
+              <input type="text" class="form-control" name="atr_ui" id="atr_ui"/>
+            </div> -->
+            <div class="form-group">
+              <label>ft_numero_oeie</label>
+              <input type="text" class="form-control" name="ft_numero_oeie" id="ft_numero_oeie"/>
+            </div>
+            <div class="form-group">
+              <label>ft_numero_demande_42C</label>
+              <input type="text" class="form-control" name="ft_numero_demande_42C" id="ft_numero_demande_42C"/>
+            </div>
+            <div class="form-group">
+              <label>ft_libelle_commune</label>
+              <input type="text" class="form-control" name="ft_libelle_commune" id="ft_libelle_commune"/>
+            </div>
+            <div class="form-group">
+              <label>ft_libelle_de_voie</label>
+              <input type="text" class="form-control" name="ft_libelle_de_voie" id="ft_libelle_de_voie"/>
+            </div>
+            <div class="form-group">
+              <label>ft_pg</label>
+              <input type="text" class="form-control" name="ft_pg" id="ft_pg"/>
+            </div>
+            <div class="form-group">
+              <label>ft_oeie_dre</label>
+              <input type="text" class="form-control" name="ft_oeie_dre" id="ft_oeie_dre"/>
+            </div>
+            <div class="form-group">
+              <label>ft_latitude</label>
+              <input type="text" class="form-control" name="ft_latitude" id="ft_latitude"/>
+            </div>
+            <div class="form-group">
+              <label>ft_longitude</label>
+              <input type="text" class="form-control" name="ft_longitude" id="ft_longitude"/>
+            </div>
+            <div class="form-group">
+              <label>insee_code</label>
+              <input type="text" class="form-control" name="insee_code" id="insee_code"/>
+            </div>
+            <div class="form-group">
+              <label>ft_libelle_affaire</label>
+              <input type="text" class="form-control" name="ft_libelle_affaire" id="ft_libelle_affaire"/>
+            </div>
+            <div class="form-group">
+              <label>ft_date_limite_realisation</label>
+              <input type="text" class="form-control" name="ft_date_limite_realisation" id="ft_date_limite_realisation"/>
+            </div>
+            <div class="form-group">
+              <label>create_date</label>
+              <input type="text" class="form-control" name="create_date" id="create_date"/>
+            </div>
+            <div class="form-group">
+              <label>ft_etat</label>
+              <input type="text" class="form-control" name="ft_etat" id="ft_etat"/>
+            </div>
+            <div class="form-group">
+              <label>atr_domaine_id</label>
+              <input type="text" class="form-control" name="atr_domaine_id" id="atr_domaine_id"/>
+            </div>
+            <div class="form-group">
+              <label>atr_caff_traitant_id</label>
+              <input type="text" class="form-control" name="atr_caff_traitant_id" id="atr_caff_traitant_id"/>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-success" id="btnValiderModalSimulationAvance">Valider</button>
+            <button class="btn btn-info" data-dismiss="modal">Fermer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     <div class="modal fade" id="advancedsettings">
      <div class="modal-dialog modal-lg" id="modal_advanced_config">
        <div class="modal-content">
@@ -117,6 +232,8 @@
             <p>((NbPoiReactive * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label> + NbPoiNonReactive * <label class="color-purple coef_non_react" id="coef_non_react"><?php echo $config->coef_non_react ?></label>) * CoefCaff) + (%Retard * NbPoiReactive * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label>) - (NbPoiRayon(<label class="color-red" id="rayon_km"><?php echo $config->rayon_km_new ?></label>km) * <label class="color-yellow" id="coef_rayon"><?php echo $config->coef_rayon_new ?></label>)->MAX(<label class="color-green" id="max_rayon"><?php echo $config->max_rayon_new ?></label>) + (NbPoiReactiveSimu * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label> + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react"><?php echo $config->coef_non_react ?></label>) </p>
             <p>Nombre de POI réactive MAX par jour: <label id="max_day"><?php echo $config->max_day ?></label></p>
             <p>Nombre de POI réactive MAX par semaine: <label id="max_week"><?php echo $config->max_week ?></label></p>
+            <p>Nombre de jours MAX avant congés: <label id="max_avant_conges"><?php echo $config->jours_avant_conges ?></label></p>
+            <p>Nombre de jours de congés MAX: <label id="max_conges"><?php echo $config->jours_conges ?></label></p>
 
          </div>
          <div class="modal-footer">
@@ -142,7 +259,6 @@
               <select id="selectUi" name="selectUi">
                 <option disabled selected value>Séléctionner une UI</option>
                 <?php
-                $listeUi = json_decode(getUi());
                 foreach($listeUi as $ui)
                 {
                   ?>
