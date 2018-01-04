@@ -1,6 +1,7 @@
 <?php
   include("API/fonctions.php");
   $listeSites = json_decode(getSites());
+  $listeEntraides = json_decode(getProchainesEntraidesCaff($_GET["idCaff"]));
 ?>
 
 <div class="modal-header">
@@ -38,6 +39,51 @@
         <input type="text" name="dateExpiration" id="dateExpiration" class="form-control" value="<?php echo date("Y-m-d")." ".date("Y-m-d") ?>" />
     </div>
   </form>
+  
+  <div>
+    <?php 
+    if(sizeof($listeEntraides) > 0)
+    {
+        $entraideEnCours = null;
+        foreach($listeEntraides as $entraide)
+        {
+            if(strtotime($entraide->date_debut) <= strtotime(date("Y-m-d")))
+            {
+                $entraideEnCours = $entraide;
+            }
+        }
+        if($entraideEnCours != null)
+        {
+            ?>
+            <div>
+              <h4>En cours</h4>
+              <div><label class="label label-default"><?php echo $entraideEnCours->site_entraide_libelle ?> : Du <?php echo $entraideEnCours->date_debut ?> Au <?php echo $entraideEnCours->date_expiration ?> <a href="#" class="glyphicon glyphicon-remove" style="color:orange"></a></label></div>
+            </div>
+            <?php
+            if(sizeof($listeEntraides) > 1)
+            {
+              ?>
+              <div>
+                <h4>A venir</h4>
+                <?php
+                foreach($listeEntraides as $entraide)
+                {
+                  if($entraide->id != $entraideEnCours->id)
+                  {
+                    ?>
+                    <div><label class="label label-default"><?php echo $entraide->site_entraide_libelle ?> : Du <?php echo $entraide->date_debut ?> Au <?php echo $entraide->date_expiration ?> <a href="#" class="glyphicon glyphicon-remove" style="color:orange"></a></label></div>
+                    <?php
+                  }
+                }
+                ?>
+              </div>
+              <?php
+            }
+        }
+
+    }
+    ?>
+  </div>
 </div>
 <div class="modal-footer">
   <button class="btn btn-success" id="validerModaleEntraide">Valider</button>

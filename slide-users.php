@@ -67,7 +67,7 @@
                             }
                             else{
                                 ?>
-                                <h6 class="users-site"><del><?php echo $caff->site ?></del> <?php echo json_decode(getLibelleSiteById($entraideEnCours->site_entraide_id)) ?> <a style="cursor:pointer;color:orange" idCaff="<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
+                                <h6 class="users-site"><del><?php echo $caff->site ?></del> <?php echo $entraideEnCours->site_entraide_libelle ?> <a style="cursor:pointer;color:orange" idCaff="<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
                                 <?php
                             }
                         }

@@ -1799,6 +1799,7 @@
 			$entraide->id = $data["id"];
 			$entraide->caff_id = $data["caff_id"];
 			$entraide->site_entraide_id = $data["site_entraide_id"];
+			$entraide->site_entraide_libelle = json_decode(getLibelleSiteById($data["site_entraide_id"]));
 			$entraide->date_expiration = $data["date_expiration"];
 			$entraide->domaines = json_decode($data["domaines"]);
 			$entraide->date_debut = $data["date_debut"];
