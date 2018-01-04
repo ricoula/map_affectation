@@ -608,10 +608,13 @@
 	{
 		include("connexionBdd.php");
 		$sites = array();
-		$req = $bdd->query("SELECT distinct site FROM cds_transco_ui_site ORDER BY site");
+		$req = $bdd->query("SELECT distinct site, erp_site_id FROM cds_transco_ui_site ORDER BY site");
 		while($data = $req->fetch())
 		{
-			array_push($sites, $data["site"]);
+			$site = (object) array();
+			$site->libelle = $data["site"];
+			$site->id = $data["erp_site_id"];
+			array_push($sites, $site);
 		}
 		return json_encode($sites);
 	}
@@ -1767,6 +1770,20 @@
 		}
 		
 		return json_encode($position);
+	}
+
+	function entraideCaff($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut)
+	{
+		include("connexionBdd.php");
+
+		$reponse = false;
+		try{
+			$req = $bdd->prepare("INSERT INTO cds_entraide(caff_id, site_entraide_id, domaines, date_expiration, date_debut) VALUES(?, ?, ?, ?, ?)");
+			$reponse = $req->execute(array($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut));
+		}catch(Exception $e){
+			$reponse = false;
+		}
+		return json_encode($reponse);
 	}
 
 ?>

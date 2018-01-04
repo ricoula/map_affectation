@@ -256,6 +256,14 @@
     </div>
 
 
+    <div class="modal" id="modaleEntraideCaff">
+      <div class="modal-dialog">
+        <div class="modal-content" id="divModaleEntraideCaff">
+        </div>
+      </div>
+    </div>
+
+
     <div class="modal fade" id="advancedsettings">
      <div class="modal-dialog modal-lg" id="modal_advanced_config">
        <div class="modal-content">

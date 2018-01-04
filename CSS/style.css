@@ -394,3 +394,7 @@ color: grey;
   display:flex;
   justify-content:flex-end;
 }
+#listeDomainesModaleEntraide{
+  display: flex;
+  justify-content: space-around;
+}
