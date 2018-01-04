@@ -133,6 +133,7 @@
 			$caff->reactive = $data["reactive"];
 			$caff->non_reactive = $data["non_reactive"];
 			$caff->conges = json_decode(getProchainesConges($caff->id));
+			$caff->entraides = json_decode(getProchainesEntraidesCaff($caff->id));
 			
 			if($caff->conges != null && $caff->conges->temps_avant <= 0)
 			{
@@ -1784,6 +1785,40 @@
 			$reponse = false;
 		}
 		return json_encode($reponse);
+	}
+
+	function getProchainesEntraidesCaff($idCaff)
+	{
+		include("connexionBdd.php");
+		$entraides = array();
+		$req = $bdd->prepare("SELECT * FROM cds_entraide WHERE date_expiration >= NOW() AND caff_id = ? ORDER BY date_debut");
+		$req->execute(array($idCaff));
+		while($data = $req->fetch())
+		{
+			$entraide = (object) array();
+			$entraide->id = $data["id"];
+			$entraide->caff_id = $data["caff_id"];
+			$entraide->site_entraide_id = $data["site_entraide_id"];
+			$entraide->date_expiration = $data["date_expiration"];
+			$entraide->domaines = json_decode($data["domaines"]);
+			$entraide->date_debut = $data["date_debut"];
+			array_push($entraides, $entraide);
+		}
+		return json_encode($entraides);
+	}
+
+	function getLibelleSiteById($idSite)
+	{
+		include("connexionBddErp.php");
+
+		$libelle = null;
+		$req = $bddErp->prepare("SELECT name FROM ag_site WHERE id = ?");
+		$req->execute(array($idSite));
+		if($data = $req->fetch())
+		{
+			$libelle = $data["name"];
+		}
+		return json_encode($libelle);
 	}
 
 ?>

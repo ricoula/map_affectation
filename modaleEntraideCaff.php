@@ -77,7 +77,7 @@
       var reponse = JSON.parse(data);
       if(reponse)
       {
-        $("#formEntraideCaff").submit();
+        document.location.reload();
       }
       else{
         alert("Une erreur s'est produite, veuillez réeesayer plus tard");
