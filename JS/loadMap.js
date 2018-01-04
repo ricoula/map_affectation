@@ -136,11 +136,7 @@
                     });
                 });
 
-<<<<<<< HEAD
-          $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val()}, function(data){
-=======
           $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val(), nb_jours_avant_conges_max: $("#nbJoursAvantCongesMax").val(), nb_jours_conges_max: $("#nbJoursCongesMax").val()}, function(data){
->>>>>>> e3e2ebdf671b8d8b285259383065ccfa6a4880a6
             console.log(data);
             var caff = JSON.parse(data);
             $("#rightClickPoi_" + marker.poi_id).removeClass("glyphicon glyphicon-refresh gly-spin").addClass("label label-info").text(caff.name_related);
