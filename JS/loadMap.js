@@ -726,16 +726,16 @@
 
 
           $("#nbPoiSimu").blur(function(){
-              if(!isNaN($(this).val()) || $(this).val() < 0)
-              {
+            if($(this).val() < 0 || $(this).val() == '' || $(this).val() == null)
+            {
                 $(this).val(0);
-              }
+            }
           });
           
           $(".numberNegatif").blur(function(){
-            if(!isNaN($(this).val()) || $(this).val() < 0)
+            if($(this).val() < 0 || $(this).val() == '' || $(this).val() == null)
             {
-              $(this).val(0);
+                $(this).val(0);
             }
         });
 
