@@ -742,34 +742,64 @@
 		}
 		return json_encode($reponse);
 	}
-	function changeAdvancedConfig($json_code){
+	function changeAdvancedConfig($json_code,$ui){
 		include("connexionBdd.php");
 		$reponse = false;
-		try{
-			$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ?");
-			$reponse = $req->execute(array($json_code));
-			/*$req = $bdd->prepare("SELECT id FROM cds_advanced_config WHERE id = 1");
-			$req->execute(array($id));
-			if($data = $req->fetch())
-			{
-				$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
+		if($ui=="defaut"){
+			try{
+				$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE ui is null");
 				$reponse = $req->execute(array($json_code));
+				/*$req = $bdd->prepare("SELECT id FROM cds_advanced_config WHERE id = 1");
+				$req->execute(array($id));
+				if($data = $req->fetch())
+				{
+					$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
+					$reponse = $req->execute(array($json_code));
+				}
+				else{
+					$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
+					$reponse = $req->execute(array($json_code));
+				}*/
+			}catch(Exception $e){
+				$reponse = false;
 			}
-			else{
-				$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
-				$reponse = $req->execute(array($json_code));
-			}*/
-		}catch(Exception $e){
-			$reponse = false;
 		}
+		else{
+			try{
+				$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE ui = ?");
+				$reponse = $req->execute(array($json_code,$ui));
+				/*$req = $bdd->prepare("SELECT id FROM cds_advanced_config WHERE id = 1");
+				$req->execute(array($id));
+				if($data = $req->fetch())
+				{
+					$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
+					$reponse = $req->execute(array($json_code));
+				}
+				else{
+					$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
+					$reponse = $req->execute(array($json_code));
+				}*/
+			}catch(Exception $e){
+				$reponse = false;
+			}
+		}
+		
 		return json_encode($reponse);
 	}
 
-	function getAdvancedConfig()
+	function getAdvancedConfig($ui)
 	{
 		include("connexionBdd.php");
 		$config = null;
-		$req = $bdd->query("SELECT config FROM cds_advanced_config WHERE config IS NOT NULL AND config != '' LIMIT 1");
+		if(!isset($ui) || $ui == null || $ui == '')
+		{
+			$req = $bdd->query("SELECT config FROM cds_advanced_config WHERE ui is null");
+		}
+		else
+		{
+			$req = $bdd->prepare("SELECT config FROM cds_advanced_config WHERE ui = ?");
+			$req->execute(array($ui));
+		}
 		if($data = $req->fetch())
 		{
 			$config = $data["config"];
@@ -1737,5 +1767,26 @@
 		
 		return json_encode($position);
 	}
+	function addAdvancedConfigUI($ui){
+		include("connexionBdd.php");
 
+		$req = $bdd->prepare("SELECT ui from cds_advanced_config where ui = ?");
+		$req->execute(array($ui));
+		if($req->fetch()){
+			return false;
+		}
+		else
+		{
+			$req2 = $bdd->prepare("INSERT INTO cds_advanced_config (ui) VALUES (?)");
+			$req2->execute(array($ui));
+			return true;
+		}
+
+	}
+	function removeAdvancedConfigUI($ui){
+		include("connexionBdd.php");
+		
+		$req = $bdd->prepare("DELETE FROM cds_advanced_config where ui = ?");
+		$req->execute(array($ui));
+	}
 ?>
