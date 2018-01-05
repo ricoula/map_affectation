@@ -1822,4 +1822,18 @@
 		return json_encode($libelle);
 	}
 
+	function removeEntraideById($idEntraide)
+	{
+		include("connexionBdd.php");
+
+		$reponse = false;
+		try{
+			$req = $bdd->prepare("DELETE FROM cds_entraide WHERE id = ?");
+			$reponse = $req->execute(array($idEntraide));
+		}catch(Exception $e){
+			$reponse = false;
+		}
+		return json_encode($reponse);
+	}
+
 ?>

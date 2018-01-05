@@ -55,30 +55,108 @@
         if($entraideEnCours != null)
         {
             ?>
-            <div>
+            <div id="divTableEntraideEnCours">
               <h4>En cours</h4>
-              <div><label class="label label-default"><?php echo $entraideEnCours->site_entraide_libelle ?> : Du <?php echo $entraideEnCours->date_debut ?> Au <?php echo $entraideEnCours->date_expiration ?> <a href="#" class="glyphicon glyphicon-remove" style="color:orange"></a></label></div>
+              <table class="table table-striped table-hover table-condensed table-bordered">
+                <tr>
+                  <th>Site</th>
+                  <th>Date Début</th>
+                  <th>Date Fin</th>
+                  <th>Annuler</th>
+                </tr>
+                <tr>
+                  <td>
+                    <?php echo $entraideEnCours->site_entraide_libelle ?>
+                  </td>
+                  <td>
+                    <?php echo $entraideEnCours->date_debut ?>
+                  </td>
+                  <td>
+                    <?php echo $entraideEnCours->date_expiration ?>
+                  </td>
+                  <td style="text-align:center">
+                    <a style="cursor:pointer" class="glyphicon glyphicon-trash supprEntraide entraideEnCours" entraideId="<?php echo $entraideEnCours->id ?>" ></a>
+                  </td>
+                </tr>
+              </table>
             </div>
             <?php
             if(sizeof($listeEntraides) > 1)
             {
               ?>
-              <div>
+              <div id="divTableEntraideAVenir">
                 <h4>A venir</h4>
+                <table class="table table-striped table-hover table-condensed table-bordered">
+                <tr>
+                  <th>Site</th>
+                  <th>Date Début</th>
+                  <th>Date Fin</th>
+                  <th>Annuler</th>
+                </tr>
                 <?php
                 foreach($listeEntraides as $entraide)
                 {
                   if($entraide->id != $entraideEnCours->id)
                   {
                     ?>
-                    <div><label class="label label-default"><?php echo $entraide->site_entraide_libelle ?> : Du <?php echo $entraide->date_debut ?> Au <?php echo $entraide->date_expiration ?> <a href="#" class="glyphicon glyphicon-remove" style="color:orange"></a></label></div>
+                    <tr>
+                      <td>
+                        <?php echo $entraide->site_entraide_libelle ?>
+                      </td>
+                      <td>
+                        <?php echo $entraide->date_debut ?>
+                      </td>
+                      <td>
+                        <?php echo $entraide->date_expiration ?>
+                      </td>
+                      <td style="text-align:center">
+                        <a style="cursor:pointer" class="glyphicon glyphicon-trash supprEntraide entraidesAVenir" entraideId="<?php echo $entraide->id ?>" ></a>
+                      </td>
+                    </tr>
                     <?php
                   }
                 }
                 ?>
+                </table>
               </div>
               <?php
             }
+        }
+        else{
+            ?>
+              <div id="divTableEntraideAVenir">
+                <h4>A venir</h4>
+                <table class="table table-striped table-hover table-condensed table-bordered">
+                <tr>
+                  <th>Site</th>
+                  <th>Date Début</th>
+                  <th>Date Fin</th>
+                  <th>Annuler</th>
+                </tr>
+                <?php
+                foreach($listeEntraides as $entraide)
+                {
+                    ?>
+                    <tr>
+                      <td>
+                        <?php echo $entraide->site_entraide_libelle ?>
+                      </td>
+                      <td>
+                        <?php echo $entraide->date_debut ?>
+                      </td>
+                      <td>
+                        <?php echo $entraide->date_expiration ?>
+                      </td>
+                      <td style="text-align:center">
+                        <a style="cursor:pointer" class="glyphicon glyphicon-trash supprEntraide entraidesAVenir" entraideId="<?php echo $entraide->id ?>" ></a>
+                      </td>
+                    </tr>
+                    <?php
+                }
+                ?>
+                </table>
+              </div>
+              <?php
         }
 
     }
@@ -92,6 +170,29 @@
 
 <script>
   $("#dateExpiration").daterangepicker({locale: {format: 'DD/MM/YYYY'}});
+
+  $(".supprEntraide").click(function(){
+    var elt = $(this);
+    $(this).removeClass("supprEntraide entraidesAVenir");
+     $.post("API/removeEntraideById.php", {entraide_id: $(this).attr("entraideId")}, function(){
+       elt.closest("tr").hide();
+       if(elt.hasClass("entraideEnCours"))
+       {
+         $("#divTableEntraideEnCours").hide();
+         var siteCaff = $("#site-caff-" + $("#idCaffEntraide").val()).children("del").text();
+         $("#site-caff-" + $("#idCaffEntraide").val()).html(siteCaff);
+       }
+       if($(".entraidesAVenir").length == 0)
+       {
+         $("#divTableEntraideAVenir").hide();
+       }
+       if($(".supprEntraide").length == 0)
+        {
+          $("#btnEntraideCaff-" + $("#idCaffEntraide").val()).css("color", "rgb(51, 122, 183)");
+        }
+     });
+  });
+
   $("#validerModaleEntraide").click(function(){
     var listeDomaines = [];
     $(".checkDomainesEntraide").each(function(){
