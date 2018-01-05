@@ -1791,7 +1791,7 @@
 	{
 		include("connexionBdd.php");
 		$entraides = array();
-		$req = $bdd->prepare("SELECT * FROM cds_entraide WHERE date_expiration >= NOW() AND caff_id = ? ORDER BY date_debut");
+		$req = $bdd->prepare("SELECT * FROM cds_entraide WHERE DATE_PART('day', date_expiration - NOW()) >= 0 AND caff_id = ? ORDER BY date_debut");
 		$req->execute(array($idCaff));
 		while($data = $req->fetch())
 		{
