@@ -2,8 +2,10 @@
   include("API/fonctions.php");
   $listeSites = json_decode(getSites());
   $listeEntraides = json_decode(getProchainesEntraidesCaff($_GET["idCaff"]));
+  $siteBase = urldecode($_GET["site"]);
 ?>
 
+<input type="hidden" name="siteEntraide" id="siteEntraide" value="<?php $_GET["site"] ?>" />
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal">x</button>
   <h4 class="modal-title">Entraide</h4>
@@ -17,9 +19,17 @@
         <?php
         foreach($listeSites as $site)
         {
-          ?>
-          <option value="<?php echo $site->id ?>"><?php echo $site->libelle ?></option>
-          <?php
+          if(strtoupper($siteBase) == strtoupper($site->libelle))
+          {
+            ?>
+            <option disabled value="<?php echo $site->id ?>"><?php echo $site->libelle ?></option>
+            <?php
+          }
+          else{
+            ?>
+            <option value="<?php echo $site->id ?>"><?php echo $site->libelle ?></option>
+            <?php
+          }
         }
         ?>
       </select>
@@ -65,7 +75,7 @@
                   <th>Annuler</th>
                 </tr>
                 <tr>
-                  <td>
+                  <td class="siteEntraideEnCours">
                     <?php echo $entraideEnCours->site_entraide_libelle ?>
                   </td>
                   <td>
@@ -224,7 +234,15 @@
       var reponse = JSON.parse(data);
       if(reponse)
       {
-        document.location.reload();
+        $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $("#idCaffEntraide").val() + "&site=" + $("#siteEntraide").val(), function(){
+          $("#btnEntraideCaff-" + $("#idCaffEntraide").val()).css("color", "orange");
+          if($(".siteEntraideEnCours").length > 0)
+          {
+            var siteEnCours = $(".siteEntraideEnCours:first").text();
+            var siteCaff = $("#site-caff-" + $("#idCaffEntraide").val()).attr("siteCaff");
+            $("#site-caff-" + $("#idCaffEntraide").val()).html("<del>" + siteCaff + "</del> " + siteEnCours);
+          }
+        });
       }
       else{
         alert("Une erreur s'est produite, veuillez réeesayer plus tard");

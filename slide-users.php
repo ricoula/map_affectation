@@ -62,18 +62,18 @@
                             if($entraideEnCours == null)
                             {
                                 ?>
-                                <h6 class="users-site"><?php echo $caff->site ?> <a style="cursor:pointer;color:orange" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
+                                <h6 class="users-site"><span id="site-caff-<?php echo $caff->id ?>" siteCaff="<?php echo urlencode($caff->site) ?>"><?php echo $caff->site ?></span> <a style="cursor:pointer;color:orange" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
                                 <?php
                             }
                             else{
                                 ?>
-                                <h6 class="users-site"><span id="site-caff-<?php echo $caff->id ?>"><del><?php echo $caff->site ?></del> <?php echo $entraideEnCours->site_entraide_libelle ?></span> <a style="cursor:pointer;color:orange" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
+                                <h6 class="users-site"><span id="site-caff-<?php echo $caff->id ?>" siteCaff="<?php echo urlencode($caff->site) ?>"><del><?php echo $caff->site ?></del> <?php echo $entraideEnCours->site_entraide_libelle ?></span> <a style="cursor:pointer;color:orange" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
                                 <?php
                             }
                         }
                         else{
                             ?>
-                            <h6 class="users-site"><?php echo $caff->site ?> <a style="cursor:pointer" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
+                            <h6 class="users-site"><span id="site-caff-<?php echo $caff->id ?>" siteCaff="<?php echo urlencode($caff->site) ?>"><?php echo $caff->site ?></span> <a style="cursor:pointer" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
                             <?php
                         }
                         ?>
@@ -95,7 +95,9 @@ $('[data-toggle="tooltip"]').tooltip();
 </script>
 <script>
     $(".btnEntraideCaff").click(function(){
-        $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $(this).attr("idCaff"), function(){
+        var idCaff = $(this).attr("idCaff");
+        var site = $("#site-caff-" + idCaff).attr("siteCaff");
+        $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $(this).attr("idCaff") + "&site=" + site, function(){
           $('#modaleEntraideCaff').modal('show');
       });
     });
