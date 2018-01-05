@@ -23,10 +23,15 @@
               var strokeweightpoi = 2;
               var scalepoi = 7;
               var d = new Date();
-              var date_now = Number(d.getFullYear() +''+ (d.getMonth() + 1) +''+ d.getDate());
-              var date_dre = Number(poi.ft_oeie_dre.split('-')[0] + poi.ft_oeie_dre.split('-')[1] + poi.ft_oeie_dre.split('-')[2]);
-              if(date_dre <= (date_now + Number(config.filterdre))){
+              var date_now = d.getTime() + (Number(config.filterdre) * 86400000);
+            //   var date_now = Number(d.getFullYear() +''+ (d.getMonth() + 1) +''+ d.getDate());
+            //   var date_dre = Number(poi.ft_oeie_dre.split('-')[0] + poi.ft_oeie_dre.split('-')[1] + poi.ft_oeie_dre.split('-')[2]);
+              var date_dre = new Date(poi.ft_oeie_dre).getTime();
+
+            //   console.log(test + " " + test2);
+              if(date_dre <= date_now){
                 strokecolorpoi = config.filtercolorurgent;
+                // console.log(filtercolorurgent + " " + strokecolorpoi );
                 strokeweightpoi = 3;
                 scalepoi = 7;
               }
@@ -37,7 +42,7 @@
                 
 
                 if((poi.ft_sous_justification_oeie == sj_oeie && poi.atr_ui == ui_oeie)){
-                  // strokecolorpoi = config.filtercolorurgent;
+                //   strokecolorpoi = config.filtercolorurgent;
                     scalepoi = 11;
                     strokeweightpoi = 4;
                 }

@@ -106,9 +106,13 @@
 </script>
 <script>
                 var d = new Date();
-                var date_now = Number(d.getFullYear() +''+ (d.getMonth() + 1) +''+ d.getDate());
-                var date_poi = Number($("#home-dre").text().split('-')[0] + $("#home-dre").text().split('-')[1] + $("#home-dre").text().split('-')[2]);
-                if(date_poi <= (date_now + Number(config.filterdre))){
+                // var date_now = Number(d.getFullYear() +''+ (d.getMonth() + 1) +''+ d.getDate());
+                // var date_poi = Number($("#home-dre").text().split('-')[0] + $("#home-dre").text().split('-')[1] + $("#home-dre").text().split('-')[2]);
+                var date_now = d.getTime() + (Number(config.filterdre) * 86400000);
+            //   var date_now = Number(d.getFullYear() +''+ (d.getMonth() + 1) +''+ d.getDate());
+            //   var date_dre = Number(poi.ft_oeie_dre.split('-')[0] + poi.ft_oeie_dre.split('-')[1] + poi.ft_oeie_dre.split('-')[2]);
+              var date_dre = new Date($("#home-dre").text()).getTime();
+                if(date_dre <= date_now){
                   $("#home-dre").addClass("label label-danger");
                 }
                 config.filtersj.forEach(function(sj){
