@@ -246,7 +246,7 @@
                 if($config != false){
                   ?> 
                   <div id="advancedConfig-<?php echo $ui->ft_zone ?>">
-                  <h3 class="advanced_config_ui"><?php echo $ui->libelle; ?> </h3><span class="glyphicon glyphicon-remove remove_advanced_ui" ui="<?php echo $ui->ft_zone; ?>"></span>
+                  <h3 class="advanced_config_ui"><?php echo $ui->libelle; ?> </h3>
             <p>((NbPoiReactive * <label class="color-grey coef_react_<?php echo $ui->ft_zone; ?>" id="coef_react_<?php echo $ui->ft_zone; ?>"><?php echo $config->coef_react ?></label> + NbPoiNonReactive * <label class="color-purple coef_non_react_<?php echo $ui->ft_zone; ?>" id="coef_non_react_<?php echo $ui->ft_zone; ?>"><?php echo $config->coef_non_react ?></label>) * CoefCaff) + (%Retard * NbPoiReactive * <label class="color-grey coef_react_<?php echo $ui->ft_zone; ?>" id="coef_react_<?php echo $ui->ft_zone; ?>"><?php echo $config->coef_react ?></label>) - (NbPoiRayon(<label class="color-red" id="rayon_km_<?php echo $ui->ft_zone; ?>"><?php echo $config->rayon_km_new ?></label>km) * <label class="color-yellow" id="coef_rayon_<?php echo $ui->ft_zone; ?>"><?php echo $config->coef_rayon_new ?></label>)->MAX(<label class="color-green" id="max_rayon_<?php echo $ui->ft_zone; ?>"><?php echo $config->max_rayon_new ?></label>) + (NbPoiReactiveSimu * <label class="color-grey coef_react_<?php echo $ui->ft_zone; ?>" id="coef_react_<?php echo $ui->ft_zone; ?>"><?php echo $config->coef_react ?></label> + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react_<?php echo $ui->ft_zone; ?>"><?php echo $config->coef_non_react ?></label>) </p>
             <p>Nombre de POI réactive MAX par jour: <label id="max_day_<?php echo $ui->ft_zone; ?>"><?php echo $config->max_day ?></label></p>
             <p>Nombre de POI réactive MAX par semaine: <label id="max_week_<?php echo $ui->ft_zone; ?>"><?php echo $config->max_week ?></label></p>
@@ -255,6 +255,7 @@
             <button class="btn btn-primary pull-left config_modify" ui="<?php echo $ui->ft_zone; ?>">Modifier</button>
          <button class="btn btn-success pull-left hide config_valid" ui="<?php echo $ui->ft_zone; ?>">Valider</button>
          <button class="btn btn-primary pull-left hide config_cancel" ui="<?php echo $ui->ft_zone; ?>">Annuler</button>
+         <button class="btn btn-danger remove_advanced_ui" ui="<?php echo $ui->ft_zone; ?>" ui_libelle="<?php echo $ui->libelle; ?>">Supprimer</button>
          </br></br></div>
                   <?php
                 }

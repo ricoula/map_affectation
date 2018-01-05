@@ -770,7 +770,8 @@
           })
           $(".remove_advanced_ui").click(function(){
               var ui = $(this).attr('ui');
-              var result = confirm("Voulez vous vraiment supprimer la configuration de l'ui "+ui);
+              var ui_libelle = $(this).attr('ui_libelle');
+              var result = confirm("Voulez vous vraiment supprimer la configuration de l'ui "+ui_libelle);
               if(result==true){
                   $.post("API/removeAdvancedConfigUI.php",{ui: ui},function(){
                     $("#advancedConfig-"+ui).html("");

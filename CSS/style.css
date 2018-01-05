@@ -402,3 +402,19 @@ color: grey;
 {
   display:-webkit-inline-box;
 }
+#remove_advanced_ui_glyph
+{
+  font-size:20px;
+  color:black;
+  margin-left:5px;
+  color:#757575;
+
+}
+#remove_advanced_ui_glyph:hover
+{
+  font-size:20px;
+  color:black;
+  margin-left:5px;
+  color:#000000;
+  cursor:pointer;
+}
