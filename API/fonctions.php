@@ -995,16 +995,28 @@
 		return json_encode($liste);
 	}
 
-	function getListeIdCaffByUi($ui)
+	function getListeIdCaffEntraideByUiAndDomaine($ui, $domaine)
 	{
 		include("connexionBdd.php");
 		$liste = array();
 		$listeIdsSites = json_decode(getListeSitesByUi($ui));
 		$listeIdsSites = implode(',', $listeIdsSites);
-		$req = $bdd->query("SELECT caff_id FROM cds_entraide WHERE site_entraide_id IN(".$listeIdsSites.") AND date_debut <= NOW() AND date_expiration >= NOW()");
+		$req = $bdd->query("SELECT id, caff_id FROM cds_entraide WHERE site_entraide_id IN(".$listeIdsSites.") AND date_debut <= current_date AND date_expiration >= current_date");
 		while($data = $req->fetch())
 		{
-			array_push($liste, $data["caff_id"]);
+			$req2 = $bdd->prepare("SELECT domaines FROM cds_entraide WHERE id = ?");
+			$req2->execute(array($data["id"]));
+			if($data2 = $req2->fetch())
+			{
+				$domainesCaff = json_decode($data2["domaines"]);
+				foreach($domainesCaff as $dom)
+				{
+					if(strtoupper($dom) == strtoupper($domaine))
+					{
+						array_push($liste, $data["caff_id"]);
+					}
+				}
+			}
 		}
 		return json_encode($liste);
 	}
@@ -1015,7 +1027,7 @@
 		$liste = array();
 		$listeIdsSites = json_decode(getListeSitesByUi($ui));
 		$listeIdsSites = implode(',', $listeIdsSites);
-		$req = $bdd->query("SELECT caff_id FROM cds_entraide WHERE site_defaut_id IN(".$listeIdsSites.") AND date_debut <= NOW() AND date_expiration >= NOW()");
+		$req = $bdd->query("SELECT caff_id FROM cds_entraide WHERE site_defaut_id IN(".$listeIdsSites.") AND date_debut <= current_date AND date_expiration >= current_date");
 		while($data = $req->fetch())
 		{
 			array_push($liste, $data["caff_id"]);
@@ -1094,7 +1106,7 @@
         }
 		
 		$cesCaffs = array();
-		$listeCaffsUi = json_decode(getListeIdCaffByUi($poi->atr_ui));
+		$listeCaffsUi = json_decode(getListeIdCaffEntraideByUiAndDomaine($poi->atr_ui, $poi->domaine));
 		if(sizeof($listeCaffsUi) > 0)
 		{
 			$listeCaffsUi = implode(",", $listeCaffsUi);
