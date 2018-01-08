@@ -7,6 +7,8 @@
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="plugins/bootstrap-daterangepicker-master/moment.min.js"></script>
+    <script src="plugins/bootstrap-daterangepicker-master/daterangepicker.js"></script>
 
 
     <script async defer src="https://maps.google.com/maps/api/js?v=3&callback=mapLibReadyHandler&key=AIzaSyAYvU3R9-LA0yn0B9UWY256WE0iTwWLBCw"></script>

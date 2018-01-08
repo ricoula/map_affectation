@@ -33,9 +33,9 @@
       foreach($listeSites as $site)
       {
         ?>
-        <optgroup label="<?php echo $site ?>">
+        <optgroup label="<?php echo $site->libelle ?>">
           <?php
-          $listeCaffs = json_decode(getCaffsBySite($site));
+          $listeCaffs = json_decode(getCaffsBySite($site->libelle));
           foreach($listeCaffs as $caff)
           {
             ?>

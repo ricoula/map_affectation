@@ -1,4 +1,25 @@
 <?php
+function getProchainesEntraidesCaff($idCaff)
+	{
+		include("connexionBdd.php");
+		$entraides = array();
+		$req = $bdd->prepare("SELECT * FROM cds_entraide WHERE DATE_PART('day', date_expiration - NOW()) >= 0 AND caff_id = ? ORDER BY date_debut");
+		$req->execute(array($idCaff));
+		while($data = $req->fetch())
+		{
+			$entraide = (object) array();
+			$entraide->id = $data["id"];
+			$entraide->caff_id = $data["caff_id"];
+			$entraide->site_entraide_id = $data["site_entraide_id"];
+			$entraide->site_entraide_libelle = json_decode(getLibelleSiteById($data["site_entraide_id"]));
+			$entraide->date_expiration = $data["date_expiration"];
+			$entraide->domaines = json_decode($data["domaines"]);
+			$entraide->date_debut = $data["date_debut"];
+			array_push($entraides, $entraide);
+		}
+		return json_encode($entraides);
+	}
+	
 	function getPoiNA()
 	{
 		include("connexionBddErp.php");
@@ -133,6 +154,7 @@
 			$caff->reactive = $data["reactive"];
 			$caff->non_reactive = $data["non_reactive"];
 			$caff->conges = json_decode(getProchainesConges($caff->id));
+			$caff->entraides = json_decode(getProchainesEntraidesCaff($caff->id));
 			
 			if($caff->conges != null && $caff->conges->temps_avant <= 0)
 			{
@@ -608,10 +630,13 @@
 	{
 		include("connexionBdd.php");
 		$sites = array();
-		$req = $bdd->query("SELECT distinct site FROM cds_transco_ui_site ORDER BY site");
+		$req = $bdd->query("SELECT distinct site, erp_site_id FROM cds_transco_ui_site ORDER BY site");
 		while($data = $req->fetch())
 		{
-			array_push($sites, $data["site"]);
+			$site = (object) array();
+			$site->libelle = $data["site"];
+			$site->id = $data["erp_site_id"];
+			array_push($sites, $site);
 		}
 		return json_encode($sites);
 	}
@@ -1738,9 +1763,40 @@
 		include("connexionBddErp.php");
 		for($i = 0; $i < $nb; $i++)
 		{
-			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 WHERE ft_etat != '1' AND atr_ui = ?");
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 AND atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE ft_etat != '1' AND atr_ui = ?");
 			$req->execute(array($ui));
 		}
+	}
+
+	function addListePoiSimuDomaines($nbDissi, $nbClient, $nbImmo, $nbFocu, $nbCoordi, $ui) //$ui = ft_zone (FC4, JR4...)
+	{
+		include("connexionBddErp.php");
+		for($i = 0; $i < $nbDissi; $i++)
+		{
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 AND atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE ft_etat != '1' AND atr_ui = ? AND atr_domaine_id = (SELECT id FROM account_analytic_account WHERE UPPER(name) = 'DISSI' LIMIT 1)");
+			$req->execute(array($ui));
+		}
+		for($i = 0; $i < $nbClient; $i++)
+		{
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 AND atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE ft_etat != '1' AND atr_ui = ? AND atr_domaine_id = (SELECT id FROM account_analytic_account WHERE UPPER(name) = 'CLIENT' LIMIT 1)");
+			$req->execute(array($ui));
+		}
+		for($i = 0; $i < $nbImmo; $i++)
+		{
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 AND atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE ft_etat != '1' AND atr_ui = ? AND atr_domaine_id = (SELECT id FROM account_analytic_account WHERE UPPER(name) = 'IMMO' LIMIT 1)");
+			$req->execute(array($ui));
+		}
+		for($i = 0; $i < $nbFocu; $i++)
+		{
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 AND atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE ft_etat != '1' AND atr_ui = ? AND atr_domaine_id = (SELECT id FROM account_analytic_account WHERE UPPER(name) = 'FO & CU' LIMIT 1)");
+			$req->execute(array($ui));
+		}
+		for($i = 0; $i < $nbCoordi; $i++)
+		{
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = 1 AND atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE ft_etat != '1' AND atr_ui = ? AND atr_domaine_id = (SELECT id FROM account_analytic_account WHERE UPPER(name) = 'COORDI' LIMIT 1)");
+			$req->execute(array($ui));
+		}
+		
 	}
 	
 	function getPositionAleatoireByUi($ui) //$ui = ft_zone (FC4, JR4...)
@@ -1781,8 +1837,51 @@
 			$req2->execute(array($ui));
 			return true;
 		}
-
 	}
+	function entraideCaff($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut)
+	{
+		include("connexionBdd.php");
+
+		$reponse = false;
+		try{
+			$req = $bdd->prepare("INSERT INTO cds_entraide(caff_id, site_entraide_id, domaines, date_expiration, date_debut) VALUES(?, ?, ?, ?, ?)");
+			$reponse = $req->execute(array($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut));
+		}catch(Exception $e){
+			$reponse = false;
+		}
+		return json_encode($reponse);
+	}
+
+
+
+	function getLibelleSiteById($idSite)
+	{
+		include("connexionBddErp.php");
+
+		$libelle = null;
+		$req = $bddErp->prepare("SELECT name FROM ag_site WHERE id = ?");
+		$req->execute(array($idSite));
+		if($data = $req->fetch())
+		{
+			$libelle = $data["name"];
+		}
+		return json_encode($libelle);
+	}
+
+	function removeEntraideById($idEntraide)
+	{
+		include("connexionBdd.php");
+
+		$reponse = false;
+		try{
+			$req = $bdd->prepare("DELETE FROM cds_entraide WHERE id = ?");
+			$reponse = $req->execute(array($idEntraide));
+		}catch(Exception $e){
+			$reponse = false;
+		}
+		return json_encode($reponse);
+	}
+
 	function removeAdvancedConfigUI($ui){
 		include("connexionBdd.php");
 		

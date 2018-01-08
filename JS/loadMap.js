@@ -731,15 +731,16 @@
 
 
           $("#nbPoiSimu").blur(function(){
-              if(!isNaN($(this).val()) || $(this).val() < 0)
-              {
-                $(this).val(0);
-              }
-          });
-          $("#nbPoiSimuAvance").blur(function(){
-            if(!isNaN($(this).val()) || $(this).val() < 0)
+            if($(this).val() < 0 || $(this).val() == '' || $(this).val() == null)
             {
-              $(this).val(0);
+                $(this).val(0);
+            }
+          });
+          
+          $(".numberNegatif").blur(function(){
+            if($(this).val() < 0 || $(this).val() == '' || $(this).val() == null)
+            {
+                $(this).val(0);
             }
         });
 
@@ -748,6 +749,12 @@
                   document.location.reload();
               });
           });
+
+          $("#btnValiderModalSimulationAvance").click(function(){
+            $.post("API/addListePoiSimuDomaines.php", {nbDissi: $("#dissiSimu").val(), nbClient: $("#clientSimu").val(), nbImmo: $("#immoSimu").val(), nbFocu: $("#focuSimu").val(), nbCoordi: $("#coordiSimu").val(), ui: $("#selectUiSimuAvance").val()}, function(){
+                document.location.reload();
+            });
+        });
           $("#advancedConfigUI").click(function(e){
               e.stopPropagation();
               console.log("ok2");

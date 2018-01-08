@@ -47,7 +47,37 @@
                     <label class="input-group-addon imageCaff" style='background-image: url("img/inconnu.jpg"); background-size: 100px 100px; width:100px; height:100px;' id="imageCaff-<?php echo $caff->id ?>" ></label>
                     <div class="card-block users-card-info" id="">
                         <h4 class="users-name"><?php echo $caff->name_related ?> <?php foreach($list_comp as $comp){echo '<label class="comp_1 comp_'.$comp.'" data-toggle="tooltip" data-placement="top" title="'.$comp.'"></label>';}?></span><?php if($caff->enConge){ ?><span class="label label-warning pull-right users-state" >Congé <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="<?php echo $caff->conges->nbJoursCongesRestant." jour(s) restant(s)" ?>"></span></span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
-                        <h6 class="users-site"><?php echo $caff->site ?><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
+                        
+                        <?php 
+                        if(sizeof($caff->entraides) > 0)
+                        {
+                            $entraideEnCours = null;
+                            foreach($caff->entraides as $entraide)
+                            {
+                                if(strtotime($entraide->date_debut) <= strtotime(date("Y-m-d")))
+                                {
+                                    $entraideEnCours = $entraide;
+                                }
+                            }
+                            if($entraideEnCours == null)
+                            {
+                                ?>
+                                <h6 class="users-site"><span id="site-caff-<?php echo $caff->id ?>" siteCaff="<?php echo urlencode($caff->site) ?>"><?php echo $caff->site ?></span> <a style="cursor:pointer;color:orange" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
+                                <?php
+                            }
+                            else{
+                                ?>
+                                <h6 class="users-site"><span id="site-caff-<?php echo $caff->id ?>" siteCaff="<?php echo urlencode($caff->site) ?>"><del><?php echo $caff->site ?></del> <?php echo $entraideEnCours->site_entraide_libelle ?></span> <a style="cursor:pointer;color:orange" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
+                                <?php
+                            }
+                        }
+                        else{
+                            ?>
+                            <h6 class="users-site"><span id="site-caff-<?php echo $caff->id ?>" siteCaff="<?php echo urlencode($caff->site) ?>"><?php echo $caff->site ?></span> <a style="cursor:pointer" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
+                            <?php
+                        }
+                        ?>
+
                         <!--<h6 class="users-charge">Charge: <span class="label label-danger users-charge-count">123</span><button class="btn btn-info btn-xs pull-right users-button-poi" id="<?php /*echo $caff->id*/ ?>">Afficher POI</button></h6>-->
                         <h6 class="users-charge">Charge: <span data-toggle="tooltip" data-placement="top" title="(nb_poi_reactives + (nb_poi_non_reactives * coef_poi_non_reactives)) * (1 / coef_charge)
                         = (<?php echo $caff->reactive ?> + (<?php echo $caff->non_reactive ?> * <?php echo $_GET["coefCharge"] ?>)) * (1 / <?php echo $caff->coefTraitement ?>)" class="label label-danger users-charge-count"><?php echo $caff->chargeInit ?></span><span class="label label-info coef-charge" data-toggle="tooltip" data-placement="right" title="Coef. charge"><?php echo $caff->ag_coeff_traitement ?></span><button id="btnAfficherPoiCaff-<?php echo urlencode($caff->name_related) ?>" caff_id="<?php echo $caff->id; ?>" class="btn btn-info btn-xs pull-right users-button-poi">Afficher POI</button></h6>
@@ -64,12 +94,14 @@
 $('[data-toggle="tooltip"]').tooltip(); 
 </script>
 <script>
-    // $(".btnAfficherPoiCaff").click(function(){
-    //     var caffName = $(this).attr("id").split("-")[1];
-    //     $("#divlistePoiCaff").load("modaleAfficherAllPoiCaff.php?caff_name=" + caffName, function(){
-    //         $("#listePoiCaff").modal("show");
-    //     });
-    // });
+    $(".btnEntraideCaff").click(function(){
+        var idCaff = $(this).attr("idCaff");
+        var site = $("#site-caff-" + idCaff).attr("siteCaff");
+        $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $(this).attr("idCaff") + "&site=" + site, function(){
+          $('#modaleEntraideCaff').modal('show');
+      });
+    });
+
     $("#allUi").click(function(){
         if($(this).hasClass("btn-success"))
         {
