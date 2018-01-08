@@ -10,9 +10,11 @@
   }
 
   $siteBase = urldecode($_GET["site"]);
+  $idSiteBase = json_decode(getIdFromSite($siteBase));
 ?>
 
-<input type="hidden" name="siteEntraide" id="siteEntraide" value="<?php $_GET["site"] ?>" />
+<input type="hidden" name="siteEntraide" id="siteEntraide" value="<?php echo $_GET["site"] ?>" />
+<input type="hidden" name="idSiteEntraide" id="idSiteEntraide" value="<?php echo $idSiteBase ?>" />
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal">x</button>
   <h4 class="modal-title">Entraide</h4>
@@ -457,7 +459,7 @@ var nonValable = false;
     var dateFin = $("#dateExpiration").val().split(" - ")[1];
     dateFin = dateFin.split("/");
     dateFin = dateFin[2] + "-" + dateFin[1] + "-" + dateFin[0];
-    $.post("API/entraideCaff.php", {caff_id: $("#idCaffEntraide").val(), site_entraide_id: $("#idSiteEntraide").val(), liste_domaines_json: listeDomaines, date_expiration: dateFin, date_debut: dateDebut}, function(data){
+    $.post("API/entraideCaff.php", {caff_id: $("#idCaffEntraide").val(), site_entraide_id: $("#idSiteEntraide").val(), liste_domaines_json: listeDomaines, date_expiration: dateFin, date_debut: dateDebut, site_defaut_id: $("#idSiteEntraide").val()}, function(data){
       var reponse = JSON.parse(data);
       if(reponse)
       {
