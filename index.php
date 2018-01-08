@@ -90,7 +90,15 @@
             </div>
           </div>
         </div>
-        <button data-toggle="modal" href="#modaleSimulationPOI" class="btn btn-info btn-lg">Simulation</button>
+       
+       
+        <button id="simu" class="btn btn-primary"><?php if($_SESSION['simu'] == true){echo "Passer en Production";}else{echo "Passer en Simulation";} ?></button></br></br>
+        <?php if($_SESSION['simu'] == true){
+          ?>  
+           <button data-toggle="modal" href="#modaleSimulationPOI" class="btn btn-info btn-lg">Simulation</button></br></br>
+           <button class="btn btn-danger btn-lg" id="btnResetSimu">Reset</button>
+          <?php
+        } ?>
       </div>
   <div id="side_bar">
     <div id="div-slide-users" class="slide"></div>
@@ -393,4 +401,12 @@
 
   <?php include("footer.php") ?>
   </body>
+  <script>
+  $("#simu").click(function(){
+    $.post("API/changeSimu.php",function(data){
+      
+      document.location.reload();
+    })
+  })
+  </script>
 </html>

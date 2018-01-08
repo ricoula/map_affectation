@@ -785,5 +785,10 @@
                   })
               }
           })
+          $("#btnResetSimu").click(function(){
+            $.post("API/resetSimulation.php", function(){
+                document.location.reload();
+            });
+        });
     }
     
