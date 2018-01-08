@@ -418,3 +418,8 @@ color: grey;
   color:#000000;
   cursor:pointer;
 }
+#caffListeFormation
+{
+  white-space:nowrap;
+  font-size:9px;
+}

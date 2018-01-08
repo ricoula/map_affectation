@@ -4,6 +4,7 @@
     $_SESSION["user_id"] = 1;
     $config = json_decode(getAdvancedConfig(null));
     $listeUi = json_decode(getUi());
+    $listeCaffFormation = json_decode(getListeCaffFormation());
 ?>
 <!DOCTYPE html>
 <html>
@@ -60,6 +61,32 @@
               <div class="panel-body"><span>Dissi:</span><span id="leg_dissi" class="leg_poi pull-right"></span></div>
               <div class="panel-body"><span>Coordi:</span><span id="leg_coord" class="leg_poi pull-right"></span></div>
               <div class="panel-body"><span id="leg_dre_txt">DRE < à :</span><span id="leg_dre" class="pull-right"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-group">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" href="#collapse2">Formation</a>
+              </h4>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse">
+              <div class="panel-body" id="caffListeFormation">
+    <?php
+      foreach($listeCaffFormation as $caff_id){
+        $caff = json_decode(getCaffById($caff_id));
+        if($caff != null){
+          ?>
+         <span> <?php echo $caff->name_related."\n"; ?> </span></br>
+        <?php
+        }
+        
+      }
+    ?>
+
+   </div>
+           
             </div>
           </div>
         </div>
