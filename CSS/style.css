@@ -426,4 +426,16 @@ color: grey;
 {
   white-space:nowrap;
   font-size:9px;
+  display:flex;
+  flex-direction:column;
+}
+.colorPickerDomaines .sp-preview,.colorPickerDomaines .sp-preview-inner
+{
+  border-radius:100%;
+
+ 
+}
+.colorPickerDomaines .sp-preview{
+ border:2px black solid;
+ width:20px;
 }
