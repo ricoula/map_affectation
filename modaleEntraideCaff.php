@@ -11,6 +11,7 @@
 
   $siteBase = urldecode($_GET["site"]);
   $idSiteBase = json_decode(getIdFromSite($siteBase));
+  $competences = json_decode(getCompetenceByCaffId($_GET["idCaff"]));
 ?>
 
 <input type="hidden" name="siteEntraide" id="siteEntraide" value="<?php echo $_GET["site"] ?>" />
@@ -46,11 +47,22 @@
     <div class="form-group">
         <label>Choix des domaines</label>
         <div id="listeDomainesModaleEntraide">
-          <label><input class="checkDomainesEntraide" type="checkbox" name="focu" id="focu" /> FO & CU</label>
-          <label><input class="checkDomainesEntraide" type="checkbox" name="client" id="client" /> Client</label>
-          <label><input class="checkDomainesEntraide" type="checkbox" name="dissi" id="dissi" /> Dissi</label>
-          <label><input class="checkDomainesEntraide" type="checkbox" name="coordi" id="coordi" /> Coordi</label>
-          <label><input class="checkDomainesEntraide" type="checkbox" name="immo" id="immo" /> Immo</label>
+          <?php 
+          foreach($competences as $competence)
+          {
+            if(strtoupper($competence) == "FO & CU" || strtoupper($competence) == "FO&CU")
+            {
+              $idElt = "focu";
+            }
+            else{
+              $idElt = strtolower($competence);
+            }
+            ?>
+            <label><input class="checkDomainesEntraide" type="checkbox" name="<?php echo $idElt ?>" id="<?php echo $idElt ?>" checked /> <?php echo $competence ?></label>
+            <?php
+          }
+          ?>
+          
         </div>
     </div>
     <div class="form-group">
