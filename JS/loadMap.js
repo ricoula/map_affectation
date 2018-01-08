@@ -23,10 +23,15 @@
               var strokeweightpoi = 2;
               var scalepoi = 7;
               var d = new Date();
-              var date_now = Number(d.getFullYear() +''+ (d.getMonth() + 1) +''+ d.getDate());
-              var date_dre = Number(poi.ft_oeie_dre.split('-')[0] + poi.ft_oeie_dre.split('-')[1] + poi.ft_oeie_dre.split('-')[2]);
-              if(date_dre <= (date_now + Number(config.filterdre))){
+              var date_now = d.getTime() + (Number(config.filterdre) * 86400000);
+            //   var date_now = Number(d.getFullYear() +''+ (d.getMonth() + 1) +''+ d.getDate());
+            //   var date_dre = Number(poi.ft_oeie_dre.split('-')[0] + poi.ft_oeie_dre.split('-')[1] + poi.ft_oeie_dre.split('-')[2]);
+              var date_dre = new Date(poi.ft_oeie_dre).getTime();
+
+            //   console.log(test + " " + test2);
+              if(date_dre <= date_now){
                 strokecolorpoi = config.filtercolorurgent;
+                // console.log(filtercolorurgent + " " + strokecolorpoi );
                 strokeweightpoi = 3;
                 scalepoi = 7;
               }
@@ -37,7 +42,7 @@
                 
 
                 if((poi.ft_sous_justification_oeie == sj_oeie && poi.atr_ui == ui_oeie)){
-                  // strokecolorpoi = config.filtercolorurgent;
+                //   strokecolorpoi = config.filtercolorurgent;
                     scalepoi = 11;
                     strokeweightpoi = 4;
                 }
@@ -744,11 +749,44 @@
                   document.location.reload();
               });
           });
+<<<<<<< HEAD
 
           $("#btnValiderModalSimulationAvance").click(function(){
             $.post("API/addListePoiSimuDomaines.php", {nbDissi: $("#dissiSimu").val(), nbClient: $("#clientSimu").val(), nbImmo: $("#immoSimu").val(), nbFocu: $("#focuSimu").val(), nbCoordi: $("#coordiSimu").val(), ui: $("#selectUiSimuAvance").val()}, function(){
                 document.location.reload();
             });
         });
+=======
+          $("#advancedConfigUI").click(function(e){
+              e.stopPropagation();
+              console.log("ok2");
+          })
+          $("#advancedConfigAddUI").click(function(){
+            var advancedSelectedUI = $('#advancedConfigUI').find(":selected").attr('value');
+            if(advancedSelectedUI != "null"){
+                console.log(advancedSelectedUI)
+                $.post("API/addAdvancedConfigUI.php",{ui : advancedSelectedUI}, function(data){
+                    if(data == true){
+                        document.location.reload();
+                    }
+                    else
+                    {
+                        alert("La configuration de l'ui existe déjà");
+                    }
+                })
+            }
+       
+          })
+          $(".remove_advanced_ui").click(function(){
+              var ui = $(this).attr('ui');
+              var ui_libelle = $(this).attr('ui_libelle');
+              var result = confirm("Voulez vous vraiment supprimer la configuration de l'ui "+ui_libelle);
+              if(result==true){
+                  $.post("API/removeAdvancedConfigUI.php",{ui: ui},function(){
+                    $("#advancedConfig-"+ui).html("");
+                  })
+              }
+          })
+>>>>>>> 54550070954ab096924747aa7a01f59ce05e8260
     }
     

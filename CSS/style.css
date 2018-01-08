@@ -398,3 +398,32 @@ color: grey;
   display: flex;
   justify-content: space-around;
 }
+#advancedConfigUI
+{
+  color:black;
+}
+.advanced_config_ui
+{
+  display:-webkit-inline-box;
+}
+#remove_advanced_ui_glyph
+{
+  font-size:20px;
+  color:black;
+  margin-left:5px;
+  color:#757575;
+
+}
+#remove_advanced_ui_glyph:hover
+{
+  font-size:20px;
+  color:black;
+  margin-left:5px;
+  color:#000000;
+  cursor:pointer;
+}
+#caffListeFormation
+{
+  white-space:nowrap;
+  font-size:9px;
+}

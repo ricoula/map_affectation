@@ -2,8 +2,9 @@
     include("header.php");
     include("API/fonctions.php");
     $_SESSION["user_id"] = 1;
-    $config = json_decode(getAdvancedConfig());
+    $config = json_decode(getAdvancedConfig(null));
     $listeUi = json_decode(getUi());
+    $listeCaffFormation = json_decode(getListeCaffFormation());
 ?>
 <!DOCTYPE html>
 <html>
@@ -60,6 +61,32 @@
               <div class="panel-body"><span>Dissi:</span><span id="leg_dissi" class="leg_poi pull-right"></span></div>
               <div class="panel-body"><span>Coordi:</span><span id="leg_coord" class="leg_poi pull-right"></span></div>
               <div class="panel-body"><span id="leg_dre_txt">DRE < à :</span><span id="leg_dre" class="pull-right"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-group">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" href="#collapse2">Formation</a>
+              </h4>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse">
+              <div class="panel-body" id="caffListeFormation">
+    <?php
+      foreach($listeCaffFormation as $caff_id){
+        $caff = json_decode(getCaffById($caff_id));
+        if($caff != null){
+          ?>
+         <span> <?php echo $caff->name_related."\n"; ?> </span></br>
+        <?php
+        }
+        
+      }
+    ?>
+
+   </div>
+           
             </div>
           </div>
         </div>
@@ -269,22 +296,54 @@
        <div class="modal-content">
          <div class="modal-header">
            <button type="button" class="close" data-dismiss="modal">x</button>
-           <h4 class="modal-title">Paramètres avancés</h4>
+           <h2 class="modal-title">Paramètres avancés</h2>
          </div>
          <div class="modal-body">
             <h4>Algorithme de calcul de charge</h4>
             <p class="color-red">Attention la modification de ce calcul influencera les affectations futures</p>
-            <p>((NbPoiReactive * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label> + NbPoiNonReactive * <label class="color-purple coef_non_react" id="coef_non_react"><?php echo $config->coef_non_react ?></label>) * CoefCaff) + (%Retard * NbPoiReactive * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label>) - (NbPoiRayon(<label class="color-red" id="rayon_km"><?php echo $config->rayon_km_new ?></label>km) * <label class="color-yellow" id="coef_rayon"><?php echo $config->coef_rayon_new ?></label>)->MAX(<label class="color-green" id="max_rayon"><?php echo $config->max_rayon_new ?></label>) + (NbPoiReactiveSimu * <label class="color-grey coef_react" id="coef_react"><?php echo $config->coef_react ?></label> + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react"><?php echo $config->coef_non_react ?></label>) </p>
-            <p>Nombre de POI réactive MAX par jour: <label id="max_day"><?php echo $config->max_day ?></label></p>
-            <p>Nombre de POI réactive MAX par semaine: <label id="max_week"><?php echo $config->max_week ?></label></p>
-            <p>Nombre de jours MAX avant congés: <label id="max_avant_conges"><?php echo $config->jours_avant_conges ?></label></p>
-            <p>Nombre de jours de congés MAX: <label id="max_conges"><?php echo $config->jours_conges ?></label></p>
-
+            <div id="advancedConfig-defaut">
+            <h3>Defaut</h3>
+            <p>((NbPoiReactive * <label class="color-grey coef_react_defaut" id="coef_react_defaut"><?php echo $config->coef_react ?></label> + NbPoiNonReactive * <label class="color-purple coef_non_react_defaut" id="coef_non_react_defaut"><?php echo $config->coef_non_react ?></label>) * CoefCaff) + (%Retard * NbPoiReactive * <label class="color-grey coef_react_defaut" id="coef_react_defaut"><?php echo $config->coef_react ?></label>) - (NbPoiRayon(<label class="color-red" id="rayon_km_defaut"><?php echo $config->rayon_km_new ?></label>km) * <label class="color-yellow" id="coef_rayon_defaut"><?php echo $config->coef_rayon_new ?></label>)->MAX(<label class="color-green" id="max_rayon_defaut"><?php echo $config->max_rayon_new ?></label>) + (NbPoiReactiveSimu * <label class="color-grey coef_react_defaut" id="coef_react_defaut"><?php echo $config->coef_react ?></label> + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react_defaut"><?php echo $config->coef_non_react ?></label>) </p>
+            <p>Nombre de POI réactive MAX par jour: <label id="max_day_defaut"><?php echo $config->max_day ?></label></p>
+            <p>Nombre de POI réactive MAX par semaine: <label id="max_week_defaut"><?php echo $config->max_week ?></label></p>
+            <p>Nombre de jours MAX avant congés: <label id="max_avant_conges_defaut"><?php echo $config->jours_avant_conges ?></label></p>
+            <p>Nombre de jours de congés MAX: <label id="max_conges_defaut"><?php echo $config->jours_conges ?></label></p>
+            <button class="btn btn-primary pull-left config_modify" ui="defaut">Modifier</button>
+         <button class="btn btn-success pull-left hide config_valid" ui="defaut">Valider</button>
+         <button class="btn btn-primary pull-left hide config_cancel" ui="defaut">Annuler</button>
+         </br></br></div>
+            <?php 
+              foreach($listeUi as $ui){
+                $config = json_decode(getAdvancedConfig($ui->ft_zone));
+                if($config != false){
+                  ?> 
+                  <div id="advancedConfig-<?php echo $ui->ft_zone ?>">
+                  <h3 class="advanced_config_ui"><?php echo $ui->libelle; ?> </h3>
+            <p>((NbPoiReactive * <label class="color-grey coef_react_<?php echo $ui->ft_zone; ?>" id="coef_react_<?php echo $ui->ft_zone; ?>"><?php echo $config->coef_react ?></label> + NbPoiNonReactive * <label class="color-purple coef_non_react_<?php echo $ui->ft_zone; ?>" id="coef_non_react_<?php echo $ui->ft_zone; ?>"><?php echo $config->coef_non_react ?></label>) * CoefCaff) + (%Retard * NbPoiReactive * <label class="color-grey coef_react_<?php echo $ui->ft_zone; ?>" id="coef_react_<?php echo $ui->ft_zone; ?>"><?php echo $config->coef_react ?></label>) - (NbPoiRayon(<label class="color-red" id="rayon_km_<?php echo $ui->ft_zone; ?>"><?php echo $config->rayon_km_new ?></label>km) * <label class="color-yellow" id="coef_rayon_<?php echo $ui->ft_zone; ?>"><?php echo $config->coef_rayon_new ?></label>)->MAX(<label class="color-green" id="max_rayon_<?php echo $ui->ft_zone; ?>"><?php echo $config->max_rayon_new ?></label>) + (NbPoiReactiveSimu * <label class="color-grey coef_react_<?php echo $ui->ft_zone; ?>" id="coef_react_<?php echo $ui->ft_zone; ?>"><?php echo $config->coef_react ?></label> + NbPoiNonReactiveSimu * <label class="color-purple coef_non_react_<?php echo $ui->ft_zone; ?>"><?php echo $config->coef_non_react ?></label>) </p>
+            <p>Nombre de POI réactive MAX par jour: <label id="max_day_<?php echo $ui->ft_zone; ?>"><?php echo $config->max_day ?></label></p>
+            <p>Nombre de POI réactive MAX par semaine: <label id="max_week_<?php echo $ui->ft_zone; ?>"><?php echo $config->max_week ?></label></p>
+            <p>Nombre de jours MAX avant congés: <label id="max_avant_conges_<?php echo $ui->ft_zone; ?>"><?php echo $config->jours_avant_conges ?></label></p>
+            <p>Nombre de jours de congés MAX: <label id="max_conges_<?php echo $ui->ft_zone; ?>"><?php echo $config->jours_conges ?></label></p>
+            <button class="btn btn-primary pull-left config_modify" ui="<?php echo $ui->ft_zone; ?>">Modifier</button>
+         <button class="btn btn-success pull-left hide config_valid" ui="<?php echo $ui->ft_zone; ?>">Valider</button>
+         <button class="btn btn-primary pull-left hide config_cancel" ui="<?php echo $ui->ft_zone; ?>">Annuler</button>
+         <button class="btn btn-danger remove_advanced_ui" ui="<?php echo $ui->ft_zone; ?>" ui_libelle="<?php echo $ui->libelle; ?>">Supprimer</button>
+         </br></br></div>
+                  <?php
+                }
+              }
+            ?>
+            <button class="btn btn-success" id="advancedConfigAddUI">Ajouter une configuration sur l'ui : <select id="advancedConfigUI">
+            <option value="null" disabled selected ></option>
+            <?php 
+              foreach($listeUi as $ui){
+                ?><option value="<?php echo $ui->ft_zone; ?>"><?php echo $ui->libelle; ?></option><?php
+              }
+            ?>
+            </select></button>
          </div>
          <div class="modal-footer">
-         <button class="btn btn-primary pull-left" id="config_modify">Modifier</button>
-         <button class="btn btn-success pull-left hide" id="config_valid">Valider</button>
-         <button class="btn btn-primary pull-left hide" id="config_cancel">Annuler</button>
+
 
            <button class="btn btn-info" data-dismiss="modal">Fermer</button>
          </div>

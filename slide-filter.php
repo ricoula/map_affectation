@@ -180,60 +180,63 @@ $(".color-picker").spectrum({
               var jours_avant_conges = $("#max_avant_conges").text();
               var jours_conges = $("#max_conges").text();
 
-    $("#config_modify").click(function(){
-               coef_non_react = $("#coef_non_react").text();
-               coef_react = $("#coef_react").text();
-               rayon_km = $("#rayon_km").text();
-               coef_rayon = $("#coef_rayon").text();
-               max_rayon = $("#max_rayon").text();
-               max_day = $("#max_day").text();
-               max_week = $("#max_week").text();
-               jours_avant_conges = $("#max_avant_conges").text();
-               jours_conges = $("#max_conges").text();
-              $(".coef_non_react").html("<input class='input_modif coef_non_react_change' type='number' value='"+ coef_non_react +"'>");
-              $("#rayon_km").html("<input type='number' class='input_modif' value='"+ rayon_km +"'>");
-              $(".coef_react").html("<input type='number' class='input_modif coef_react_change' value='"+ coef_react +"'>");
-              $("#coef_rayon").html("<input type='number' class='input_modif' value='"+ coef_rayon +"'>");
-              $("#max_rayon").html("<input type='number' class='input_modif' value='"+ max_rayon +"'>");
-              $("#max_day").html("<input type='number' class='input_modif' value='"+ max_day +"'>");
-              $("#max_week").html("<input type='number' class='input_modif' value='"+ max_week +"'>");
-              $("#max_avant_conges").html("<input type='number' class='input_modif' value='"+ jours_avant_conges +"'>");
-              $("#max_conges").html("<input type='number' class='input_modif' value='"+ jours_conges +"'>");
-              $("#config_modify").addClass("hide");
-              $("#config_valid").removeClass("hide");
-              $("#config_cancel").removeClass("hide");
-                $(".coef_non_react_change").on('change paste keyup',function(){
-                $(".coef_non_react_change").val($(this).val())
+    $(".config_modify").click(function(){
+     var ui = $(this).attr('ui');
+     console.log(ui);
+               coef_non_react = $("#coef_non_react_"+ui).text();
+               coef_react = $("#coef_react_"+ui).text();
+               rayon_km = $("#rayon_km_"+ui).text();
+               coef_rayon = $("#coef_rayon_"+ui).text();
+               max_rayon = $("#max_rayon_"+ui).text();
+               max_day = $("#max_day_"+ui).text();
+               max_week = $("#max_week_"+ui).text();
+               jours_avant_conges = $("#max_avant_conges_"+ui).text();
+               jours_conges = $("#max_conges_"+ui).text();
+              $(".coef_non_react_"+ui).html("<input class='input_modif coef_non_react_change_"+ui+"' type='number' value='"+ coef_non_react +"'>");
+              $("#rayon_km_"+ui).html("<input type='number' class='input_modif' value='"+ rayon_km +"'>");
+              $(".coef_react_"+ui).html("<input type='number' class='input_modif coef_react_change_"+ui+"' value='"+ coef_react +"'>");
+              $("#coef_rayon_"+ui).html("<input type='number' class='input_modif' value='"+ coef_rayon +"'>");
+              $("#max_rayon_"+ui).html("<input type='number' class='input_modif' value='"+ max_rayon +"'>");
+              $("#max_day_"+ui).html("<input type='number' class='input_modif' value='"+ max_day +"'>");
+              $("#max_week_"+ui).html("<input type='number' class='input_modif' value='"+ max_week +"'>");
+              $("#max_avant_conges_"+ui).html("<input type='number' class='input_modif' value='"+ jours_avant_conges +"'>");
+              $("#max_conges_"+ui).html("<input type='number' class='input_modif' value='"+ jours_conges +"'>");
+              $(".config_modify[ui='"+ui+"']").addClass("hide");
+              $(".config_valid[ui='"+ui+"']").removeClass("hide");
+              $(".config_cancel[ui='"+ui+"']").removeClass("hide");
+                $(".coef_non_react_change_"+ui).on('change paste keyup',function(){
+                $(".coef_non_react_change_"+ui).val($(this).val())
                 });
-                $(".coef_react_change").on('change paste keyup',function(){
-                $(".coef_react_change").val($(this).val())
+                $(".coef_react_change_"+ui).on('change paste keyup',function(){
+                $(".coef_react_change_"+ui).val($(this).val())
                 });
 
             });
 
-            $("#config_valid").click(function(){
-                
-               var coef_non_react_new =  $("#coef_non_react").children().val();
-               var coef_react_new =  $("#coef_react").children().val();
-               var rayon_km_new = $("#rayon_km").children().val();
-               var coef_rayon_new = $("#coef_rayon").children().val();
-               var max_rayon_new = $("#max_rayon").children().val();
-               var max_day_new = $("#max_day").children().val();
-               var max_week_new = $("#max_week").children().val();
-               var jours_avant_conges_new = $("#max_avant_conges").children().val();
-               var jours_conges_new = $("#max_conges").children().val();
-                $(".coef_non_react").html(coef_non_react_new);
-              $("#rayon_km").html(rayon_km_new);
-              $(".coef_react").html(coef_react_new);
-              $("#coef_rayon").html(coef_rayon_new);
-              $("#max_rayon").html(max_rayon_new);
-              $("#max_week").html(max_week_new);
-              $("#max_day").html(max_day_new);
-              $("#max_avant_conges").html(jours_avant_conges_new);
-              $("#max_conges").html(jours_conges_new);
-              $("#config_modify").removeClass("hide");
-              $("#config_valid").addClass("hide");
-              $("#config_cancel").addClass("hide");
+            $(".config_valid").click(function(){
+                var ui = $(this).attr('ui');
+     console.log(ui);
+               var coef_non_react_new =  $("#coef_non_react_"+ui).children().val();
+               var coef_react_new =  $("#coef_react_"+ui).children().val();
+               var rayon_km_new = $("#rayon_km_"+ui).children().val();
+               var coef_rayon_new = $("#coef_rayon_"+ui).children().val();
+               var max_rayon_new = $("#max_rayon_"+ui).children().val();
+               var max_day_new = $("#max_day_"+ui).children().val();
+               var max_week_new = $("#max_week_"+ui).children().val();
+               var jours_avant_conges_new = $("#max_avant_conges_"+ui).children().val();
+               var jours_conges_new = $("#max_conges_"+ui).children().val();
+                $(".coef_non_react_"+ui).html(coef_non_react_new);
+              $("#rayon_km_"+ui).html(rayon_km_new);
+              $(".coef_react_"+ui).html(coef_react_new);
+              $("#coef_rayon_"+ui).html(coef_rayon_new);
+              $("#max_rayon_"+ui).html(max_rayon_new);
+              $("#max_week_"+ui).html(max_week_new);
+              $("#max_day_"+ui).html(max_day_new);
+              $("#max_avant_conges_"+ui).html(jours_avant_conges_new);
+              $("#max_conges_"+ui).html(jours_conges_new);
+              $(".config_modify[ui='"+ui+"']").removeClass("hide");
+              $(".config_valid[ui='"+ui+"']").addClass("hide");
+              $(".config_cancel[ui='"+ui+"']").addClass("hide");
               var modif_json = {
                   coef_non_react: coef_non_react_new,
                   coef_react: coef_react_new,
@@ -247,25 +250,26 @@ $(".color-picker").spectrum({
               };
               var modif_json_string = JSON.stringify(modif_json);
               console.log(modif_json_string);
-              $.post("API/changeAdvancedConfig.php",{config:modif_json_string});
+              $.post("API/changeAdvancedConfig.php",{config:modif_json_string, ui:ui});
               
 
             });
 
-            $("#config_cancel").click(function(){
-
-            $(".coef_non_react").html(coef_non_react);
-            $(".coef_react").html(coef_react);
-              $("#rayon_km").html(rayon_km);
-              $("#coef_rayon").html(coef_rayon);
-              $("#max_rayon").html(max_rayon);
-              $("#max_day").html(max_day);
-              $("#max_week").html(max_week);
-              $("#max_avant_conges").html(jours_avant_conges);
-              $("#max_conges").html(jours_conges);
-              $("#config_modify").removeClass("hide");
-              $("#config_valid").addClass("hide");
-              $("#config_cancel").addClass("hide");   
+            $(".config_cancel").click(function(){
+                var ui = $(this).attr('ui');
+     console.log(ui);
+            $(".coef_non_react_"+ui).html(coef_non_react);
+            $(".coef_react_"+ui).html(coef_react);
+              $("#rayon_km_"+ui).html(rayon_km);
+              $("#coef_rayon_"+ui).html(coef_rayon);
+              $("#max_rayon_"+ui).html(max_rayon);
+              $("#max_day_"+ui).html(max_day);
+              $("#max_week_"+ui).html(max_week);
+              $("#max_avant_conges_"+ui).html(jours_avant_conges);
+              $("#max_conges_"+ui).html(jours_conges);
+              $(".config_modify[ui='"+ui+"']").removeClass("hide");
+              $(".config_valid[ui='"+ui+"']").addClass("hide");
+              $(".config_cancel[ui='"+ui+"']").addClass("hide");
             });
 </script>
 

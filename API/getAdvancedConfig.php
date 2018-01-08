@@ -1,4 +1,8 @@
 <?php
     require_once("fonctions.php");
-    echo getAdvancedConfig();
+    if(!isset($_POST["ui"]) || $_POST["ui"] == '')
+    {
+        $_POST["ui"] = null;
+    }
+    echo getAdvancedConfig($_POST["ui"]);
 ?>

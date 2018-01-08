@@ -116,7 +116,7 @@
 		full join ag_site on hr_employee.ag_site_id = ag_site.id
 		full join ag_agence on hr_employee.ag_agence_id = ag_agence.id
 		full join hr_job on hr_employee.job_id = hr_job.id
-		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
+		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
 		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, t1.ag_coeff_traitement) t2
 		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name, t2.ag_coeff_traitement ) t3
 		where name_related is not null ORDER BY name_related");
@@ -170,7 +170,7 @@
 		full join ag_site on hr_employee.ag_site_id = ag_site.id
 		full join ag_agence on hr_employee.ag_agence_id = ag_agence.id
 		full join hr_job on hr_employee.job_id = hr_job.id
-		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
+		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
 		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name) t2
 		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name ) t3
 		where name_related is not null AND site = ?");
@@ -396,7 +396,7 @@
 				left join hr_job on hr_employee.job_id = hr_job.id
 			   left join (select id,name_related,parent_id from hr_employee) test on hr_employee.parent_id = test.id
 			   order by test.name_related)test2 on res_users.ag_employee_id = test2.employee_id
-			   where active is true and login not in ('admin','import_portefeuille','CONGES') and job in ('CAFF FT','CAFF MIXTE')
+			   where active is true and login not in ('admin','import_portefeuille','CONGES') and job in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER')
 		)");
 		$req->execute(array($titulaire, $commune, $commune, $voie, $ui));
 		if($data = $req->fetch())
@@ -426,7 +426,7 @@
 				left join hr_job on hr_employee.job_id = hr_job.id
 			   left join (select id,name_related,parent_id from hr_employee) test on hr_employee.parent_id = test.id
 			   order by test.name_related)test2 on res_users.ag_employee_id = test2.employee_id
-			   where active is true and login not in ('admin','import_portefeuille','CONGES') and job in ('CAFF FT','CAFF MIXTE')
+			   where active is true and login not in ('admin','import_portefeuille','CONGES') and job in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER')
 		)
 		GROUP BY p.atr_caff_traitant_id, e.name_related, e.ag_site_id
 		ORDER BY nb DESC");
@@ -478,7 +478,7 @@
 				left join hr_job on hr_employee.job_id = hr_job.id
 			   left join (select id,name_related,parent_id from hr_employee) test on hr_employee.parent_id = test.id
 			   order by test.name_related)test2 on res_users.ag_employee_id = test2.employee_id
-			   where active is true and login not in ('admin','import_portefeuille','CONGES') and job in ('CAFF FT','CAFF MIXTE')
+			   where active is true and login not in ('admin','import_portefeuille','CONGES') and job in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER')
 		)
 		GROUP BY p.atr_caff_traitant_id, e.name_related, e.ag_site_id
 		ORDER BY nb DESC");
@@ -527,7 +527,7 @@
 				left join hr_job on hr_employee.job_id = hr_job.id
 			   left join (select id,name_related,parent_id from hr_employee) test on hr_employee.parent_id = test.id
 			   order by test.name_related)test2 on res_users.ag_employee_id = test2.employee_id
-			   where active is true and login not in ('admin','import_portefeuille','CONGES') and job in ('CAFF FT','CAFF MIXTE')
+			   where active is true and login not in ('admin','import_portefeuille','CONGES') and job in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER')
 		)
 		GROUP BY p.atr_caff_traitant_id, e.name_related, e.ag_site_id
 		ORDER BY nb DESC");
@@ -746,34 +746,64 @@
 		}
 		return json_encode($reponse);
 	}
-	function changeAdvancedConfig($json_code){
+	function changeAdvancedConfig($json_code,$ui){
 		include("connexionBdd.php");
 		$reponse = false;
-		try{
-			$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ?");
-			$reponse = $req->execute(array($json_code));
-			/*$req = $bdd->prepare("SELECT id FROM cds_advanced_config WHERE id = 1");
-			$req->execute(array($id));
-			if($data = $req->fetch())
-			{
-				$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
+		if($ui=="defaut"){
+			try{
+				$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE ui is null");
 				$reponse = $req->execute(array($json_code));
+				/*$req = $bdd->prepare("SELECT id FROM cds_advanced_config WHERE id = 1");
+				$req->execute(array($id));
+				if($data = $req->fetch())
+				{
+					$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
+					$reponse = $req->execute(array($json_code));
+				}
+				else{
+					$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
+					$reponse = $req->execute(array($json_code));
+				}*/
+			}catch(Exception $e){
+				$reponse = false;
 			}
-			else{
-				$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
-				$reponse = $req->execute(array($json_code));
-			}*/
-		}catch(Exception $e){
-			$reponse = false;
 		}
+		else{
+			try{
+				$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE ui = ?");
+				$reponse = $req->execute(array($json_code,$ui));
+				/*$req = $bdd->prepare("SELECT id FROM cds_advanced_config WHERE id = 1");
+				$req->execute(array($id));
+				if($data = $req->fetch())
+				{
+					$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
+					$reponse = $req->execute(array($json_code));
+				}
+				else{
+					$req = $bdd->prepare("UPDATE cds_advanced_config SET config = ? WHERE id = 1");
+					$reponse = $req->execute(array($json_code));
+				}*/
+			}catch(Exception $e){
+				$reponse = false;
+			}
+		}
+		
 		return json_encode($reponse);
 	}
 
-	function getAdvancedConfig()
+	function getAdvancedConfig($ui)
 	{
 		include("connexionBdd.php");
 		$config = null;
-		$req = $bdd->query("SELECT config FROM cds_advanced_config WHERE config IS NOT NULL AND config != '' LIMIT 1");
+		if(!isset($ui) || $ui == null || $ui == '')
+		{
+			$req = $bdd->query("SELECT config FROM cds_advanced_config WHERE ui is null");
+		}
+		else
+		{
+			$req = $bdd->prepare("SELECT config FROM cds_advanced_config WHERE ui = ?");
+			$req->execute(array($ui));
+		}
 		if($data = $req->fetch())
 		{
 			$config = $data["config"];
@@ -897,7 +927,7 @@
 		full join ag_site on hr_employee.ag_site_id = ag_site.id
 		full join ag_agence on hr_employee.ag_agence_id = ag_agence.id
 		full join hr_job on hr_employee.job_id = hr_job.id
-		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
+		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
 		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name) t2
 		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name ) t3
 		WHERE id = ?");
@@ -1007,7 +1037,7 @@
 		full join hr_job on hr_employee.job_id = hr_job.id
 		FULL JOIN m2m__hr_employee__ag_competence cmp ON cmp.employee_id = hr_employee.id
 		FULL JOIN ag_competence ON ag_competence.id = cmp.competence_id
-		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE') and ag_competence.name = '".$competence."') t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
+		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER') and ag_competence.name = '".$competence."') t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
 		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, t1.site_id, t1.ag_coeff_traitement) t2
 		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name, t2.site_id, t2.ag_coeff_traitement ) t3
 		where name_related is not null AND site_id IN(".$listeIdSites."))caff
@@ -1772,6 +1802,20 @@
 		
 		return json_encode($position);
 	}
+	function addAdvancedConfigUI($ui){
+		include("connexionBdd.php");
+
+		$req = $bdd->prepare("SELECT ui from cds_advanced_config where ui = ?");
+		$req->execute(array($ui));
+		if($req->fetch()){
+			return false;
+		}
+		else
+		{
+			$req2 = $bdd->prepare("INSERT INTO cds_advanced_config (ui) VALUES (?)");
+			$req2->execute(array($ui));
+			return true;
+		}
 
 	function entraideCaff($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut)
 	{
@@ -1836,4 +1880,21 @@
 		return json_encode($reponse);
 	}
 
+	}
+	function removeAdvancedConfigUI($ui){
+		include("connexionBdd.php");
+		
+		$req = $bdd->prepare("DELETE FROM cds_advanced_config where ui = ?");
+		$req->execute(array($ui));
+	}
+
+	function getListeCaffFormation(){
+		include("connexionBdd.php");
+		$listCaffFormation = array();
+		$req = $bdd->query("SELECT * FROM cds_formation");
+		while($data = $req->fetch()){
+			array_push($listCaffFormation, $data['caff_id']);
+		}
+		return json_encode($listCaffFormation);
+	}
 ?>
