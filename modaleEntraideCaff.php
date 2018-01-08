@@ -2,6 +2,13 @@
   include("API/fonctions.php");
   $listeSites = json_decode(getSites());
   $listeEntraides = json_decode(getProchainesEntraidesCaff($_GET["idCaff"]));
+  foreach($listeEntraides as $entraide)
+  {
+    ?>
+    <input type="hidden" class="uneEntraide" dateDeb="<?php echo $entraide->date_debut ?>" dateFin="<?php echo $entraide->date_expiration ?>" />
+    <?php
+  }
+
   $siteBase = urldecode($_GET["site"]);
 ?>
 
@@ -179,7 +186,156 @@
 </div>
 
 <script>
-  $("#dateExpiration").daterangepicker({locale: {format: 'DD/MM/YYYY'}});
+/*var w = 0;
+var v = 0;
+var premiere_date = null;
+var compteur = 0;
+premiere_date_comp = null;
+var nbEvent = 0;
+var event = false;
+$("#dateExpiration").on("showCalendar.daterangepicker", function(){
+  if(nbEvent > 0)
+  {
+    event = true;
+    console.log("ghthtezhezqe");
+  }
+  nbEvent++;
+});
+  $("#dateExpiration").daterangepicker({locale: {format: 'DD/MM/YYYY'}, isInvalidDate: function(date){
+    
+    w++;
+    premiere_date = date._d;
+    if(w == 1)
+    {
+      console.log("CLICK");
+      if(premiere_date_comp == null){
+        premiere_date_comp = premiere_date;
+      }else if(new Date(premiere_date_comp).getTime() == new Date(premiere_date).getTime() || event == true){ // || ev = true
+
+        event = false;
+        if(compteur == 0){
+          compteur++;
+          console.log("premier click");
+        }else
+        {
+          compteur = 0; 
+          console.log("second click");
+        }
+      }else{
+        premiere_date_comp = premiere_date;
+      }
+console.log(compteur);
+
+
+     
+    }else if(w == 84)
+    {
+    w=0;
+  
+    }
+    var trouve = false;
+   //console.log(date.length);
+    
+   
+    $(".uneEntraide").each(function(){
+      var dateDeb = new Date($(this).attr("dateDeb"));
+      var dateFin = new Date($(this).attr("dateFin"));
+
+      if(date._d.getTime() >= dateDeb.getTime() && date._d.getTime() <= dateFin.getTime())
+      {
+        trouve = true;
+      }
+    });
+    if(!trouve)
+    {
+      return false;
+    }
+    else{
+      return true;
+    }
+  } }, function(start, end, label) {
+
+});*/
+
+/* var w = 1;
+var v = 0;
+var nonValable = false;
+  $("#dateExpiration").daterangepicker({locale: {format: 'DD/MM/YYYY'}, isInvalidDate: function(date){
+    // if(v >= 84)
+    //   {
+    //     w = 1;
+    //     v = 0;
+    //   }
+    var trouve = false;
+      v++;
+      if(v == 84)
+      {
+        v = 0;
+      }
+    //if($(".start-date").length > 0 && w == 1 && v == 84)
+    if($(".start-date").length > 0 && v == 0)
+    {
+      //w++;
+      v = 0;
+      var jour = parseInt($(".start-date").text()) + 1;
+      var monthYear = $(".start-date").closest("table").children("thead").children("tr").children(".month").text();
+      var tabMonth = monthYear.split(" ");
+      var annee = tabMonth[1];
+      var mois = tabMonth[0];
+      var dateDebutChoisie = new Date(mois + " " + jour + ", " + annee)
+      if(date._d.getTime() >= dateDebutChoisie.getTime() && nonValable)
+      {
+        trouve = true;
+      }
+    }
+    $(".uneEntraide").each(function(){
+      var dateDeb = new Date($(this).attr("dateDeb"));
+      var dateFin = new Date($(this).attr("dateFin"));
+
+      if(date._d.getTime() >= dateDeb.getTime() && date._d.getTime() <= dateFin.getTime() && trouve == false)
+      {
+        console.log("FFFFFFFFFFF");
+        trouve = true;
+        return true;
+      }
+    });
+
+    if(!trouve)
+    {
+      return false;
+    }
+    else{
+      
+      nonValable = true;
+      return true;
+    }
+  }
+  });*/
+
+  $("#dateExpiration").daterangepicker({locale: {format: 'DD/MM/YYYY'}, isInvalidDate: function(date){
+    var trouve = false;
+    $(".uneEntraide").each(function(){
+      var dateDeb = new Date($(this).attr("dateDeb"));
+      var dateFin = new Date($(this).attr("dateFin"));
+
+      if(date._d.getTime() >= dateDeb.getTime() && date._d.getTime() <= dateFin.getTime())
+      {
+        trouve = true;
+      }
+    });
+
+    if(!trouve)
+    {
+      return false;
+    }
+    else{
+      
+      nonValable = true;
+      return true;
+    }
+  }
+  });
+
 
   $(".supprEntraide").click(function(){
     var elt = $(this);
@@ -200,6 +356,11 @@
         {
           $("#btnEntraideCaff-" + $("#idCaffEntraide").val()).css("color", "rgb(51, 122, 183)");
         }
+
+        $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $("#idCaffEntraide").val() + "&site=" + $("#siteEntraide").val(), function(){
+          
+        });
+
      });
   });
 
