@@ -152,7 +152,6 @@
             <button class="btn btn-primary" data-toggle="modal" href="#modaleSimulationPOIAvance">Avancé</button>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-danger" id="btnResetSimu">Reset</button>
             <button class="btn btn-success" id="btnValiderModalSimulation">Valider</button>
             <button class="btn btn-info" data-dismiss="modal">Fermer</button>
           </div>

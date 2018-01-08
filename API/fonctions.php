@@ -1982,16 +1982,4 @@
 		}
 		return json_encode($listCaffFormation);
 	}
-	
-	function resetSimulation()
-	{
-		include("connexionBddErp.php");
-		$reponse = false;
-		try{
-			$reponse = $bddErp->exec("update ag_poi set atr_caff_traitant_id = 1, ft_etat = '6' where atr_caff_traitant_id = 357");
-		}catch(Exception $e){
-			$reponse = false;
-		}
-		return json_encode($reponse);
-	}
 ?>
