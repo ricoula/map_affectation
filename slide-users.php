@@ -224,6 +224,10 @@ $(".users-formation").click(function(){
         $(this).addClass("label label-warning");
         $(this).text("OUI");
         $.post("API/addRemoveFormationByCaffId.php", {caff_id: caff_id, state: "OUI"});
+        $.post("API/getCaffById.php",{caff_id: caff_id},function(data){
+           var caff = JSON.parse(data);
+           $("#caffListeFormation").append("<span id='formation-" + caff.id + "'>" + caff.name_related + "</span>");
+        })
     }
         else
         {
@@ -231,6 +235,7 @@ $(".users-formation").click(function(){
         $(this).addClass("label label-default");
         $(this).text("NON");
         $.post("API/addRemoveFormationByCaffId.php", {caff_id: caff_id, state:"NON"});
+        $("#formation-"+caff_id).remove()
         }
 })
 </script>
