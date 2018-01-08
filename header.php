@@ -1,4 +1,8 @@
-<?php session_start(); ?>
+<?php session_start();
+if(!isset($_SESSION['simu'])){
+  $_SESSION['simu'] = false;
+}
+ ?>
 <!DOCTYPE html>
 <html>
   <head>
