@@ -316,6 +316,8 @@ var nonValable = false;
     var trouve = false;
     $(".uneEntraide").each(function(){
       var dateDeb = new Date($(this).attr("dateDeb"));
+      dateDeb = dateDeb.getTime() - (23 * 60 * 60 * 1000) - (30 * 60 * 1000); //J'enleve 23h30 à la date pour que la date de debut ne soit pas valide à la selection
+      dateDeb = new Date(dateDeb);
       var dateFin = new Date($(this).attr("dateFin"));
 
       if(date._d.getTime() >= dateDeb.getTime() && date._d.getTime() <= dateFin.getTime())
@@ -333,9 +335,73 @@ var nonValable = false;
       nonValable = true;
       return true;
     }
-  }
+  }});
+
+
+  $("#dateExpiration").on("apply.daterangepicker", function(ev, obj){
+    var dateDebutChoisi = obj.startDate._d;
+    var dateFinChoisi = obj.endDate._d;
+    var valActuelle = $("#dateExpiration").val();
+    var dateValide = true;
+    $(".uneEntraide").each(function(){
+      var dateDeb = new Date($(this).attr("dateDeb"));
+      var dateFin = new Date($(this).attr("dateFin"));
+      if(dateDebutChoisi.getTime() <= dateDeb.getTime() && dateFinChoisi.getTime() >= dateDeb.getTime())
+      {
+        dateValide = false;
+      }
+      /*if((dateDebutChoisi.getTime() >= dateDeb.getTime() && dateDebutChoisi.getTime() <= dateFin.getTime()) || (dateFinChoisi.getTime() >= dateDeb.getTime() && dateFinChoisi.getTime() <= dateFin.getTime()))
+      {
+        dateValide = false;
+      }
+      else{
+        console.log("non");
+      }*/
+    });
+    if(!dateValide)
+    {
+      alert("Cette période n'est pas valide car une enraide est déjà prévu");
+      $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $("#idCaffEntraide").val() + "&site=" + $("#siteEntraide").val(), function(){
+          
+        });
+    }
+    else{
+      $("#validerModaleEntraide").prop("disabled", false);
+    }
   });
 
+  var fonctionVerifDate = function(valDate){ //prends en parametres la valeur du input daterangepicker et renvoit true si la date est valide, false sinon
+    var tabValDate = valDate.split(" - ");
+    var dateDb = tabValDate[0].split("/")[2] + "-" + tabValDate[0].split("/")[1] + "-" + tabValDate[0].split("/")[0];
+    var dateFn = tabValDate[1].split("/")[2] + "-" + tabValDate[1].split("/")[1] + "-" + tabValDate[1].split("/")[0];
+    var dateDebutChoisi = new Date(dateDb);
+    var dateFinChoisi = new Date(dateFn);
+    var dateValide = true;
+    $(".uneEntraide").each(function(){
+      var dateDeb = new Date($(this).attr("dateDeb"));
+      var dateFin = new Date($(this).attr("dateFin"));
+      console.log(dateDebutChoisi.getTime() + " <= " + dateDeb.getTime() + " && " + dateFinChoisi.getTime() + " >= " + dateDeb.getTime() +"\n\n");
+      if(dateDebutChoisi.getTime() <= dateDeb.getTime() && dateFinChoisi.getTime() >= dateDeb.getTime())
+      {
+        dateValide = false;
+      }
+      else if(dateDebutChoisi.getTime() >= dateDeb.getTime() && dateDebutChoisi.getTime() <= dateFin.getTime())
+      {
+        dateValide = false;
+      }
+
+    });
+    return dateValide;
+  };
+
+  
+  if(!fonctionVerifDate($("#dateExpiration").val()))
+  {
+    $("#validerModaleEntraide").prop("disabled", true);
+  }
+  else{
+    $("#validerModaleEntraide").prop("disabled", false);
+  }
 
   $(".supprEntraide").click(function(){
     var elt = $(this);
