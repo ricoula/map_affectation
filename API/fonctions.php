@@ -1,4 +1,25 @@
 <?php
+function getProchainesEntraidesCaff($idCaff)
+	{
+		include("connexionBdd.php");
+		$entraides = array();
+		$req = $bdd->prepare("SELECT * FROM cds_entraide WHERE DATE_PART('day', date_expiration - NOW()) >= 0 AND caff_id = ? ORDER BY date_debut");
+		$req->execute(array($idCaff));
+		while($data = $req->fetch())
+		{
+			$entraide = (object) array();
+			$entraide->id = $data["id"];
+			$entraide->caff_id = $data["caff_id"];
+			$entraide->site_entraide_id = $data["site_entraide_id"];
+			$entraide->site_entraide_libelle = json_decode(getLibelleSiteById($data["site_entraide_id"]));
+			$entraide->date_expiration = $data["date_expiration"];
+			$entraide->domaines = json_decode($data["domaines"]);
+			$entraide->date_debut = $data["date_debut"];
+			array_push($entraides, $entraide);
+		}
+		return json_encode($entraides);
+	}
+	
 	function getPoiNA()
 	{
 		include("connexionBddErp.php");
@@ -1816,7 +1837,7 @@
 			$req2->execute(array($ui));
 			return true;
 		}
-
+	}
 	function entraideCaff($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut)
 	{
 		include("connexionBdd.php");
@@ -1831,26 +1852,7 @@
 		return json_encode($reponse);
 	}
 
-	function getProchainesEntraidesCaff($idCaff)
-	{
-		include("connexionBdd.php");
-		$entraides = array();
-		$req = $bdd->prepare("SELECT * FROM cds_entraide WHERE DATE_PART('day', date_expiration - NOW()) >= 0 AND caff_id = ? ORDER BY date_debut");
-		$req->execute(array($idCaff));
-		while($data = $req->fetch())
-		{
-			$entraide = (object) array();
-			$entraide->id = $data["id"];
-			$entraide->caff_id = $data["caff_id"];
-			$entraide->site_entraide_id = $data["site_entraide_id"];
-			$entraide->site_entraide_libelle = json_decode(getLibelleSiteById($data["site_entraide_id"]));
-			$entraide->date_expiration = $data["date_expiration"];
-			$entraide->domaines = json_decode($data["domaines"]);
-			$entraide->date_debut = $data["date_debut"];
-			array_push($entraides, $entraide);
-		}
-		return json_encode($entraides);
-	}
+
 
 	function getLibelleSiteById($idSite)
 	{
@@ -1880,7 +1882,6 @@
 		return json_encode($reponse);
 	}
 
-	}
 	function removeAdvancedConfigUI($ui){
 		include("connexionBdd.php");
 		
