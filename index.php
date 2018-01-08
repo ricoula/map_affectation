@@ -78,7 +78,7 @@
         $caff = json_decode(getCaffById($caff_id));
         if($caff != null){
           ?>
-         <span> <?php echo $caff->name_related."\n"; ?> </span></br>
+         <span id="formation-<?php echo $caff->id; ?>"> <?php echo $caff->name_related."\n"; ?> </span>
         <?php
         }
         
