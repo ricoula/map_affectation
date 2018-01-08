@@ -48,7 +48,7 @@
             
      </div>
      <h4>POI</h4>
-        <div class="form-group">
+        <div class="form-group colorPickerDomaines">
             <div class="list-group">
                 <div class="list-group-item"><label>Couleur POI Client</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-client" value="<?php echo $config_default->filtercolorclient ?>"></div></div>
                 <div class="list-group-item"><label>Couleur POI Immobilier</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-immo" value="<?php echo $config_default->filtercolorimmo ?>"></div></div>
