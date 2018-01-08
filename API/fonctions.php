@@ -1789,4 +1789,14 @@
 		$req = $bdd->prepare("DELETE FROM cds_advanced_config where ui = ?");
 		$req->execute(array($ui));
 	}
+
+	function getListeCaffFormation(){
+		include("connexionBdd.php");
+		$listCaffFormation = array();
+		$req = $bdd->query("SELECT * FROM cds_formation");
+		while($data = $req->fetch()){
+			array_push($listCaffFormation, $data['caff_id']);
+		}
+		return json_encode($listCaffFormation);
+	}
 ?>
