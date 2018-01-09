@@ -1763,8 +1763,15 @@
 					//echo "WEEK";
 				}
 				else{
-					$req2 = $bddErp->prepare("SELECT id FROM hr_holidays WHERE date_from <= ? AND date_to >= ? AND employee_id = ?");
-					$req2->execute(array($dateDebutSimu->format('Y-m-d H:i:s'), $dateDebutSimu->format('Y-m-d H:i:s'), $idEmploye));
+					/*$dateDbut = $dateDebutSimu;
+					$dateDbut = $dateDbut->modify("+20 hour"); //J'ajoute 23h à la date car sinon il y a un problème d'heure
+					var_dump($dateDebutSimu);
+					var_dump($dateDbut);*/
+
+					//echo $dateDebutSimu->format('Y-m-d H:i:s')."\n\n";
+					//echo "SELECT id FROM hr_holidays WHERE date_from <= ".$dateDbut->format('Y-m-d H:i:s')." AND date_to >= ".$dateDebutSimu->format('Y-m-d H:i:s')." AND employee_id = 387 \n\n";
+					$req2 = $bddErp->query("SELECT id FROM hr_holidays WHERE DATE_PART('day', '".$dateDebutSimu->format('Y-m-d H:i:s')."' - date_from)  >= 0  AND DATE_PART('day', date_to - '".$dateDebutSimu->format('Y-m-d H:i:s')."') >= 0 AND employee_id = ".$idEmploye);
+					//$req2->execute(array($dateDebutSimu->format('Y-m-d H:i:s'), $idEmploye));
 					if($data2 = $req2->fetch())
 					{
 						//echo "conge";
@@ -1775,8 +1782,16 @@
 					}
 				}
 				
-				$dateDebutSimu = $dateDebutSimu->modify("+1 day");
-				$dateDebutSimu = $dateDebutSimu->format('Y-m-d H:i:s');
+				if($continue)
+				{
+					$dateDebutSimu = $dateDebutSimu->modify("+1 day");
+					$dateDebutSimu = $dateDebutSimu->format('Y-m-d H:i:s');
+				}
+				else{
+					$dateDebutSimu = $dateDebutSimu->modify("-1 day");
+					$dateDebutSimu = $dateDebutSimu->format('Y-m-d');
+					$conges->dateFin = $dateDebutSimu;
+				}
 			}
 			$conges->nbJoursCongesRestant = $nbJoursConges;
 			
