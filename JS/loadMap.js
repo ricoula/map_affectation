@@ -758,7 +758,7 @@
           $("#advancedConfigUI").click(function(e){
               e.stopPropagation();
               console.log("ok2");
-          })
+          });
           $("#advancedConfigAddUI").click(function(){
             var advancedSelectedUI = $('#advancedConfigUI').find(":selected").attr('value');
             if(advancedSelectedUI != "null"){
@@ -774,7 +774,7 @@
                 })
             }
        
-          })
+          });
           $(".remove_advanced_ui").click(function(){
               var ui = $(this).attr('ui');
               var ui_libelle = $(this).attr('ui_libelle');

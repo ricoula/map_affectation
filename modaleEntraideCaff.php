@@ -10,9 +10,12 @@
   }
 
   $siteBase = urldecode($_GET["site"]);
+  $idSiteBase = json_decode(getIdFromSite($siteBase));
+  $competences = json_decode(getCompetenceByCaffId($_GET["idCaff"]));
 ?>
 
-<input type="hidden" name="siteEntraide" id="siteEntraide" value="<?php $_GET["site"] ?>" />
+<input type="hidden" name="siteEntraide" id="siteEntraide" value="<?php echo $_GET["site"] ?>" />
+<input type="hidden" name="idSiteEntraideBase" id="idSiteEntraideBase" value="<?php echo $idSiteBase ?>" />
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal">x</button>
   <h4 class="modal-title">Entraide</h4>
@@ -44,11 +47,22 @@
     <div class="form-group">
         <label>Choix des domaines</label>
         <div id="listeDomainesModaleEntraide">
-          <label><input class="checkDomainesEntraide" type="checkbox" name="focu" id="focu" /> FO & CU</label>
-          <label><input class="checkDomainesEntraide" type="checkbox" name="client" id="client" /> Client</label>
-          <label><input class="checkDomainesEntraide" type="checkbox" name="dissi" id="dissi" /> Dissi</label>
-          <label><input class="checkDomainesEntraide" type="checkbox" name="coordi" id="coordi" /> Coordi</label>
-          <label><input class="checkDomainesEntraide" type="checkbox" name="immo" id="immo" /> Immo</label>
+          <?php 
+          foreach($competences as $competence)
+          {
+            if(strtoupper($competence) == "FO & CU" || strtoupper($competence) == "FO&CU")
+            {
+              $idElt = "focu";
+            }
+            else{
+              $idElt = strtolower($competence);
+            }
+            ?>
+            <label><input class="checkDomainesEntraide" type="checkbox" name="<?php echo $idElt ?>" id="<?php echo $idElt ?>" checked /> <?php echo $competence ?></label>
+            <?php
+          }
+          ?>
+          
         </div>
     </div>
     <div class="form-group">
@@ -71,6 +85,7 @@
         }
         if($entraideEnCours != null)
         {
+          $domaines = implode(", ", $entraideEnCours->domaines);
             ?>
             <div id="divTableEntraideEnCours">
               <h4>En cours</h4>
@@ -79,6 +94,7 @@
                   <th>Site</th>
                   <th>Date Début</th>
                   <th>Date Fin</th>
+                  <th>Domaines</th>
                   <th>Annuler</th>
                 </tr>
                 <tr>
@@ -91,6 +107,7 @@
                   <td>
                     <?php echo $entraideEnCours->date_expiration ?>
                   </td>
+                  <td><?php echo $domaines ?></td>
                   <td style="text-align:center">
                     <a style="cursor:pointer" class="glyphicon glyphicon-trash supprEntraide entraideEnCours" entraideId="<?php echo $entraideEnCours->id ?>" ></a>
                   </td>
@@ -108,6 +125,7 @@
                   <th>Site</th>
                   <th>Date Début</th>
                   <th>Date Fin</th>
+                  <th>Domaines</th>
                   <th>Annuler</th>
                 </tr>
                 <?php
@@ -115,6 +133,7 @@
                 {
                   if($entraide->id != $entraideEnCours->id)
                   {
+                    $domaines = implode(", ", $entraide->domaines);
                     ?>
                     <tr>
                       <td>
@@ -126,6 +145,7 @@
                       <td>
                         <?php echo $entraide->date_expiration ?>
                       </td>
+                      <td><?php echo $domaines ?></td>
                       <td style="text-align:center">
                         <a style="cursor:pointer" class="glyphicon glyphicon-trash supprEntraide entraidesAVenir" entraideId="<?php echo $entraide->id ?>" ></a>
                       </td>
@@ -148,11 +168,13 @@
                   <th>Site</th>
                   <th>Date Début</th>
                   <th>Date Fin</th>
+                  <th>Domaines</th>
                   <th>Annuler</th>
                 </tr>
                 <?php
                 foreach($listeEntraides as $entraide)
                 {
+                    $domaines = implode(", ", $entraide->domaines);
                     ?>
                     <tr>
                       <td>
@@ -164,6 +186,7 @@
                       <td>
                         <?php echo $entraide->date_expiration ?>
                       </td>
+                      <td><?php echo $domaines ?></td>
                       <td style="text-align:center">
                         <a style="cursor:pointer" class="glyphicon glyphicon-trash supprEntraide entraidesAVenir" entraideId="<?php echo $entraide->id ?>" ></a>
                       </td>
@@ -457,7 +480,7 @@ var nonValable = false;
     var dateFin = $("#dateExpiration").val().split(" - ")[1];
     dateFin = dateFin.split("/");
     dateFin = dateFin[2] + "-" + dateFin[1] + "-" + dateFin[0];
-    $.post("API/entraideCaff.php", {caff_id: $("#idCaffEntraide").val(), site_entraide_id: $("#idSiteEntraide").val(), liste_domaines_json: listeDomaines, date_expiration: dateFin, date_debut: dateDebut}, function(data){
+    $.post("API/entraideCaff.php", {caff_id: $("#idCaffEntraide").val(), site_entraide_id: $("#idSiteEntraide").val(), liste_domaines_json: listeDomaines, date_expiration: dateFin, date_debut: dateDebut, site_defaut_id: $("#idSiteEntraideBase").val()}, function(data){
       var reponse = JSON.parse(data);
       if(reponse)
       {

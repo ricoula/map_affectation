@@ -1,5 +1,5 @@
 <?php
-function getProchainesEntraidesCaff($idCaff)
+	function getProchainesEntraidesCaff($idCaff)
 	{
 		include("connexionBdd.php");
 		$entraides = array();
@@ -15,9 +15,23 @@ function getProchainesEntraidesCaff($idCaff)
 			$entraide->date_expiration = $data["date_expiration"];
 			$entraide->domaines = json_decode($data["domaines"]);
 			$entraide->date_debut = $data["date_debut"];
+			$entraide->site_defaut_id = $data["site_defaut_id"];
 			array_push($entraides, $entraide);
 		}
 		return json_encode($entraides);
+	}
+	
+	function getIdFromSite($site)
+	{
+		include("connexionBdd.php");
+		$id = null;
+		$req = $bdd->prepare("SELECT erp_site_id FROM cds_transco_ui_site WHERE UPPER(site) = ? LIMIT 1");
+		$req->execute(array(strtoupper($site)));
+		if($data = $req->fetch())
+		{
+			$id = $data["erp_site_id"];
+		}
+		return json_encode($id);
 	}
 	
 	function getPoiNA()
@@ -967,6 +981,59 @@ function getProchainesEntraidesCaff($idCaff)
 		}
 		return json_encode($caff);
 	}
+
+	function getListeSitesByUi($ui) //$ui --> JR4, FC4...
+	{
+		include("connexionBdd.php");
+		$liste = array();
+		$req = $bdd->prepare("SELECT erp_site_id FROM cds_transco_ui_site WHERE ft_zone = ?");
+		$req->execute(array($ui));
+		while($data = $req->fetch())
+		{
+			array_push($liste, $data["erp_site_id"]);
+		}
+		return json_encode($liste);
+	}
+
+	function getListeIdCaffEntraideByUiAndDomaine($ui, $domaine)
+	{
+		include("connexionBdd.php");
+		$liste = array();
+		$listeIdsSites = json_decode(getListeSitesByUi($ui));
+		$listeIdsSites = implode(',', $listeIdsSites);
+		$req = $bdd->query("SELECT id, caff_id FROM cds_entraide WHERE site_entraide_id IN(".$listeIdsSites.") AND date_debut <= current_date AND date_expiration >= current_date");
+		while($data = $req->fetch())
+		{
+			$req2 = $bdd->prepare("SELECT domaines FROM cds_entraide WHERE id = ?");
+			$req2->execute(array($data["id"]));
+			if($data2 = $req2->fetch())
+			{
+				$domainesCaff = json_decode($data2["domaines"]);
+				foreach($domainesCaff as $dom)
+				{
+					if(strtoupper($dom) == strtoupper($domaine))
+					{
+						array_push($liste, $data["caff_id"]);
+					}
+				}
+			}
+		}
+		return json_encode($liste);
+	}
+	
+	function getListeIdCaffEntraideExclureUi($ui)
+	{
+		include("connexionBdd.php");
+		$liste = array();
+		$listeIdsSites = json_decode(getListeSitesByUi($ui));
+		$listeIdsSites = implode(',', $listeIdsSites);
+		$req = $bdd->query("SELECT caff_id FROM cds_entraide WHERE site_defaut_id IN(".$listeIdsSites.") AND date_debut <= current_date AND date_expiration >= current_date");
+		while($data = $req->fetch())
+		{
+			array_push($liste, $data["caff_id"]);
+		}
+		return json_encode($liste);
+	}
 	
 	function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefChargeReactive, $coefCharge, $limiteJour, $limiteSemaine, $limiteMaxCalcul, $nbJoursAvantConges, $nbJoursConges)//, $listeCaffsSimulation) // $listeCaffsSimulation (facultatif) = array en json
 	{
@@ -1038,6 +1105,24 @@ function getProchainesEntraidesCaff($idCaff)
 			$finRequete = ")dre)dre2 group by atr_caff_traitant_id)";
         }
 		
+		$cesCaffs = array();
+		$listeCaffsUi = json_decode(getListeIdCaffEntraideByUiAndDomaine($poi->atr_ui, $poi->domaine));
+		if(sizeof($listeCaffsUi) > 0)
+		{
+			$listeCaffsUi = implode(",", $listeCaffsUi);
+		}
+		else{
+			$listeCaffsUi = "0";
+		}
+		$listeCaffsExclure = json_decode(getListeIdCaffEntraideExclureUi($poi->atr_ui));
+		if(sizeof($listeCaffsExclure) > 0)
+		{
+			$listeCaffsExclure = implode(",", $listeCaffsExclure);
+		}
+		else{
+			$listeCaffsExclure = "0";
+		}
+		
 		$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, (((reactive * ".$coefChargeReactive.") + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement)) charge_initiale, (CASE WHEN ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") > ".$limiteMaxCalcul." THEN ".$limiteMaxCalcul." ELSE ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") END)charge_rayon, ((((reactive * ".$coefChargeReactive.") + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement))
         - CASE WHEN ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") > ".$limiteMaxCalcul." THEN ".$limiteMaxCalcul." ELSE ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") END
         )charge_totale 
@@ -1058,12 +1143,11 @@ function getProchainesEntraidesCaff($idCaff)
 		full join hr_job on hr_employee.job_id = hr_job.id
 		FULL JOIN m2m__hr_employee__ag_competence cmp ON cmp.employee_id = hr_employee.id
 		FULL JOIN ag_competence ON ag_competence.id = cmp.competence_id
-		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER') and ag_competence.name = '".$competence."') t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
+		where ((res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER') and ag_competence.name = '".$competence."') OR hr_employee.id IN(".$listeCaffsUi.")) AND hr_employee.id NOT IN(".$listeCaffsExclure.")) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
 		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, t1.site_id, t1.ag_coeff_traitement) t2
 		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name, t2.site_id, t2.ag_coeff_traitement ) t3
-		where name_related is not null AND site_id IN(".$listeIdSites."))caff
-        ORDER BY charge_totale");
-		
+		where ((name_related is not null AND site_id IN(".$listeIdSites.")) OR id IN(".$listeCaffsUi.")) AND id NOT IN(".$listeCaffsExclure."))caff
+		ORDER BY charge_totale");
 		while($data = $req->fetch())
 		{
 			$req2 = $bdd->prepare("SELECT id FROM cds_formation WHERE caff_id = ?");
@@ -1679,8 +1763,15 @@ function getProchainesEntraidesCaff($idCaff)
 					//echo "WEEK";
 				}
 				else{
-					$req2 = $bddErp->prepare("SELECT id FROM hr_holidays WHERE date_from <= ? AND date_to >= ? AND employee_id = ?");
-					$req2->execute(array($dateDebutSimu->format('Y-m-d H:i:s'), $dateDebutSimu->format('Y-m-d H:i:s'), $idEmploye));
+					/*$dateDbut = $dateDebutSimu;
+					$dateDbut = $dateDbut->modify("+20 hour"); //J'ajoute 23h à la date car sinon il y a un problème d'heure
+					var_dump($dateDebutSimu);
+					var_dump($dateDbut);*/
+
+					//echo $dateDebutSimu->format('Y-m-d H:i:s')."\n\n";
+					//echo "SELECT id FROM hr_holidays WHERE date_from <= ".$dateDbut->format('Y-m-d H:i:s')." AND date_to >= ".$dateDebutSimu->format('Y-m-d H:i:s')." AND employee_id = 387 \n\n";
+					$req2 = $bddErp->query("SELECT id FROM hr_holidays WHERE DATE_PART('day', '".$dateDebutSimu->format('Y-m-d H:i:s')."' - date_from)  >= 0  AND DATE_PART('day', date_to - '".$dateDebutSimu->format('Y-m-d H:i:s')."') >= 0 AND employee_id = ".$idEmploye);
+					//$req2->execute(array($dateDebutSimu->format('Y-m-d H:i:s'), $idEmploye));
 					if($data2 = $req2->fetch())
 					{
 						//echo "conge";
@@ -1691,8 +1782,16 @@ function getProchainesEntraidesCaff($idCaff)
 					}
 				}
 				
-				$dateDebutSimu = $dateDebutSimu->modify("+1 day");
-				$dateDebutSimu = $dateDebutSimu->format('Y-m-d H:i:s');
+				if($continue)
+				{
+					$dateDebutSimu = $dateDebutSimu->modify("+1 day");
+					$dateDebutSimu = $dateDebutSimu->format('Y-m-d H:i:s');
+				}
+				else{
+					$dateDebutSimu = $dateDebutSimu->modify("-1 day");
+					$dateDebutSimu = $dateDebutSimu->format('Y-m-d');
+					$conges->dateFin = $dateDebutSimu;
+				}
 			}
 			$conges->nbJoursCongesRestant = $nbJoursConges;
 			
@@ -1838,14 +1937,14 @@ function getProchainesEntraidesCaff($idCaff)
 			return true;
 		}
 	}
-	function entraideCaff($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut)
+	function entraideCaff($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut, $idSiteDefaut)
 	{
 		include("connexionBdd.php");
 
 		$reponse = false;
 		try{
-			$req = $bdd->prepare("INSERT INTO cds_entraide(caff_id, site_entraide_id, domaines, date_expiration, date_debut) VALUES(?, ?, ?, ?, ?)");
-			$reponse = $req->execute(array($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut));
+			$req = $bdd->prepare("INSERT INTO cds_entraide(caff_id, site_entraide_id, domaines, date_expiration, date_debut, site_defaut_id) VALUES(?, ?, ?, ?, ?, ?)");
+			$reponse = $req->execute(array($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut, $idSiteDefaut));
 		}catch(Exception $e){
 			$reponse = false;
 		}
