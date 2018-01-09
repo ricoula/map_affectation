@@ -1788,6 +1788,7 @@
 					$dateDebutSimu = $dateDebutSimu->format('Y-m-d H:i:s');
 				}
 				else{
+					$conges->dateRetour = $dateDebutSimu->format('Y-m-d');
 					$dateDebutSimu = $dateDebutSimu->modify("-1 day");
 					$dateDebutSimu = $dateDebutSimu->format('Y-m-d');
 					$conges->dateFin = $dateDebutSimu;
