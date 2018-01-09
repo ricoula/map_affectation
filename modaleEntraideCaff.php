@@ -14,7 +14,7 @@
   $competences = json_decode(getCompetenceByCaffId($_GET["idCaff"]));
 ?>
 
-<input type="hidden" name="siteEntraide" id="siteEntraide" value="<?php echo $_GET["site"] ?>" />
+<input type="hidden" name="siteEntraide" id="siteEntraide" value="<?php echo urlencode($_GET["site"]) ?>" />
 <input type="hidden" name="idSiteEntraideBase" id="idSiteEntraideBase" value="<?php echo $idSiteBase ?>" />
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal">x</button>
@@ -403,7 +403,7 @@ var nonValable = false;
     $(".uneEntraide").each(function(){
       var dateDeb = new Date($(this).attr("dateDeb"));
       var dateFin = new Date($(this).attr("dateFin"));
-      console.log(dateDebutChoisi.getTime() + " <= " + dateDeb.getTime() + " && " + dateFinChoisi.getTime() + " >= " + dateDeb.getTime() +"\n\n");
+      //console.log(dateDebutChoisi.getTime() + " <= " + dateDeb.getTime() + " && " + dateFinChoisi.getTime() + " >= " + dateDeb.getTime() +"\n\n");
       if(dateDebutChoisi.getTime() <= dateDeb.getTime() && dateFinChoisi.getTime() >= dateDeb.getTime())
       {
         dateValide = false;
@@ -480,10 +480,20 @@ var nonValable = false;
     var dateFin = $("#dateExpiration").val().split(" - ")[1];
     dateFin = dateFin.split("/");
     dateFin = dateFin[2] + "-" + dateFin[1] + "-" + dateFin[0];
+
+    /*console.log("caff_id: " + $("#idCaffEntraide").val());
+    console.log("site_entraide_id: " + $("#idSiteEntraide").val());
+    console.log("liste_domaines_json: " + listeDomaines);
+    console.log("date_expiration: " + dateFin);
+    console.log("date_debut: " + dateDebut);
+    console.log("site_defaut_id: " + $("#idSiteEntraideBase").val());*/
+
     $.post("API/entraideCaff.php", {caff_id: $("#idCaffEntraide").val(), site_entraide_id: $("#idSiteEntraide").val(), liste_domaines_json: listeDomaines, date_expiration: dateFin, date_debut: dateDebut, site_defaut_id: $("#idSiteEntraideBase").val()}, function(data){
+      //console.log(data);
       var reponse = JSON.parse(data);
       if(reponse)
       {
+        //console.log($("#siteEntraide").val());
         $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $("#idCaffEntraide").val() + "&site=" + $("#siteEntraide").val(), function(){
           $("#btnEntraideCaff-" + $("#idCaffEntraide").val()).css("color", "orange");
           if($(".siteEntraideEnCours").length > 0)
