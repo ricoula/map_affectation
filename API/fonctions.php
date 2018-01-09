@@ -25,8 +25,8 @@
 	{
 		include("connexionBdd.php");
 		$id = null;
-		$req = $bdd->prepare("SELECT erp_site_id FROM cds_transco_ui_site WHERE UPPER(site) = ? LIMIT 1");
-		$req->execute(array(strtoupper($site)));
+		$req = $bdd->prepare("SELECT erp_site_id FROM cds_transco_ui_site WHERE LOWER(site) = ? LIMIT 1");
+		$req->execute(array(strtolower($site)));
 		if($data = $req->fetch())
 		{
 			$id = $data["erp_site_id"];
@@ -1788,6 +1788,7 @@
 					$dateDebutSimu = $dateDebutSimu->format('Y-m-d H:i:s');
 				}
 				else{
+					$conges->dateRetour = $dateDebutSimu->format('Y-m-d');
 					$dateDebutSimu = $dateDebutSimu->modify("-1 day");
 					$dateDebutSimu = $dateDebutSimu->format('Y-m-d');
 					$conges->dateFin = $dateDebutSimu;

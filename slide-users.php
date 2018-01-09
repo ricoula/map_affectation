@@ -24,7 +24,11 @@
         <?php
         foreach($caffs as $caff)
         {
-
+            if($caff->enConge)
+            {
+                $dateRetour = new DateTime($caff->conges->dateRetour);
+                $dateRetour = $dateRetour->format('d/m/Y');
+            }
             if($caff->id != 326)
             {
                 if($caff->ag_coeff_traitement != null)
@@ -46,7 +50,7 @@
                 <div class="input-group users-card-caff card-<?php echo $caff->ui->ft_zone ?>" id="<?php echo urlencode(json_encode($caff)) ?>" >
                     <label class="input-group-addon imageCaff" style='background-image: url("img/inconnu.jpg"); background-size: 100px 100px; width:100px; height:100px;' id="imageCaff-<?php echo $caff->id ?>" ></label>
                     <div class="card-block users-card-info" id="">
-                        <h4 class="users-name"><?php echo $caff->name_related ?> <?php foreach($list_comp as $comp){echo '<label class="comp_1 comp_'.$comp.'" data-toggle="tooltip" data-placement="top" title="'.$comp.'"></label>';}?></span><?php if($caff->enConge){ ?><span class="label label-warning pull-right users-state" >Congé <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="<?php echo $caff->conges->nbJoursCongesRestant." jour(s) restant(s)" ?>"></span></span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
+                        <h4 class="users-name"><?php echo $caff->name_related ?> <?php foreach($list_comp as $comp){echo '<label class="comp_1 comp_'.$comp.'" data-toggle="tooltip" data-placement="top" title="'.$comp.'"></label>';}?></span><?php if($caff->enConge){ ?><span class="label label-warning pull-right users-state" >Congé <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" data-html="true" title="<div>Retour le <?php echo $dateRetour ?></div><div><?php echo $caff->conges->nbJoursCongesRestant." jour(s) de semaine restant(s)</div>" ?>"></span></span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
                         
                         <?php 
                         if(sizeof($caff->entraides) > 0)
