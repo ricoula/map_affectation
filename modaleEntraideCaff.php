@@ -434,7 +434,7 @@ var nonValable = false;
        if(elt.hasClass("entraideEnCours"))
        {
          $("#divTableEntraideEnCours").hide();
-         var siteCaff = $("#site-caff-" + $("#idCaffEntraide").val()).children("del").text();
+         var siteCaff = decodeURI($("#site-caff-" + $("#idCaffEntraide").val()).children("del").text());
          $("#site-caff-" + $("#idCaffEntraide").val()).html(siteCaff);
        }
        if($(".entraidesAVenir").length == 0)
@@ -499,7 +499,9 @@ var nonValable = false;
           if($(".siteEntraideEnCours").length > 0)
           {
             var siteEnCours = $(".siteEntraideEnCours:first").text();
-            var siteCaff = $("#site-caff-" + $("#idCaffEntraide").val()).attr("siteCaff");
+            var siteCaff = decodeURI($("#site-caff-" + $("#idCaffEntraide").val()).attr("siteCaff"));
+            siteCaff = siteCaff.split("+");
+            siteCaff = siteCaff.join(" ");
             $("#site-caff-" + $("#idCaffEntraide").val()).html("<del>" + siteCaff + "</del> " + siteEnCours);
           }
         });
