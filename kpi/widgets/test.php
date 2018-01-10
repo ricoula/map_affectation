@@ -1,5 +1,5 @@
 <?php 
-if($_POST['size'] == "sm"){
+if(!isset($_POST['size']) || $_POST['size'] == "sm"){
 ?>
 <style>
     #testtaille{
@@ -8,22 +8,22 @@ if($_POST['size'] == "sm"){
         background-color:red;
     }
 </style>
+<input type="hidden" id="testx" value="1">
+<input type="hidden" id="testy" value="1">
 <div id="testtaille"></div>
-<?php 
-$taille = array(1,1);
-return json_encode($taille);
+<?php
 }else{
 ?>
 <style>
     #testtaille{
-        width: 320px;
-        height: 300px;
+        width: 283px;
+        height: 302px;
         background-color:blue;
     }
 </style>
+<input type="hidden" id="testx" value="2">
+<input type="hidden" id="testy" value="2">
 <div id="testtaille"></div>
 <?php
-$taille = array(2,2);
-return json_encode($taille);
 }
 ?>

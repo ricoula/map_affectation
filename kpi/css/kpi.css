@@ -42,3 +42,6 @@
     padding:px;
     color:#635353;
 }
+#ajouterCase, #sauvegarderEmplacement{
+    display: none;
+}
