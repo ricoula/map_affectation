@@ -2,6 +2,7 @@ $(function(){ //DOM Ready
     var fonctionSerialize = function($w, wgd){
         var obj = { col: wgd.col, row: wgd.row, size_x: wgd.size_x, size_y: wgd.size_y } ;
         obj.lien = wgd.el.attr("lien");
+        obj.taille = wgd.el.attr("taille");
         return obj;
     }
 
@@ -11,7 +12,7 @@ $(function(){ //DOM Ready
     $("#ajouterCase").click(function(){ 
         $.post("kpi/API/getSizeWidget.php",{lien: 'test', size: 'sm'},function(data){
             var size = JSON.parse(data);
-            var thisWidget = gridster.add_widget('<li class="new"  lien="test.php"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-fullscreen"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>', size.sm.x, size.sm.y);
+            var thisWidget = gridster.add_widget('<li class="new"  lien="test.php" taille="sm" ><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-fullscreen"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>', size.sm.x, size.sm.y);
             var contenuWidget = thisWidget.children(".contenuCase");
 
             thisWidget.children(".menuCase").children(".glyphicon-resize-full").click(function(){
@@ -27,11 +28,12 @@ $(function(){ //DOM Ready
                 gridster.resize_widget( $(this).closest(".gs-w"), size.sm.x, size.sm.y);
                 contenuWidget.load("kpi/widgets/test.php", {size: 'sm'});
             });
-            thisWidget.children(".menuCase").children(".glyphicon-resize-full").click(function(){
+            thisWidget.children(".menuCase").children(".glyphicon-fullscreen").click(function(){
                 var widget = $(this).closest(".gs-w");
             });
-            thisWidget.children(".menuCase").children(".glyphicon-resize-full").click(function(){
+            thisWidget.children(".menuCase").children(".glyphicon-remove").click(function(){
                 var widget = $(this).closest(".gs-w");
+                gridster.remove_widget(widget);
             });
 
             contenuWidget.load("kpi/widgets/test.php", {size: 'sm'});
@@ -104,5 +106,6 @@ $(function(){ //DOM Ready
     });
     $(".menuCase .glyphicon-remove").click(function(){
         var widget = $(this).closest(".gs-w");
+        gridster.remove_widget(widget);
     });
 });
