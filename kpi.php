@@ -13,11 +13,13 @@
   </head>
   <body>
     <div>
-        <button id="ajouterCase">Ajouter</button>
+        <button id="ajouterCase" class="btn btn-default">Ajouter</button>
+        <button id="modifierEmplacement" class="btn btn-primary">Modifier</button>
     </div>
+
     <div class="gridster" oncontextmenu="return false;">
         <ul>
-            <li data-row="1" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
+            <li lien="test.php" data-row="1" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
             <li data-row="2" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
             <li data-row="3" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
 
@@ -35,7 +37,27 @@
             <li data-row="2" data-col="6" data-sizex="1" data-sizey="2"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
         </ul>
     </div>
-    
+    <div>
+        <button id="sauvegarderEmplacement" class="btn btn-success">Sauvegarder</button>
+    </div>
+
+
+    <div class="modal" id="modaleAjoutCase">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">x</button>
+            <h4 class="modal-title">Nouvelle case</h4>
+        </div>
+        <div class="modal-body">
+            
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-info" data-dismiss="modal">Fermer</button>
+        </div>
+        </div>
+    </div>
+    </div>
 
     
     <footer>

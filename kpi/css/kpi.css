@@ -12,3 +12,7 @@
     background-color: gainsboro;
     text-align: right;
 }
+
+#ajouterCase, #sauvegarderEmplacement{
+    display: none;
+}
