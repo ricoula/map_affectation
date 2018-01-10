@@ -383,7 +383,7 @@ var nonValable = false;
     });
     if(!dateValide)
     {
-      alert("Cette période n'est pas valide car une enraide est déjà prévu");
+      alert("Cette période n'est pas valide car une entraide est déjà prévue");
       $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $("#idCaffEntraide").val() + "&site=" + $("#siteEntraide").val(), function(){
           
         });
@@ -473,42 +473,52 @@ var nonValable = false;
         }
       }
     });
-    listeDomaines = JSON.stringify(listeDomaines);
-    var dateDebut = $("#dateExpiration").val().split(" - ")[0];
-    dateDebut = dateDebut.split("/");
-    dateDebut = dateDebut[2] + "-" + dateDebut[1] + "-" + dateDebut[0];
-    var dateFin = $("#dateExpiration").val().split(" - ")[1];
-    dateFin = dateFin.split("/");
-    dateFin = dateFin[2] + "-" + dateFin[1] + "-" + dateFin[0];
+    if(listeDomaines.length > 0)
+    {
+      listeDomaines = JSON.stringify(listeDomaines);
+      var dateDebut = $("#dateExpiration").val().split(" - ")[0];
+      dateDebut = dateDebut.split("/");
+      dateDebut = dateDebut[2] + "-" + dateDebut[1] + "-" + dateDebut[0];
+      var dateFin = $("#dateExpiration").val().split(" - ")[1];
+      dateFin = dateFin.split("/");
+      dateFin = dateFin[2] + "-" + dateFin[1] + "-" + dateFin[0];
 
-    /*console.log("caff_id: " + $("#idCaffEntraide").val());
-    console.log("site_entraide_id: " + $("#idSiteEntraide").val());
-    console.log("liste_domaines_json: " + listeDomaines);
-    console.log("date_expiration: " + dateFin);
-    console.log("date_debut: " + dateDebut);
-    console.log("site_defaut_id: " + $("#idSiteEntraideBase").val());*/
+      /*console.log("caff_id: " + $("#idCaffEntraide").val());
+      console.log("site_entraide_id: " + $("#idSiteEntraide").val());
+      console.log("liste_domaines_json: " + listeDomaines);
+      console.log("date_expiration: " + dateFin);
+      console.log("date_debut: " + dateDebut);
+      console.log("site_defaut_id: " + $("#idSiteEntraideBase").val());*/
 
-    $.post("API/entraideCaff.php", {caff_id: $("#idCaffEntraide").val(), site_entraide_id: $("#idSiteEntraide").val(), liste_domaines_json: listeDomaines, date_expiration: dateFin, date_debut: dateDebut, site_defaut_id: $("#idSiteEntraideBase").val()}, function(data){
-      //console.log(data);
-      var reponse = JSON.parse(data);
-      if(reponse)
-      {
-        //console.log($("#siteEntraide").val());
-        $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $("#idCaffEntraide").val() + "&site=" + $("#siteEntraide").val(), function(){
-          $("#btnEntraideCaff-" + $("#idCaffEntraide").val()).css("color", "orange");
-          if($(".siteEntraideEnCours").length > 0)
-          {
-            var siteEnCours = $(".siteEntraideEnCours:first").text();
-            var siteCaff = decodeURI($("#site-caff-" + $("#idCaffEntraide").val()).attr("siteCaff"));
-            siteCaff = siteCaff.split("+");
-            siteCaff = siteCaff.join(" ");
-            $("#site-caff-" + $("#idCaffEntraide").val()).html("<del>" + siteCaff + "</del> " + siteEnCours);
-          }
-        });
-      }
-      else{
-        alert("Une erreur s'est produite, veuillez réeesayer plus tard");
-      }
-    });
+      $.post("API/entraideCaff.php", {caff_id: $("#idCaffEntraide").val(), site_entraide_id: $("#idSiteEntraide").val(), liste_domaines_json: listeDomaines, date_expiration: dateFin, date_debut: dateDebut, site_defaut_id: $("#idSiteEntraideBase").val()}, function(data){
+        //console.log(data);
+        var reponse = JSON.parse(data);
+        if(reponse)
+        {
+          //console.log($("#siteEntraide").val());
+          $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $("#idCaffEntraide").val() + "&site=" + $("#siteEntraide").val(), function(){
+            if($(".supprEntraide").length > 0)
+            {
+              $("#btnEntraideCaff-" + $("#idCaffEntraide").val()).css("color", "orange");
+              if($(".siteEntraideEnCours").length > 0)
+              {
+                var siteEnCours = $(".siteEntraideEnCours:first").text();
+                var siteCaff = decodeURI($("#site-caff-" + $("#idCaffEntraide").val()).attr("siteCaff"));
+                siteCaff = siteCaff.split("+");
+                siteCaff = siteCaff.join(" ");
+                $("#site-caff-" + $("#idCaffEntraide").val()).html("<del>" + siteCaff + "</del> " + siteEnCours);
+              }
+            }
+          });
+        }
+        else{
+          alert("Une erreur s'est produite, veuillez réeesayer plus tard");
+        }
+      });
+    }
+    else{
+      alert("Veuillez sélectionner au moins un domaine");
+    }
+    
   });
 </script>
