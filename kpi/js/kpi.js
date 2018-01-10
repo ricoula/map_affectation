@@ -1,4 +1,4 @@
-$(function(){ //DOM Ready
+$(function(){
     var fonctionSerialize = function($w, wgd){
         var obj = { col: wgd.col, row: wgd.row, size_x: wgd.size_x, size_y: wgd.size_y } ;
         obj.lien = wgd.el.attr("lien");
@@ -9,27 +9,45 @@ $(function(){ //DOM Ready
 
     var gridster = $(".gridster ul").gridster({widget_margins: [3, 3], widget_base_dimensions: [140, 160], serialize_params: fonctionSerialize, avoid_overlapped_widgets: false}).data('gridster').disable();
     
-    $("#ajouterCase").click(function(){ 
-        $.post("kpi/API/getSizeWidget.php",{lien: 'test', size: 'sm'},function(data){
+    $("#ajouterCase").click(function(){
+        var lien = 'test';
+        $.post("kpi/API/getSizeWidget.php",{lien: lien, size: 'sm'},function(data){
             var size = JSON.parse(data);
-            var thisWidget = gridster.add_widget('<li class="new"  lien="test.php" taille="sm" ><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-fullscreen"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>', size.sm.x, size.sm.y);
+            var thisWidget = gridster.add_widget('<li class="new"  lien="' + lien + '.php" taille="sm" ><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-fullscreen"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>', size.sm.x, size.sm.y);
+            
+            thisWidget.children(".menuCase").children(".glyphicon-resize-small").hide();
+            if(!size.full)
+            {
+                thisWidget.children(".menuCase").children(".glyphicon-fullscreen").hide();
+            }
+
+            if(size.lg == null)
+            {
+                thisWidget.children(".menuCase").children(".glyphicon-resize-full").hide();
+            }
+
             var contenuWidget = thisWidget.children(".contenuCase");
 
             thisWidget.children(".menuCase").children(".glyphicon-resize-full").click(function(){
                 var elt = $(this);
-                console.log(elt);
                 var widget = $(this).closest(".gs-w");
                 gridster.resize_widget( widget, size.lg.x, size.lg.y);
-                contenuWidget.load("kpi/widgets/test.php", {size: 'lg'});
+                contenuWidget.load("kpi/widgets/" + lien + ".php", {size: 'lg'}, function(){
+                    elt.hide();
+                    elt.closest(".menuCase").children(".glyphicon-resize-small").show();
+                });
             });
             thisWidget.children(".menuCase").children(".glyphicon-resize-small").click(function(){
                 var elt = $(this);
                 var widget = $(this).closest(".gs-w");
                 gridster.resize_widget( $(this).closest(".gs-w"), size.sm.x, size.sm.y);
-                contenuWidget.load("kpi/widgets/test.php", {size: 'sm'});
+                contenuWidget.load("kpi/widgets/" + lien + ".php", {size: 'sm'}, function(){
+                    elt.hide();
+                    elt.closest(".menuCase").children(".glyphicon-resize-full").show();
+                });
             });
             thisWidget.children(".menuCase").children(".glyphicon-fullscreen").click(function(){
-                $("#contenuModaleWidgetFullScreen").load("kpi/widgets/test.php", {size: 'full'}, function(){
+                $("#contenuModaleWidgetFullScreen").load("kpi/widgets/" + lien + ".php", {size: 'full'}, function(){
                     $("#modaleWidgetFullScreen").modal("show");
                 });
             });
@@ -38,41 +56,8 @@ $(function(){ //DOM Ready
                 gridster.remove_widget(widget);
             });
 
-            contenuWidget.load("kpi/widgets/test.php", {size: 'sm'});
+            contenuWidget.load("kpi/widgets/" + lien + ".php", {size: 'sm'});
         });
-        // var thisWidget = gridster.add_widget('<li class="new"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-fullscreen"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div lien="test.php"></div></li>', 1, 1);
-        // //console.log($("[lien='test.php']"));
-        // console.log(thisWidget);
-        // thisWidget.children(".menuCase .glyphicon-resize-small").click(function(){
-        //     console.log("okkko");
-        //     var widget = $(this).closest(".gs-w");
-        //     gridster.resize_widget( widget, 1, 1, true, function(){
-    
-        //     } );
-        // });
-        // thisWidget.children(".menuCase .glyphicon-resize-small").click(function(){
-        //     console.log("okkko");
-        //     var widget = $(this).closest(".gs-w");
-        //     gridster.resize_widget( widget, 2, 2, true, function(){
-    
-        //     } );
-        // });
-        // thisWidget.children(".menuCase .glyphicon-resize-small").click(function(){
-        //     console.log("okkko");
-        //     var widget = $(this).closest(".gs-w");
-        // });
-        // thisWidget.children(".menuCase .glyphicon-resize-small").click(function(){
-        //     console.log("okkko");
-        //     var widget = $(this).closest(".gs-w");
-        // });
-        // /*$("[lien='test.php']").load("kpi/widgets/test.php", {size: 'sm'}, function(data){
-        //    var x = $("#testx").val();
-        //    var y = $("#testy").val();
-        //    console.log($(this).closest(".gs-w"));
-        //    gridster.resize_widget( $(this).closest(".gs-w"), 1, 1, true, function(){
-
-        // } );
-        // });*/
     });
 
     $("#modifierEmplacement").click(function(){
@@ -88,25 +73,28 @@ $(function(){ //DOM Ready
         $("#modifierEmplacement").show();
         gridster.disable();
         var obj = gridster.serialize();
-        console.log(obj);
     });
 
     $(".menuCase .glyphicon-resize-small").click(function(){
         var widget = $(this).closest(".gs-w");
-        gridster.resize_widget( widget, 1, 1, true, function(){
-
-        } );
+        gridster.resize_widget( widget, 1, 1);
+        $(this).hide();
+        $(this).closest(".menuCase").children(".glyphicon-resize-full").show();
     });
     $(".menuCase .glyphicon-resize-full").click(function(){
         var widget = $(this).closest(".gs-w");
-        gridster.resize_widget( widget, 2, 2, true, function(){
-
-        } );
+        gridster.resize_widget( widget, 2, 2);
+        $(this).hide();
+        $(this).closest(".menuCase").children(".glyphicon-resize-small").show();
     });
     $(".menuCase .glyphicon-fullscreen").click(function(){
-        $("#contenuModaleWidgetFullScreen").load("kpi/widgets/test.php", {size: 'full'}, function(){
-            $("#modaleWidgetFullScreen").modal("show");
-        });
+        var lien = $(this).closest(".gs-w").attr("lien");
+        if(lien != null)
+        {
+            $("#contenuModaleWidgetFullScreen").load("kpi/widgets/" + lien + ".php", {size: 'full'}, function(){
+                $("#modaleWidgetFullScreen").modal("show");
+            });
+        }
     });
     $(".menuCase .glyphicon-remove").click(function(){
         var widget = $(this).closest(".gs-w");
