@@ -17,6 +17,7 @@
   $poi = json_decode(getPoiById($_GET["poi_id"]));
 ?>
 
+<input type="hidden" name="uiPoiModaleListePoiCaff" id="uiPoiModaleListePoiCaff" value="<?php echo $poi->atr_ui ?>" />
 <input type="hidden" name="idCaffModaleListePoiCaff" id="idCaffModaleListePoiCaff" value="<?php echo $caff->id ?>" />
 <input type="hidden" name="nameCaffModaleListePoiCaff" id="nameCaffModaleListePoiCaff" value="<?php echo $caff->name_related ?>" />
 <input type="hidden" name="idPoiModaleListePoiCaff" id="idPoiModaleListePoiCaff" value="<?php echo $poi->id ?>" />
@@ -73,7 +74,7 @@
 <script>
   $(function(){
     $("#btnAffectationCaffPoiLien").click(function(){
-      $.post("API/addPoiAffect.php", {poi_id: $("#idPoiModaleListePoiCaff").val(), poi_num: $("#numPoiModaleListePoiCaff").val(), poi_domaine: $("#domainePoiModaleListePoiCaff").val(), caff_id: $("#idCaffModaleListePoiCaff").val(), caff_name: $("#idCaffModaleListePoiCaff").val()}, function(data2){
+      $.post("API/addPoiAffect.php", {poi_id: $("#idPoiModaleListePoiCaff").val(), poi_num: $("#numPoiModaleListePoiCaff").val(), poi_domaine: $("#domainePoiModaleListePoiCaff").val(), caff_id: $("#idCaffModaleListePoiCaff").val(), caff_name: $("#idCaffModaleListePoiCaff").val(), ui: $("#uiPoiModaleListePoiCaff").val()}, function(data2){
           window.location.reload();
       });
     });
