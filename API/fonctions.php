@@ -1834,13 +1834,13 @@
 		return json_encode($liste_poi);
 	}
 
-	function addPoiAffect($poi_id,$poi_num,$poi_domaine,$caff_id,$caff_name){
+	function addPoiAffect($poi_id,$poi_num,$poi_domaine,$caff_id,$caff_name, $ui){
 		
 		$state = 1;
 		$pilote = 'unknow';
 		include("connexionBdd.php");
-		$req = $bdd->prepare("INSERT INTO cds_affectation (erp_poi_id,erp_caff_name,erp_pilote_name,cds_affectation_date,cds_affectation_state_id,erp_poi,caff_id,erp_poi_domaine) VALUES (?,?,?,NOW(),?,?,?,?)");
-		$req->execute(array($poi_id,$caff_name,$pilote,$state,$poi_num,$caff_id,$poi_domaine));
+		$req = $bdd->prepare("INSERT INTO cds_affectation (erp_poi_id,erp_caff_name,erp_pilote_name,cds_affectation_date,cds_affectation_state_id,erp_poi,caff_id,erp_poi_domaine, erp_ui) VALUES (?,?,?,NOW(),?,?,?,?, ?)");
+		$req->execute(array($poi_id,$caff_name,$pilote,$state,$poi_num,$caff_id,$poi_domaine, $ui));
 		
 	}
 	
