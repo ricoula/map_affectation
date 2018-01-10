@@ -73,6 +73,8 @@ $(function(){
         $("#modifierEmplacement").show();
         gridster.disable();
         var obj = gridster.serialize();
+        obj = JSON.stringify(obj);
+        $.post("kpi/API/addGridster.php", {user_id: $("#user_id").val(), gridster_json: obj});
     });
 
     $(".menuCase .glyphicon-resize-small").click(function(){
