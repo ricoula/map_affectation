@@ -11,6 +11,7 @@
             $obj->lg = (object) array();
             $obj->lg->x = 2;
             $obj->lg->y = 2;
+            $obj->full = true;
         }
 
         return json_encode($obj);

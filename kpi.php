@@ -39,24 +39,12 @@
         </ul>
     </div>
 
-
-    <div class="modal" id="modaleAjoutCase">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">x</button>
-            <h4 class="modal-title">Nouvelle case</h4>
-        </div>
-        <div class="modal-body">
-            
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-info" data-dismiss="modal">Fermer</button>
-        </div>
-        </div>
-    </div>
-    </div>
-
+    <div class="modal fade" id="modaleWidgetFullScreen">
+        <div class="modal-dialog">  
+          <div class="modal-content" id="contenuModaleWidgetFullScreen">
+          </div>  
+        </div> 
+      </div>
     
     <footer>
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>

@@ -29,7 +29,9 @@ $(function(){ //DOM Ready
                 contenuWidget.load("kpi/widgets/test.php", {size: 'sm'});
             });
             thisWidget.children(".menuCase").children(".glyphicon-fullscreen").click(function(){
-                var widget = $(this).closest(".gs-w");
+                $("#contenuModaleWidgetFullScreen").load("kpi/widgets/test.php", {size: 'full'}, function(){
+                    $("#modaleWidgetFullScreen").modal("show");
+                });
             });
             thisWidget.children(".menuCase").children(".glyphicon-remove").click(function(){
                 var widget = $(this).closest(".gs-w");
@@ -102,7 +104,9 @@ $(function(){ //DOM Ready
         } );
     });
     $(".menuCase .glyphicon-fullscreen").click(function(){
-        var widget = $(this).closest(".gs-w");
+        $("#contenuModaleWidgetFullScreen").load("kpi/widgets/test.php", {size: 'full'}, function(){
+            $("#modaleWidgetFullScreen").modal("show");
+        });
     });
     $(".menuCase .glyphicon-remove").click(function(){
         var widget = $(this).closest(".gs-w");
