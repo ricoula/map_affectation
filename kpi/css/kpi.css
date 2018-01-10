@@ -4,15 +4,44 @@
 
 .gridster li{
     list-style: none;
-    background-color: aquamarine;
+    background-color: #e8e8e8;
 }
 
 .menuCase{
-    height: 20px;
-    background-color: gainsboro;
+    height: 21px;
+    background-color: #ffffff;
     text-align: right;
-}
+    border-bottom:1px black solid;
 
+}
+.menuCase span
+{
+    margin-right:7px;
+    color:#000000;
+    cursor:pointer;
+}
+.menuCase span:hover
+{
+    margin-right:7px;
+    color:#635353;
+    cursor:pointer;
+}
+.menuCase .glyphicon-remove
+{
+
+    border: 2px #000000 solid;
+    border-radius: 4px;
+    padding:px;
+    color:#000000;
+}
+.menuCase .glyphicon-remove:hover
+{
+
+    border: 2px #635353 solid;
+    border-radius: 4px;
+    padding:px;
+    color:#635353;
+}
 #ajouterCase, #sauvegarderEmplacement{
     display: none;
 }
