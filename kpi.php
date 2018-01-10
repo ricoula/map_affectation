@@ -17,22 +17,22 @@
     </div>
     <div class="gridster" oncontextmenu="return false;">
         <ul>
-            <li data-row="1" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><a href="#" class=""></a></div></li>
-            <li data-row="2" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"></div></li>
-            <li data-row="3" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"></div></li>
+            <li data-row="1" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
+            <li data-row="2" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
+            <li data-row="3" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
 
-            <li data-row="1" data-col="2" data-sizex="2" data-sizey="1"><div class="menuCase"></div></li>
-            <li data-row="2" data-col="2" data-sizex="2" data-sizey="2"><div class="menuCase"></div></li>
+            <li data-row="1" data-col="2" data-sizex="2" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
+            <li data-row="2" data-col="2" data-sizex="2" data-sizey="2"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
 
-            <li data-row="1" data-col="4" data-sizex="1" data-sizey="1"><div class="menuCase"></div></li>
-            <li data-row="2" data-col="4" data-sizex="2" data-sizey="1"><div class="menuCase"></div></li>
-            <li data-row="3" data-col="4" data-sizex="1" data-sizey="1"><div class="menuCase"></div></li>
+            <li data-row="1" data-col="4" data-sizex="1" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
+            <li data-row="2" data-col="4" data-sizex="2" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
+            <li data-row="3" data-col="4" data-sizex="1" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
 
-            <li data-row="1" data-col="5" data-sizex="1" data-sizey="1"><div class="menuCase"></div></li>
-            <li data-row="3" data-col="5" data-sizex="1" data-sizey="1"><div class="menuCase"></div></li>
+            <li data-row="1" data-col="5" data-sizex="1" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
+            <li data-row="3" data-col="5" data-sizex="1" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
 
-            <li data-row="1" data-col="6" data-sizex="1" data-sizey="1"><div class="menuCase"></div></li>
-            <li data-row="2" data-col="6" data-sizex="1" data-sizey="2"><div class="menuCase"></div></li>
+            <li data-row="1" data-col="6" data-sizex="1" data-sizey="1"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
+            <li data-row="2" data-col="6" data-sizex="1" data-sizey="2"><div class="menuCase"><a href="#" class="glyphicon glyphicon-resize-small"></a> <a href="#" class="glyphicon glyphicon-resize-full"></a> <a href="#" class="glyphicon glyphicon-fullscreen"></a></div></li>
         </ul>
     </div>
     
