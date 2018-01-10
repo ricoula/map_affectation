@@ -1,0 +1,14 @@
+.gridster{
+    background-color: darkcyan;
+}
+
+.gridster li{
+    list-style: none;
+    background-color: aquamarine;
+}
+
+.menuCase{
+    height: 20px;
+    background-color: gainsboro;
+    text-align: right;
+}
