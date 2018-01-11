@@ -54,22 +54,37 @@
 
             <div class="gridster">
                 <ul>
-                <li class="widgetPasModif" lien="test" taille="sm" data-row="1" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div></li>
-                        <li class="widgetPasModif" lien="test" taille="sm" data-row="2" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>
-                        <li class="widgetPasModif" lien="test" taille="sm" data-row="3" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>
+                    <?php
+                    if($gridster == null)
+                    {
+                        ?>
+                        <li class="widgetPasModif" lien="test" taille="sm" data-row="1" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div></li>
+                        <li class="widgetPasModif" lien="test" taille="sm" data-row="2" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div></li>
+                        <li class="widgetPasModif" lien="test" taille="sm" data-row="3" data-col="1" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div></li>
 
-                        <li class="widgetPasModif" lien="test" taille="sm" data-row="1" data-col="2" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>
-                        <li class="widgetPasModif" lien="test" taille="sm" data-row="2" data-col="2" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>
+                        <li class="widgetPasModif" lien="test" taille="sm" data-row="1" data-col="2" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div></li>
+                        <li class="widgetPasModif" lien="test" taille="sm" data-row="2" data-col="2" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div></li>
 
-                        <li class="widgetPasModif" lien="test" taille="sm" data-row="1" data-col="4" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>
-                        <li class="widgetPasModif" lien="test" taille="sm" data-row="2" data-col="4" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>
-                        <li class="widgetPasModif" lien="test" taille="sm" data-row="3" data-col="4" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>
+                        <li class="widgetPasModif" lien="test" taille="sm" data-row="1" data-col="4" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div></li>
+                        <li class="widgetPasModif" lien="test" taille="sm" data-row="2" data-col="4" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div></li>
+                        <li class="widgetPasModif" lien="test" taille="sm" data-row="3" data-col="4" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div></li>
 
-                        <li class="widgetPasModif" lien="test" taille="sm" data-row="1" data-col="5" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>
-                        <li class="widgetPasModif" lien="test" taille="sm" data-row="3" data-col="5" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>
+                        <li class="widgetPasModif" lien="test" taille="sm" data-row="1" data-col="5" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div></li>
+                        <li class="widgetPasModif" lien="test" taille="sm" data-row="3" data-col="5" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div></li>
 
-                        <li class="widgetPasModif" lien="test" taille="sm" data-row="1" data-col="6" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>
-                        <li class="widgetPasModif" lien="test" taille="sm" data-row="2" data-col="6" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>
+                        <li class="widgetPasModif" lien="test" taille="sm" data-row="1" data-col="6" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div></li>
+                        <li class="widgetPasModif" lien="test" taille="sm" data-row="2" data-col="6" data-sizex="1" data-sizey="1"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div></li>
+                        <?php
+                    }
+                    else{
+                        foreach($gridster as $wdg)
+                        {
+                            ?>
+                            <li class="widgetPasModif" lien="<?php echo $wdg->lien ?>" taille="<?php echo $wdg->taille ?>" data-row="<?php echo $wdg->row ?>" data-col="<?php echo $wdg->col ?>" data-sizex="<?php echo $wdg->size_x ?>" data-sizey="<?php echo $wdg->size_y ?>"><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>
+                            <?php
+                        }
+                    }
+                    ?>
                 </ul>
             </div>
         </div>
