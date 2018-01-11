@@ -16,7 +16,7 @@ if(!isset($_POST['size']) || $_POST['size'] == "sm"){
 ?>
 <style>
     .testtaillelg{
-        width: 283px;
+        width: 303px;
         height: 302px;
         background-color:blue;
     }

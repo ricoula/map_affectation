@@ -15,6 +15,16 @@
                 $obj->lg->y = 2;
                 $obj->full = true;
                 break;
+            
+            case "kpi_nb_affectation": $obj = (object) array();
+            $obj->sm = (object) array();
+            $obj->sm->x = 1;
+            $obj->sm->y = 1;
+            $obj->lg = (object) array();
+            $obj->lg->x = 2;
+            $obj->lg->y = 2;
+            $obj->full = true;
+            break;
         }
 
         return json_encode($obj);

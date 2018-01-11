@@ -1,18 +1,19 @@
+body{
+    background-image: url("http://www.misucell.com/data/out/10/IMG_418374.png");
+}
 .gridster{
-    background-color: darkcyan;
+    background-color: #008b8b00;
 }
 
 .gridster li{
     list-style: none;
-    background-color: #e8e8e8;
+    background-color: #337ab700;
 }
 
 .menuCase{
     height: 21px;
-    background-color: #ffffff;
+    background-color: #ffffff00;
     text-align: right;
-    border-bottom:1px black solid;
-
 }
 .menuCase span
 {
@@ -42,6 +43,14 @@
     padding:px;
     color:#635353;
 }
-#ajouterCase, #sauvegarderEmplacement{
+#ajouterCase, #sauvegarderEmplacement, #annulerModif{
     display: none;
+}
+
+.widgetEnModif .menuCase{
+    visibility: visible;
+}
+
+.widgetPasModif .menuCase{
+    visibility: hidden;
 }
