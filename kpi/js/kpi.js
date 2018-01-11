@@ -1,4 +1,5 @@
 $(function(){
+    $('[data-toggle="tooltip"]').tooltip();
 
     $(".contenuCase").each(function(){
         var taille = $(this).parent().attr("taille");
@@ -14,19 +15,10 @@ $(function(){
         });
     });
 
-    var fonctionSerialize = function($w, wgd){
-        var obj = { col: wgd.col, row: wgd.row, size_x: wgd.size_x, size_y: wgd.size_y } ;
-        obj.lien = wgd.el.attr("lien");
-        obj.taille = wgd.el.attr("taille");
-        return obj;
-    }
-
-
-    var gridster = $(".gridster ul").gridster({widget_margins: [23, 3], widget_base_dimensions: [140, 160], serialize_params: fonctionSerialize, avoid_overlapped_widgets: false}).data('gridster').disable();
-    
-    $("#ajouterCase").click(function(){
-        var lien = 'kpi_nb_affectation';
-        $.post("kpi/API/getSizeWidget.php",{lien: lien, size: 'sm'},function(data){
+    var fonctionClickOnWidgetDispoListe = function(){
+        $(this).removeClass("widgetDispo").off("click");
+        var lien = $(this).attr("lien");
+        $.post("kpi/API/getInfosWidget.php",{lien: lien, size: 'sm'},function(data){
             var size = JSON.parse(data);
             var thisWidget = gridster.add_widget('<li class="widgetEnModif"  lien="' + lien + '" taille="sm" ><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>', size.sm.x, size.sm.y);
             
@@ -68,26 +60,48 @@ $(function(){
                 }
             });
             thisWidget.children(".menuCase").children(".glyphicon-remove").click(function(){
+                var lien = $(this).closest(".gs-w").attr("lien");
+                $(".widgetListe").each(function(){
+                    var elt = $(this);
+                    if($(this).attr("lien") == lien)
+                    {
+                        elt.addClass("widgetDispo").click(fonctionClickOnWidgetDispoListe);
+                    }
+                });
                 var widget = $(this).closest(".gs-w");
                 gridster.remove_widget(widget);
             });
 
             contenuWidget.load("kpi/widgets/" + lien + ".php", {size: 'sm'});
         });
-    });
+    };
+
+    var fonctionSerialize = function($w, wgd){
+        var obj = { col: wgd.col, row: wgd.row, size_x: wgd.size_x, size_y: wgd.size_y };
+        obj.lien = wgd.el.attr("lien");
+        obj.taille = wgd.el.attr("taille");
+        return obj;
+    }
+
+
+    var gridster = $(".gridster ul").gridster({widget_margins: [23, 3], widget_base_dimensions: [140, 160], serialize_params: fonctionSerialize, avoid_overlapped_widgets: false, max_cols: 10, max_rows: 4, autogrow_cols: true}).data('gridster').disable();
+    
+    $(".widgetDispo").click(fonctionClickOnWidgetDispoListe);
 
     $("#modifierEmplacement").click(function(){
+        $("#partieGridster");
         $(".widgetPasModif").removeClass("widgetPasModif").addClass("widgetEnModif");
+        $("#menuAjoutWidget").css("visibility", "visible");
         gridster.enable();
         $(this).hide();
-        $("#ajouterCase").show();
+        //$("#ajouterCase").show();
         $("#sauvegarderEmplacement").show();
         $("#annulerModif").show();
     });
 
     $("#sauvegarderEmplacement").click(function(){
         $(".widgetEnModif").removeClass("widgetEnModif").addClass("widgetPasModif");
-        $("#ajouterCase").hide();
+        //$("#ajouterCase").hide();
         $("#annulerModif").hide();
         $(this).hide();
         $("#modifierEmplacement").show();
@@ -137,6 +151,14 @@ $(function(){
         }
     });
     $(".menuCase .glyphicon-remove").click(function(){
+        var lien = $(this).closest(".gs-w").attr("lien");
+        $(".widgetListe").each(function(){
+            var elt = $(this);
+            if($(this).attr("lien") == lien)
+            {
+                elt.addClass("widgetDispo").click(fonctionClickOnWidgetDispoListe);
+            }
+        });
         var widget = $(this).closest(".gs-w");
         gridster.remove_widget(widget);
     });

@@ -117,8 +117,11 @@ if(!isset($_POST['size']) || $_POST['size'] == "sm"){
 <?php
 }
 ?>
+
 <script>
-$.post("../API/getNbAffectationByUi.php",function(data){
+    console.log("jfiozjizj");
+$.post("kpi/API/getNbAffectationByUi.php",function(data){
+    console.log(data);
     var listeaffect = JSON.parse(data);
     listeaffect.forEach(function(affect){
         var ui = affect.ui;
