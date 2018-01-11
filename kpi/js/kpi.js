@@ -1,4 +1,18 @@
 $(function(){
+    $(".contenuCase").each(function(){
+        var taille = $(this).parent().attr("taille");
+        var elt = $(this);
+        $(this).load("kpi/widgets/" + $(this).parent().attr("lien") + ".php", {size: $(this).parent().attr("taille")}, function(){
+            if(taille == "sm")
+            {
+                elt.closest(".gs-w").children(".menuCase").children(".glyphicon-resize-small").hide();
+            }
+            else{
+                elt.closest(".gs-w").children(".menuCase").children(".glyphicon-resize-full").hide();
+            }
+        });
+    });
+
     var fonctionSerialize = function($w, wgd){
         var obj = { col: wgd.col, row: wgd.row, size_x: wgd.size_x, size_y: wgd.size_y } ;
         obj.lien = wgd.el.attr("lien");
@@ -13,7 +27,7 @@ $(function(){
         var lien = 'test';
         $.post("kpi/API/getSizeWidget.php",{lien: lien, size: 'sm'},function(data){
             var size = JSON.parse(data);
-            var thisWidget = gridster.add_widget('<li class="new"  lien="' + lien + '.php" taille="sm" ><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-fullscreen"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>', size.sm.x, size.sm.y);
+            var thisWidget = gridster.add_widget('<li class="new"  lien="' + lien + '" taille="sm" ><div class="menuCase"><span href="#" class="glyphicon glyphicon-resize-small"></span><span href="#" class="glyphicon glyphicon-resize-full"></span><span href="#" class="glyphicon glyphicon-fullscreen"></span><span href="#" class="glyphicon glyphicon-remove"></span></div><div class="contenuCase" ></div></li>', size.sm.x, size.sm.y);
             
             thisWidget.children(".menuCase").children(".glyphicon-resize-small").hide();
             if(!size.full)
@@ -29,6 +43,7 @@ $(function(){
             var contenuWidget = thisWidget.children(".contenuCase");
 
             thisWidget.children(".menuCase").children(".glyphicon-resize-full").click(function(){
+                $(this).closest(".gs-w").attr("taille", "lg");
                 var elt = $(this);
                 var widget = $(this).closest(".gs-w");
                 gridster.resize_widget( widget, size.lg.x, size.lg.y);
@@ -38,6 +53,7 @@ $(function(){
                 });
             });
             thisWidget.children(".menuCase").children(".glyphicon-resize-small").click(function(){
+                $(this).closest(".gs-w").attr("taille", "sm");
                 var elt = $(this);
                 var widget = $(this).closest(".gs-w");
                 gridster.resize_widget( $(this).closest(".gs-w"), size.sm.x, size.sm.y);
@@ -78,16 +94,27 @@ $(function(){
     });
 
     $(".menuCase .glyphicon-resize-small").click(function(){
+        $(this).closest(".gs-w").attr("taille", "sm");
         var widget = $(this).closest(".gs-w");
         gridster.resize_widget( widget, 1, 1);
-        $(this).hide();
-        $(this).closest(".menuCase").children(".glyphicon-resize-full").show();
+        var lien = $(this).closest(".gs-w").attr("lien");
+        console.log(lien);
+        var elt = $(this);
+        $(this).closest(".gs-w").children(".contenuCase").load("kpi/widgets/" + lien + ".php", {size: 'sm'}, function(){
+            elt.hide();
+            elt.closest(".menuCase").children(".glyphicon-resize-full").show();
+        });
     });
     $(".menuCase .glyphicon-resize-full").click(function(){
+        $(this).closest(".gs-w").attr("taille", "lg");
         var widget = $(this).closest(".gs-w");
         gridster.resize_widget( widget, 2, 2);
-        $(this).hide();
-        $(this).closest(".menuCase").children(".glyphicon-resize-small").show();
+        var elt = $(this);
+        var lien = $(this).closest(".gs-w").attr("lien");
+        $(this).closest(".gs-w").children(".contenuCase").load("kpi/widgets/" + lien + ".php", {size: 'lg'}, function(){
+            elt.hide();
+            elt.closest(".menuCase").children(".glyphicon-resize-small").show();
+        });
     });
     $(".menuCase .glyphicon-fullscreen").click(function(){
         var lien = $(this).closest(".gs-w").attr("lien");

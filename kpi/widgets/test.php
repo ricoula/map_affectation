@@ -2,7 +2,7 @@
 if(!isset($_POST['size']) || $_POST['size'] == "sm"){
 ?>
 <style>
-    #testtaille{
+    .testtaille{
         width: 140px;
         height: 140px;
         background-color:red;
@@ -10,12 +10,12 @@ if(!isset($_POST['size']) || $_POST['size'] == "sm"){
 </style>
 <input type="hidden" id="testx" value="1">
 <input type="hidden" id="testy" value="1">
-<div id="testtaille"></div>
+<div class="testtaille"></div>
 <?php
 }elseif($_POST['size'] == "lg"){
 ?>
 <style>
-    #testtaille{
+    .testtaillelg{
         width: 283px;
         height: 302px;
         background-color:blue;
@@ -23,7 +23,7 @@ if(!isset($_POST['size']) || $_POST['size'] == "sm"){
 </style>
 <input type="hidden" id="testx" value="2">
 <input type="hidden" id="testy" value="2">
-<div id="testtaille"></div>
+<div class="testtaillelg"></div>
 <?php
 }
 else{
