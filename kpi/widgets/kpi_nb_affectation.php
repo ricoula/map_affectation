@@ -1,5 +1,5 @@
 <?php 
-$_POST['size'] = 'sm';
+$_POST['size'] = "lg";
 include("../API/fonctions.php");
 include("../../API/fonctions.php");
 $listaffect = json_decode(getNbAffectation());
@@ -106,7 +106,7 @@ if(!isset($_POST['size']) || $_POST['size'] == "sm"){
 <?php foreach($listeui as $ui){
     echo "<tr>
     <td>".$ui->libelle."</td>
-    <td  class='kpi_table_center' id='ui-".$ui->ft_zone."'>0</td>
+    <td  class='kpi_table_center' id='kpi_ui-".$ui->ft_zone."'>0</td>
     
     </tr>";
 } ?>
@@ -118,8 +118,18 @@ if(!isset($_POST['size']) || $_POST['size'] == "sm"){
 <?php
 }
 ?>
+<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
 <script>
 $.post("../API/getNbAffectationByUi.php",function(data){
-    console.log(data)
+    var listeaffect = JSON.parse(data);
+    listeaffect.forEach(function(affect){
+        var ui = affect.ui;
+        var nb_poi = affect.nb_poi;
+        $("#kpi_ui-"+ui).text(nb_poi);
+    })
+    
 })
 </script>
