@@ -73,4 +73,20 @@
         }
         return json_encode($listaffect);
     }
+    function getNbAffectationByUi(){
+        include("connexionBdd.php");
+        $listeaffectui = array();
+        $lastmonday = date("Y-m-d",strtotime("last Monday"));
+        $nextsunday = date("Y-m-d",strtotime("next Sunday"));
+        $req= $bdd->prepare("select erp_ui,count(id) from cds_affectation where cds_affectation_date >= ? AND cds_affectation_date <= ? group by erp_ui");
+        $req->execute(array($lastmonday,$nextsunday));
+		while($data = $req->fetch())
+		{
+			$affect = (object) array();
+			$affect->ui = $data["erp_ui"];
+			$affect->nb_poi = $data["count"];
+            array_push($listeaffectui,$affect);
+        }
+        return json_encode($listeaffectui);
+    }
 ?>
