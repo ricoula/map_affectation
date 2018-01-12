@@ -108,6 +108,7 @@
         return json_encode($listeaffectui);
     }
 
+
     function getListeWidgets()
     {
         $liste = array();
@@ -165,4 +166,5 @@
 
         return json_encode($listeWidgets);
     }
+
 ?>

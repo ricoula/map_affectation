@@ -1,4 +1,5 @@
 <?php 
+
 include("../API/fonctions.php");
 include("../../API/fonctions.php");
 $listaffect = json_decode(getNbAffectation());
@@ -16,10 +17,12 @@ if(!isset($_POST['size']) || $_POST['size'] == "sm"){
     .top{
         padding:5px;
         text-align:left;
+
         font-weight:bold;
         font-size:11px;
         font-family:calibri;
         color:white;
+
     }
     .bottom{
         padding:5px;
@@ -28,6 +31,7 @@ if(!isset($_POST['size']) || $_POST['size'] == "sm"){
         font-size:11px;
         font-family:calibri;
         color:white;
+
     }
     #result{
         font-family:calibri;
@@ -96,10 +100,12 @@ if(!isset($_POST['size']) || $_POST['size'] == "sm"){
 </style>
 <input type="hidden" id="testx" value="1">
 <input type="hidden" id="testy" value="1">
+
 <div id="testtaillelg">
 <div class="toplg"><span>Nombre POI affectée(s)</span></div>
 <div class="toplg"><span>Par UI - S<?php echo date("W"); ?></span></div>
 <div id="resultlg"><table id="table_kpi">
+
 <tbody>
 <tr>
 <?php foreach($listeui as $ui){
@@ -118,10 +124,12 @@ if(!isset($_POST['size']) || $_POST['size'] == "sm"){
 }
 ?>
 
+
 <script>
     console.log("jfiozjizj");
 $.post("kpi/API/getNbAffectationByUi.php",function(data){
     console.log(data);
+
     var listeaffect = JSON.parse(data);
     listeaffect.forEach(function(affect){
         var ui = affect.ui;
