@@ -18,30 +18,30 @@ body{
 .menuCase span
 {
     margin-right:7px;
-    color:#000000;
+    color:#bfbfbf;
     cursor:pointer;
 }
 .menuCase span:hover
 {
     margin-right:7px;
-    color:#635353;
+    color:#ffffff;
     cursor:pointer;
 }
 .menuCase .glyphicon-remove
 {
 
-    border: 2px #000000 solid;
+    border: 2px #bfbfbf solid;
     border-radius: 4px;
     padding:px;
-    color:#000000;
+    color:#bfbfbf;
 }
 .menuCase .glyphicon-remove:hover
 {
 
-    border: 2px #635353 solid;
+    border: 2px #ffffff solid;
     border-radius: 4px;
     padding:px;
-    color:#635353;
+    color:#ffffff;
 }
 
 /* #ajouterCase, #sauvegarderEmplacement, #annulerModif{
@@ -59,20 +59,29 @@ body{
     visibility: hidden;
 }
 
-#menuAjoutWidget{
-    background-color: antiquewhite;
+#menuAjoutWidget {
+    background-color: #efefef;
     height: 100vh;
+    box-shadow: 5px 0px 15px 1px #00000080;
     visibility: hidden;
-}
-
+    }
+.widgetListe
+    {
+        text-decoration: line-through;
+    }
 .widgetDispo{
+        text-decoration: none;
+    }
+.widgetDispo:hover{
     cursor: pointer;
+    font-weight: bold;
 }
 .contenuCase
 {
     background-color: #ffffff12;
     border-radius: 4px;
 }
+
 
 
 /*#menuAjoutWidget{

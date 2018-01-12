@@ -105,6 +105,7 @@ $(function(){
         $("#annulerModif").hide();
         $(this).hide();
         $("#modifierEmplacement").show();
+        $("#menuAjoutWidget").css("visibility", "hidden");
         gridster.disable();
         var obj = gridster.serialize();
         obj = JSON.stringify(obj);
