@@ -121,7 +121,7 @@ $(function(){
         var widget = $(this).closest(".gs-w");
         gridster.resize_widget( widget, 1, 1);
         var lien = $(this).closest(".gs-w").attr("lien");
-        console.log(lien);
+      
         var elt = $(this);
         $(this).closest(".gs-w").children(".contenuCase").load("kpi/widgets/" + lien + ".php", {size: 'sm'}, function(){
             elt.hide();

@@ -215,7 +215,7 @@ $(".users-button-poi").click(function(){
                 mkr.setMap(null);
             })*/
     }
-    console.log(caff_id);
+    // console.log(caff_id);
 });
 </script>
 <script>

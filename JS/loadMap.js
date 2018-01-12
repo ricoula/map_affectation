@@ -271,17 +271,19 @@
                     $("#progress_bar_affect").css({"width":"0%"});
                     $("#progress_bar_affect").html("0%");
 
-
-        
+                    
+                    
                     $("#btnGenererPoiNA").click(function(){
-                        $.post("API/getAdvancedConfig.php", {ui: cetteUI}, function(data5){
-                            var config = JSON.parse(data5);
-                            
-                      $("#percent").text('0%').fadeIn();
+                        $("#percent").text('0%').fadeIn();
                         var el = document.getElementById('btnGenererPoiNA'),
                         elClone = el.cloneNode(true);
                         el.parentNode.replaceChild(elClone, el);
                         $("#resultatsListePoiNA").html("").hide();
+
+                        $.post("API/getAdvancedConfig.php", {ui: cetteUI}, function(data5){
+                            var config = JSON.parse(data5);
+                       
+                      
                        
                         $("#divListePoiNAUi").show();
                         var progress = 0;
@@ -333,13 +335,14 @@
                                 listeLiensPoi += " <span class='glyphicon glyphicon-link' data-toggle='tooltip' title='" + thisTitle + "' data-placement='right'></span><sup>" + tab.length + "</sup>";
                             }
                               y++;
-                              
+                              console.log(obj + "avant " );
 
                             $.ajax({
                                 type: 'POST',
                                 url: "API/getAffectationAuto.php",
                                 data: obj,
                                 success: function(data2){
+                                    
                                     i++;
                                     var clientDejaDansTab = false;
 
@@ -743,7 +746,7 @@
                                         }
                                     }
                                 },
-                                async:true
+              
                               });
                             
                         });
