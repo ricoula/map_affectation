@@ -149,16 +149,16 @@
                     var config = JSON.parse(data);
                     if(config == null)
                     {
-                      console.log("DEFAUT UI");
+                      //console.log("DEFAUT UI");
                       var obj = {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val(), nb_jours_avant_conges_max: $("#nbJoursAvantCongesMax").val(), nb_jours_conges_max: $("#nbJoursCongesMax").val()};
                     }
                     else{
-                        console.log("UI: " + marker.poi_ui);
+                        //console.log("UI: " + marker.poi_ui);
                       var obj = {poi_id: marker.poi_id, km: config.rayon_km_new, coef_poi_proxi: config.coef_rayon_new, coef_charge_reactive: config.coef_react, coef_charge: config.coef_non_react, limite_jour: config.max_day, limite_semaine: config.max_week, limite_max_calcul: config.max_rayon_new, nb_jours_avant_conges_max: config.jours_avant_conges, nb_jours_conges_max: config.jours_conges};
                     }
         
                     $.post("API/getAffectationAuto.php", obj, function(data){
-                        console.log(data);
+                        //console.log(data);
                         var caff = JSON.parse(data);
                         $("#rightClickPoi_" + marker.poi_id).removeClass("glyphicon glyphicon-refresh gly-spin").addClass("label label-info").text(caff.name_related);
                         $("#win_info_affecter_auto").click(function(){
@@ -262,7 +262,7 @@
 
                 var cetteUI = $(this).val();
                 $.post("API/getPoiNAByUi.php", {ui: $(this).val()}, function(data){
-                    console.log(cetteUI);
+                    //console.log(cetteUI);
                     $("#loadingChoixUi").hide();
                     var listePoi = JSON.parse(data);
                     $("#nbPoiNA").text(listePoi.length);
@@ -375,19 +375,9 @@
                                     $("#progress_bar_affect").css("width", progress+"%");
                                      $("#percent").html(progress+"%");
 
-                                    console.log(data2);
+                                    //console.log(data2);
                                     poi.affectationAuto = JSON.parse(data2);
-                                    /*if(poi.affectationAuto == null)
-                                    {
-                                        console.log(poi);
-                                    }
-                                    if(poi.affectationAuto.listePoiTitulaire != null)
-                                    {
-                                        console.log("////////////////////////////////");
-                                        console.log(poi.affectationAuto);
-                                        console.log(poi);
-                                        console.log("////////////////////////////////\n\n");
-                                    }*/
+                                    //console.log(poi.affectationAuto);
 
                                     var optionElt = "";
                                     
@@ -462,13 +452,13 @@
                                                 {
                                                     if(a.id == client.caffAffecte)
                                                     {
-                                                        console.log("Poi: " + poi.ft_titulaire_client + " | Client: " + client.caffAffecte + " = " + a.id + "(" + a.name_related + ")");
+                                                        //console.log("Poi: " + poi.ft_titulaire_client + " | Client: " + client.caffAffecte + " = " + a.id + "(" + a.name_related + ")");
                                                         return -1;
                                                     }
                                                     else{
                                                         if(b.id == client.caffAffecte)
                                                         {
-                                                            console.log("Client: " + client.caffAffecte + " = " + b.id + "(" + b.name_related + ")");
+                                                            //console.log("Client: " + client.caffAffecte + " = " + b.id + "(" + b.name_related + ")");
                                                             return 1;
                                                         }
                                                     }
@@ -559,6 +549,7 @@
                                         {
                                             if(poi.affectationAuto.listePoiTitulaire != null)
                                             {
+                                                //console.log(poi.ft_numero_oeie + " : " + ceCaff.name_related);
                                                 optionElt += "<option poi_ui='" + poi.atr_ui + "' poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") = ("+ Number(ceCaff.charge_initiale).toFixed(1) + ") + (" + Number(ceCaff.tauxRetard).toFixed(1) + ") - (" + Number(ceCaff.charge_rayon).toFixed(1) + ") + (" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
                                                 //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
                                             }
@@ -568,14 +559,15 @@
                                             }
                                         }
                                         else{
-                                            if(poi.affectationAuto.listePoiTitulaire != null)
+                                            /*if(poi.affectationAuto.listePoiTitulaire != null)
                                             {
+                                                console.log(poi.ft_numero_oeie + " : " + ceCaff.name_related);
                                                 optionElt += "<option poi_ui='" + poi.atr_ui + "' poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' selected class='caffTitulaireAffectAuto' style='color:green' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") = ("+ Number(ceCaff.charge_initiale).toFixed(1) + ") + (" + Number(ceCaff.tauxRetard).toFixed(1) + ") - (" + Number(ceCaff.charge_rayon).toFixed(1) + ") + (" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
                                                 //console.log("Selected " + poi.ft_numero_oeie + ": " + ceCaff.name_related + " (" + poi.affectationAuto.name_related + ")");
-                                            }
-                                            else{
+                                            }*/
+                                            //else{
                                                 optionElt += "<option poi_ui='" + poi.atr_ui + "' poi_num='" + poi.ft_numero_oeie + "' poi_domaine='" + poi.domaine + "' poi_id='" + poi.id + "' caff_id='" + ceCaff.id + "' caff_name='" + ceCaff.name_related + "' value='caff-" + ceCaff.id + "' style='color:" + color + "' id='caffPoi" + poi.id + "-" + ceCaff.id + "' data-content=\"<span class='label label-info'>" + ceCaff.charge_totale + "</span>\">" + ceCaff.name_related + " (" + Number(ceCaff.charge_totale).toFixed(1) + ") = ("+ Number(ceCaff.charge_initiale).toFixed(1) + ") + (" + Number(ceCaff.tauxRetard).toFixed(1) + ") - (" + Number(ceCaff.charge_rayon).toFixed(1) + ") + (" + Number(ceCaff.charge_simu).toFixed(1) + ")</option>";
-                                            }
+                                            //}
                                             
                                         }
 
@@ -789,7 +781,7 @@
         });
           $("#advancedConfigUI").click(function(e){
               e.stopPropagation();
-              console.log("ok2");
+              //console.log("ok2");
           });
           $("#advancedConfigAddUI").click(function(){
             var advancedSelectedUI = $('#advancedConfigUI').find(":selected").attr('value');
