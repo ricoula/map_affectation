@@ -141,22 +141,38 @@
                         $('#modaleAffecterA').modal('show');
                     });
                 });
+                
 
-          $.post("API/getAffectationAuto.php", {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val(), nb_jours_avant_conges_max: $("#nbJoursAvantCongesMax").val(), nb_jours_conges_max: $("#nbJoursCongesMax").val()}, function(data){
-            console.log(data);
-            var caff = JSON.parse(data);
-            $("#rightClickPoi_" + marker.poi_id).removeClass("glyphicon glyphicon-refresh gly-spin").addClass("label label-info").text(caff.name_related);
-            $("#win_info_affecter_auto").click(function(){
-                var repUser = confirm("Attribuer " + marker.title + " à " + caff.name_related + "?");
-                if(repUser)
-                {
-                    $.post("API/addPoiAffect.php", {poi_id: marker.poi_id, poi_num: marker.title, poi_domaine: marker.poi_domaine, caff_id: caff.id, caff_name: caff.name_related, ui: marker.poi_ui}, function(data2){
-                        $("#cardBox-" + marker.poi_id).hide();
-                        marker.setMap(null);
+
+
+                $.post("API/getAdvancedConfig.php", {ui: marker.poi_ui}, function(data){
+                    var config = JSON.parse(data);
+                    if(config == null)
+                    {
+                      console.log("DEFAUT UI");
+                      var obj = {poi_id: marker.poi_id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val(), nb_jours_avant_conges_max: $("#nbJoursAvantCongesMax").val(), nb_jours_conges_max: $("#nbJoursCongesMax").val()};
+                    }
+                    else{
+                        console.log("UI: " + marker.poi_ui);
+                      var obj = {poi_id: marker.poi_id, km: config.rayon_km_new, coef_poi_proxi: config.coef_rayon_new, coef_charge_reactive: config.coef_react, coef_charge: config.coef_non_react, limite_jour: config.max_day, limite_semaine: config.max_week, limite_max_calcul: config.max_rayon_new, nb_jours_avant_conges_max: config.jours_avant_conges, nb_jours_conges_max: config.jours_conges};
+                    }
+        
+                    $.post("API/getAffectationAuto.php", obj, function(data){
+                        console.log(data);
+                        var caff = JSON.parse(data);
+                        $("#rightClickPoi_" + marker.poi_id).removeClass("glyphicon glyphicon-refresh gly-spin").addClass("label label-info").text(caff.name_related);
+                        $("#win_info_affecter_auto").click(function(){
+                            var repUser = confirm("Attribuer " + marker.title + " à " + caff.name_related + "?");
+                            if(repUser)
+                            {
+                                $.post("API/addPoiAffect.php", {poi_id: marker.poi_id, poi_num: marker.title, poi_domaine: marker.poi_domaine, caff_id: caff.id, caff_name: caff.name_related, ui: marker.poi_ui}, function(data2){
+                                    $("#cardBox-" + marker.poi_id).hide();
+                                    marker.setMap(null);
+                                });
+                            }
+                        });
                     });
-                }
-            });
-          });
+                  });
   
           });
           google.maps.event.addListener(marker, 'spider_click', function(e) {  // 'spider_rightclick', not plain 'click'
@@ -305,11 +321,20 @@
                                 listeLiensPoi += " <span class='glyphicon glyphicon-link' data-toggle='tooltip' title='" + thisTitle + "' data-placement='right'></span><sup>" + tab.length + "</sup>";
                             }
                               y++;
+                              $.post("API/getAdvancedConfig.php", {ui: poi.atr_ui}, function(data5){
+                                var config = JSON.parse(data5);
+                                if(config == null)
+                                {
+                                  var obj = {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val(), nb_jours_avant_conges_max: $("#nbJoursAvantCongesMax").val(), nb_jours_conges_max: $("#nbJoursCongesMax").val()};
+                                }
+                                else{
+                                  var obj = {poi_id: poi.id, km: config.rayon_km_new, coef_poi_proxi: config.coef_rayon_new, coef_charge_reactive: config.coef_react, coef_charge: config.coef_non_react, limite_jour: config.max_day, limite_semaine: config.max_week, limite_max_calcul: config.max_rayon_new, nb_jours_avant_conges_max: config.jours_avant_conges, nb_jours_conges_max: config.jours_conges};
+                                }
 
                             $.ajax({
                                 type: 'POST',
                                 url: "API/getAffectationAuto.php",
-                                data: {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val(), nb_jours_avant_conges_max: $("#nbJoursAvantCongesMax").val(), nb_jours_conges_max: $("#nbJoursCongesMax").val()},// liste_caffs_simulation: listeCaffsSimulation},
+                                data: obj,
                                 success: function(data2){
                                     i++;
                                     var clientDejaDansTab = false;
@@ -346,7 +371,7 @@
                                     $("#progress_bar_affect").css("width", progress+"%");
                                      $("#percent").html(progress+"%");
 
-                                    //console.log(data2);
+                                    console.log(data2);
                                     poi.affectationAuto = JSON.parse(data2);
                                     /*if(poi.affectationAuto == null)
                                     {
@@ -724,6 +749,7 @@
                                 },
                                 async:true
                               });
+                            });
                         });
                         
                     });
@@ -764,7 +790,6 @@
           $("#advancedConfigAddUI").click(function(){
             var advancedSelectedUI = $('#advancedConfigUI').find(":selected").attr('value');
             if(advancedSelectedUI != "null"){
-                console.log(advancedSelectedUI)
                 $.post("API/addAdvancedConfigUI.php",{ui : advancedSelectedUI}, function(data){
                     if(data == true){
                         document.location.reload();

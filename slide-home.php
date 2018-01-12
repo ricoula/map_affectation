@@ -34,6 +34,7 @@
     <input type="hidden" id="site_lat_lng" latlng='<?php echo $closestSite->sitelatlng ;?>'>
     <input type="hidden" id="site_nb" nb="<?php echo $closestSite->i*/ ?>"> -->
     <input type="hidden" id="idPoi" name="idPoi" value="<?php echo $_GET["poi_id"] ?>" />
+    <input type="hidden" id="uiPoi" name="uiPoi" value="<?php echo $poi->atr_ui ?>" />
     <span class="glyphicon glyphicon-remove pull-right slide-close"></span></br> 
     <h1 id="home-poi" class="well"><?php echo $poi->ft_numero_oeie.$listePoiLien ?><span class="badge badge-default pull-right" id="home-domaine"><?php echo $poi->domaine ?></span></h1>
     <h4>Information POI</h4>
@@ -93,9 +94,20 @@
         //console.log("CETTE POI = " + $("#idPoi").val());
         if($("#idPoi").val() != undefined && $("#idPoi").val() != null)
         {
-          $.post("API/getAffectationAuto.php", {poi_id: $("#idPoi").val(), km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val(), nb_jours_avant_conges_max: $("#nbJoursAvantCongesMax").val(), nb_jours_conges_max: $("#nbJoursCongesMax").val()}, function(data){
+          $.post("API/getAdvancedConfig.php", {ui: $("#uiPoi").val()}, function(data){
+            var config = JSON.parse(data);
+            if(config == null)
+            {
+              var obj = {poi_id: $("#idPoi").val(), km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val(), nb_jours_avant_conges_max: $("#nbJoursAvantCongesMax").val(), nb_jours_conges_max: $("#nbJoursCongesMax").val()};
+            }
+            else{
+              var obj = {poi_id: $("#idPoi").val(), km: config.rayon_km_new, coef_poi_proxi: config.coef_rayon_new, coef_charge_reactive: config.coef_react, coef_charge: config.coef_non_react, limite_jour: config.max_day, limite_semaine: config.max_week, limite_max_calcul: config.max_rayon_new, nb_jours_avant_conges_max: config.jours_avant_conges, nb_jours_conges_max: config.jours_conges};
+            }
+
+            $.post("API/getAffectationAuto.php", obj, function(data){
             var caff = JSON.parse(data);
             $("#attenteCaffConseille").replaceWith('<label class="pull-right home-result label label-success" id="home-caff">' + caff.name_related + '</label>');
+          });
           });
         }
         $(".slide-close").click(function(){

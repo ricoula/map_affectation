@@ -829,7 +829,7 @@
 	function getAdvancedConfig($ui)
 	{
 		include("connexionBdd.php");
-		$config = null;
+		$config = json_encode(null);
 		if(!isset($ui) || $ui == null || $ui == '')
 		{
 			$req = $bdd->query("SELECT config FROM cds_advanced_config WHERE ui is null");
