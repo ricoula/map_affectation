@@ -1309,11 +1309,11 @@
 				}
 					
 									
-					$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= (NOW() - interval '1 day') AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
+					$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND (DATE_PART('day', NOW()) - DATE_PART('day', cds_affectation_date)) < 1 AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
 					$req3->execute(array($data["id"]));
 					if($data3 = $req3->fetch())
 					{
-						if($data3["nb_affectations_jour"] <= $limiteJour)
+						if($data3["nb_affectations_jour"] < $limiteJour)
 						{
 							$lastMonday = date("Y-m-d",strtotime("last Monday"));
 							
@@ -1321,7 +1321,7 @@
 							$req4->execute(array($data["id"], $lastMonday));
 							if($data4 = $req4->fetch())
 							{
-								if($data4["nb_affectations_semaine"] <= $limiteSemaine)
+								if($data4["nb_affectations_semaine"] < $limiteSemaine)
 								{
 									if(!$enConges)
 									{
