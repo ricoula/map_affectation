@@ -68,6 +68,11 @@ body{
 .widgetDispo{
     cursor: pointer;
 }
+.contenuCase
+{
+    background-color: #ffffff12;
+    border-radius: 4px;
+}
 
 
 /*#menuAjoutWidget{
