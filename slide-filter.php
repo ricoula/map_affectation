@@ -182,7 +182,7 @@ $(".color-picker").spectrum({
 
     $(".config_modify").click(function(){
      var ui = $(this).attr('ui');
-     console.log(ui);
+    //  console.log(ui);
                coef_non_react = $("#coef_non_react_"+ui).text();
                coef_react = $("#coef_react_"+ui).text();
                rayon_km = $("#rayon_km_"+ui).text();
@@ -215,7 +215,7 @@ $(".color-picker").spectrum({
 
             $(".config_valid").click(function(){
                 var ui = $(this).attr('ui');
-     console.log(ui);
+    //  console.log(ui);
                var coef_non_react_new =  $("#coef_non_react_"+ui).children().val();
                var coef_react_new =  $("#coef_react_"+ui).children().val();
                var rayon_km_new = $("#rayon_km_"+ui).children().val();
@@ -249,7 +249,7 @@ $(".color-picker").spectrum({
                   jours_conges: jours_conges_new
               };
               var modif_json_string = JSON.stringify(modif_json);
-              console.log(modif_json_string);
+            //   console.log(modif_json_string);
               $.post("API/changeAdvancedConfig.php",{config:modif_json_string, ui:ui});
               
 
@@ -257,7 +257,7 @@ $(".color-picker").spectrum({
 
             $(".config_cancel").click(function(){
                 var ui = $(this).attr('ui');
-     console.log(ui);
+    //  console.log(ui);
             $(".coef_non_react_"+ui).html(coef_non_react);
             $(".coef_react_"+ui).html(coef_react);
               $("#rayon_km_"+ui).html(rayon_km);
