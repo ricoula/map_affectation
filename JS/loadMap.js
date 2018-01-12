@@ -283,8 +283,6 @@
                         $.post("API/getAdvancedConfig.php", {ui: cetteUI}, function(data5){
                             var config = JSON.parse(data5);
                        
-                      
-                       
                         $("#divListePoiNAUi").show();
                         var progress = 0;
                         var html = "<table class='table table-striped table-hover table-condensed table-responsive'><thead><tr><th>POI</th><th>Domaine</th><th>DRE</th><th>SJ</th><th>Caff</th></tr></thead><tbody>";
