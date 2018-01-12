@@ -259,8 +259,10 @@
                 $("#loadingChoixUi").show();
                 $("#labelNbPoiNA").hide();
                 $("#divListePoiNAUi").hide();
-        
+
+                var cetteUI = $(this).val();
                 $.post("API/getPoiNAByUi.php", {ui: $(this).val()}, function(data){
+                    console.log(cetteUI);
                     $("#loadingChoixUi").hide();
                     var listePoi = JSON.parse(data);
                     $("#nbPoiNA").text(listePoi.length);
@@ -272,6 +274,9 @@
 
         
                     $("#btnGenererPoiNA").click(function(){
+                        $.post("API/getAdvancedConfig.php", {ui: cetteUI}, function(data5){
+                            var config = JSON.parse(data5);
+                            
                       $("#percent").text('0%').fadeIn();
                         var el = document.getElementById('btnGenererPoiNA'),
                         elClone = el.cloneNode(true);
@@ -286,6 +291,13 @@
                         var listeCaffsSimulation = new Array();
                         var listeClientsAvecListePoiLiee = new Array();
                         listePoi.forEach(function(poi){
+                            if(config == null)
+                            {
+                              var obj = {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val(), nb_jours_avant_conges_max: $("#nbJoursAvantCongesMax").val(), nb_jours_conges_max: $("#nbJoursCongesMax").val()};
+                            }
+                            else{
+                              var obj = {poi_id: poi.id, km: config.rayon_km_new, coef_poi_proxi: config.coef_rayon_new, coef_charge_reactive: config.coef_react, coef_charge: config.coef_non_react, limite_jour: config.max_day, limite_semaine: config.max_week, limite_max_calcul: config.max_rayon_new, nb_jours_avant_conges_max: config.jours_avant_conges, nb_jours_conges_max: config.jours_conges};
+                            }
                             var listeLiensPoi = "";
                             var nbPoiLien = 0;
                             var tab = new Array();
@@ -321,15 +333,7 @@
                                 listeLiensPoi += " <span class='glyphicon glyphicon-link' data-toggle='tooltip' title='" + thisTitle + "' data-placement='right'></span><sup>" + tab.length + "</sup>";
                             }
                               y++;
-                              $.post("API/getAdvancedConfig.php", {ui: poi.atr_ui}, function(data5){
-                                var config = JSON.parse(data5);
-                                if(config == null)
-                                {
-                                  var obj = {poi_id: poi.id, km: $("#kmRadius").val(), coef_poi_proxi: $("#coefPoiProxi").val(), coef_charge_reactive: $("#coefPoiClient").val(), coef_charge: $("#coefCharge").val(), limite_jour: $("#limiteAffectationJour").val(), limite_semaine: $("#limiteAffectationSemaine").val(), limite_max_calcul: $("#limiteMaxCalcul").val(), nb_jours_avant_conges_max: $("#nbJoursAvantCongesMax").val(), nb_jours_conges_max: $("#nbJoursCongesMax").val()};
-                                }
-                                else{
-                                  var obj = {poi_id: poi.id, km: config.rayon_km_new, coef_poi_proxi: config.coef_rayon_new, coef_charge_reactive: config.coef_react, coef_charge: config.coef_non_react, limite_jour: config.max_day, limite_semaine: config.max_week, limite_max_calcul: config.max_rayon_new, nb_jours_avant_conges_max: config.jours_avant_conges, nb_jours_conges_max: config.jours_conges};
-                                }
+                              
 
                             $.ajax({
                                 type: 'POST',
@@ -749,9 +753,9 @@
                                 },
                                 async:true
                               });
-                            });
+                            
                         });
-                        
+                    });
                     });
                 })
             });
