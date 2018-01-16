@@ -1,6 +1,8 @@
 body{
     background-image: url("http://www.misucell.com/data/out/10/IMG_418374.png");
-}
+    background-repeat: no-repeat;
+    background-size: 120%;
+    }
 .gridster{
     background-color: #008b8b00;
 }

@@ -47,6 +47,7 @@ body
   background-color:#3a3a3a;
   text-align:center;
   cursor:pointer;
+    transition: all 0.3s ease-in-out;
 }
 .font-glyph
 {
@@ -438,4 +439,18 @@ color: grey;
 .colorPickerDomaines .sp-preview{
  border:2px black solid;
  width:20px;
+}
+.stat_kpi_div
+{
+  background-color:#b9b900;
+}
+.stat_kpi_div span
+{
+  color:black;
+}
+.stat_kpi_div:hover
+{
+  background-color:#d6d600;
+  transition: all 0.3s ease;
+
 }
