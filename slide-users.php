@@ -34,7 +34,13 @@
                 if($caff->ag_coeff_traitement != null)
                 {
                     $caff->coefTraitement = $caff->ag_coeff_traitement;
-                    $caff->chargeInit = round(getChargeCaff(json_encode($caff), $_GET["coefCharge"])*(1/$caff->ag_coeff_traitement), 1);
+                    if($caff->ag_coeff_traitement != 0)
+                    {
+                        $caff->chargeInit = round(getChargeCaff(json_encode($caff), $_GET["coefCharge"])*(1/$caff->ag_coeff_traitement), 1);
+                    }
+                    else{
+                        $caff->chargeInit = 0;
+                    }
                     $caff->ag_coeff_traitement *= 100;
                     $caff->ag_coeff_traitement .= "%";
                 }
