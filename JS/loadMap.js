@@ -271,8 +271,8 @@
                     $("#progress_bar_affect").css({"width":"0%"});
                     $("#progress_bar_affect").html("0%");
 
-
-        
+                    
+                    
                     $("#btnGenererPoiNA").click(function(){
                         $("#percent").text('0%').fadeIn();
                         var el = document.getElementById('btnGenererPoiNA'),
@@ -333,13 +333,14 @@
                                 listeLiensPoi += " <span class='glyphicon glyphicon-link' data-toggle='tooltip' title='" + thisTitle + "' data-placement='right'></span><sup>" + tab.length + "</sup>";
                             }
                               y++;
-                              
+                              console.log(obj + "avant " );
 
                             $.ajax({
                                 type: 'POST',
                                 url: "API/getAffectationAuto.php",
                                 data: obj,
                                 success: function(data2){
+                                    
                                     i++;
                                     var clientDejaDansTab = false;
 
@@ -743,7 +744,7 @@
                                         }
                                     }
                                 },
-                                async:true
+              
                               });
                             
                         });
