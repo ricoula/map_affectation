@@ -396,6 +396,36 @@
 		
 		return json_encode($closestSite);
 	}
+
+	function poiProxi($latitude, $longitude, $km)
+	{
+		include("connexionBddErp.php");
+		$liste = array();
+		
+		$req = $bddErp->prepare("select ft_numero_oeie,ft_commentaire_creation_oeie,ft_libelle_commune,ag_poi.id,atr_caff_traitant_id, name_related,round(sqrt(power((ft_longitude - ?)/0.0090808,2)+power((ft_latitude - ?)/0.01339266,2))::numeric,1) as algo,account_analytic_account.name as domaine,hr_employee.mobile_phone from ag_poi
+		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
+		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
+		where sqrt(power((ft_longitude - ?)/0.0090808,2)+power((ft_latitude - ?)/0.01339266,2)) < ? and ft_etat = '1' and name_related is not null
+		order by algo");
+		$req->execute(array($longitude, $latitude,$longitude, $latitude, $km));
+		while($data = $req->fetch())
+		{
+			$obj = (object) array();
+			$obj->oeie_id = $data["id"];
+			$obj->oeie = $data["ft_numero_oeie"];
+			$obj->caff_id = $data["atr_caff_traitant_id"];
+			$obj->caff_name = $data["name_related"];
+			$obj->algo = $data["algo"];
+			$obj->ft_libelle_commune = $data["ft_libelle_commune"];
+			$obj->domaine = $data["domaine"];
+			$obj->mobile = $data["mobile_phone"];
+			$obj->ft_commentaire_creation_oeie = $data['ft_commentaire_creation_oeie'];
+			array_push($liste, $obj);
+		}
+		
+		return json_encode($liste);
+
+	}
 	
 	function nbPoiCaffByRadius($latitude, $longitude, $km)
 	{

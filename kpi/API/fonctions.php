@@ -182,7 +182,7 @@
     function getChargeByUi(){
         include("connexionBddErp.php");
         $listUiCharge = array();
-        $req = $bddErp->query("select agence,sum(reactive) as reactive,sum(non_reactive) as non_reactive,count(agence) from(
+        $req = $bddErp->query("select site as agence,sum(reactive) as reactive,sum(non_reactive) as non_reactive,count(agence),round(((sum(reactive) + (sum(non_reactive)*0.1))/count(agence)),2) as charge from(
             select id, t3.ag_coeff_traitement, t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.agence,case when t3.reactive is null then 0 else t3.reactive end,
                     case when t3.non_reactive is null then 0 else t3.non_reactive end from
                     (
@@ -202,7 +202,8 @@
                     group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, t1.ag_coeff_traitement) t2
                     group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name, t2.ag_coeff_traitement ) t3
                     where name_related is not null ORDER BY name_related)uicharge
-                    group by agence");
+                    group by site
+                    order by charge desc");
                     while($data = $req->fetch())
                     {
                         $listui = (object) array();

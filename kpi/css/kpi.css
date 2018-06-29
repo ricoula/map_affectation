@@ -101,3 +101,18 @@ body{
     position: relative;
     left: 110px;
 }*/
+.myProgress {
+  width: 90%;
+  background-color: #dddddd24;
+  border-radius:10px;
+}
+
+.myBar {
+  width: 50%;
+  height: 10px;
+  background-color: #4caf50;
+  text-align: center;
+  line-height: 10px;
+  color: rgb(0, 0, 0);
+ border-radius:10px;
+}

@@ -117,7 +117,7 @@ $nb_caff = 0;
 
 <div id="testtaillelg">
 <div class="toplg"><span>Charge</span></div>
-<div class="toplg"><span>Par UI - S<?php echo date("W"); ?></span></div>
+<div class="toplg"><span>Par Sites - S<?php echo date("W"); ?></span></div>
 <div id="resultlg"><table id="table_kpi">
 
 <tbody>
@@ -130,7 +130,9 @@ foreach($listchargeui as $chargeui){
      $charge_globale = round(($charge_react + $charge_non_react) / $nb_caff,1);
     echo "<tr>
     <td>".$chargeui->ui."</td>
-    <td  class='kpi_table_center'>".$charge_globale."</td>
+    <td  class='kpi_table_center'><div class='myProgress'>
+    <div class='myBar progress-kpi' value='".$charge_globale."'></div>
+  </div></td>
     </tr>";
 } ?>
 </tr>
@@ -141,6 +143,19 @@ foreach($listchargeui as $chargeui){
 <?php
 }
 ?>
+<script>
+$(".progress-kpi").each(function(){
+    average = 35.5 * 2;
+    progress = $(this).attr('value');
+    progress_percent = (progress / average) * 100
+    
+    hsv_val = 100 - ((progress_percent * 2) - 50);
+    var hsv = 'hsl('+hsv_val+', 90%, 61%)';
+    $(this).css({"width":progress_percent+"%","backgroundColor":hsv});
+    $(this).html(progress);
+    
+})
+</script>
 
 
 
