@@ -1,6 +1,8 @@
 body{
     background-image: url("http://www.misucell.com/data/out/10/IMG_418374.png");
-}
+    background-repeat: no-repeat;
+    background-size: 120%;
+    }
 .gridster{
     background-color: #008b8b00;
 }
@@ -81,6 +83,12 @@ body{
     background-color: #ffffff12;
     border-radius: 4px;
 }
+.contenuCase
+{
+    background-color: #ffffff12;
+    border-radius: 4px;
+}
+
 
 
 
@@ -99,3 +107,18 @@ body{
     position: relative;
     left: 110px;
 }*/
+.myProgress {
+  width: 90%;
+  background-color: #dddddd24;
+  border-radius:10px;
+}
+
+.myBar {
+  width: 50%;
+  height: 10px;
+  background-color: #4caf50;
+  text-align: center;
+  line-height: 10px;
+  color: rgb(0, 0, 0);
+ border-radius:10px;
+}

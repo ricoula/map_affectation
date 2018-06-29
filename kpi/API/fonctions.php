@@ -28,8 +28,20 @@
                 $obj->lg->x = 2;
                 $obj->lg->y = 2;
                 $obj->full = true;
-                $obj->libelle = "nb affectations";
-                $obj->description = "KPI qui calcule le nombre d'affectations";
+                $obj->libelle = "Nombre Affect.";
+                $obj->description = "Nombre d'affectations total ou par UI";
+                break;
+            case "kpi_charge_ui": $obj = (object) array();
+                $obj->lien = $lien;
+                $obj->sm = (object) array();
+                $obj->sm->x = 1;
+                $obj->sm->y = 1;
+                $obj->lg = (object) array();
+                $obj->lg->x = 2;
+                $obj->lg->y = 2;
+                $obj->full = true;
+                $obj->libelle = "Charge UI";
+                $obj->description = "Charge des ui en fonction du nombre de CAFF";
                 break;
         }
 
@@ -165,6 +177,43 @@
         }
 
         return json_encode($listeWidgets);
+    }
+
+    function getChargeByUi(){
+        include("connexionBddErp.php");
+        $listUiCharge = array();
+        $req = $bddErp->query("select site as agence,sum(reactive) as reactive,sum(non_reactive) as non_reactive,count(agence),round(((sum(reactive) + (sum(non_reactive)*0.1))/count(agence)),2) as charge from(
+            select id, t3.ag_coeff_traitement, t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.agence,case when t3.reactive is null then 0 else t3.reactive end,
+                    case when t3.non_reactive is null then 0 else t3.non_reactive end from
+                    (
+                    select t2.ag_coeff_traitement, t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name as agence, sum(t2.reactive) as reactive, sum(t2.non_reactive) as non_reactive from (
+                     
+                    select t1.ag_coeff_traitement, t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, case when account_analytic_account.name in ('Client', 'FO & CU') then count (ag_poi.id)
+                    end as reactive , case when account_analytic_account.name not in ('Client', 'FO & CU') then count (ag_poi.id) end as non_reactive
+                    from ag_poi
+                    left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id  
+                    full join
+                    (select hr_employee.ag_coeff_traitement, hr_employee.id, hr_employee.name_related,hr_employee.mobile_phone,hr_employee.work_email,ag_site.name as site,ag_agence.name from res_users
+                    full join hr_employee on res_users.ag_employee_id = hr_employee.id
+                    full join ag_site on hr_employee.ag_site_id = ag_site.id
+                    full join ag_agence on hr_employee.ag_agence_id = ag_agence.id
+                    full join hr_job on hr_employee.job_id = hr_job.id
+                    where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
+                    group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, t1.ag_coeff_traitement) t2
+                    group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name, t2.ag_coeff_traitement ) t3
+                    where name_related is not null ORDER BY name_related)uicharge
+                    group by site
+                    order by charge desc");
+                    while($data = $req->fetch())
+                    {
+                        $listui = (object) array();
+                        $listui->ui = $data['agence'];
+                        $listui->charge_reactive = $data['reactive'];
+                        $listui->charge_non_reactive = $data['non_reactive'];
+                        $listui->nb_caff = $data['count'];
+                        array_push($listUiCharge,$listui);
+                    }
+                    return json_encode($listUiCharge);
     }
 
 ?>
