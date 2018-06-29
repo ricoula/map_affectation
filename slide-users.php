@@ -34,7 +34,13 @@
                 if($caff->ag_coeff_traitement != null)
                 {
                     $caff->coefTraitement = $caff->ag_coeff_traitement;
-                    $caff->chargeInit = round(getChargeCaff(json_encode($caff), $_GET["coefCharge"])*(1/$caff->ag_coeff_traitement), 1);
+                    if($caff->ag_coeff_traitement != 0)
+                    {
+                        $caff->chargeInit = round(getChargeCaff(json_encode($caff), $_GET["coefCharge"])*(1/$caff->ag_coeff_traitement), 1);
+                    }
+                    else{
+                        $caff->chargeInit = 0;
+                    }
                     $caff->ag_coeff_traitement *= 100;
                     $caff->ag_coeff_traitement .= "%";
                 }
@@ -47,10 +53,28 @@
                 $list_comp = json_decode(getCompetenceByCaffId($caff->id));
                 $caff->ui = json_decode(getUiBySite($caff->site));
                 ?>
-                <div class="input-group users-card-caff card-<?php echo $caff->ui->ft_zone ?>" id="<?php echo urlencode(json_encode($caff)) ?>" >
+                <div class="input-group users-card-caff card-<?php if($caff->ui != null){ echo $caff->ui->ft_zone; } ?>" id="<?php echo urlencode(json_encode($caff)) ?>" >
                     <label class="input-group-addon imageCaff" style='background-image: url("img/inconnu.jpg"); background-size: 100px 100px; width:100px; height:100px;' id="imageCaff-<?php echo $caff->id ?>" ></label>
                     <div class="card-block users-card-info" id="">
-                        <h4 class="users-name"><?php echo $caff->name_related ?> <?php foreach($list_comp as $comp){echo '<label class="comp_1 comp_'.$comp.'" data-toggle="tooltip" data-placement="top" title="'.$comp.'"></label>';}?></span><?php if($caff->enConge){ ?><span class="label label-warning pull-right users-state" >Congé <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" data-html="true" title="<div>Retour le <?php echo $dateRetour ?></div><div><?php echo $caff->conges->nbJoursCongesRestant." jour(s) ouvré(s) restant(s)</div>" ?>"></span></span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
+                        <h4 class="users-name">
+                            <?php 
+                                echo $caff->name_related 
+                            ?>
+                            <?php
+                            if(sizeof($list_comp) > 0)
+                            {
+                                ?>
+                                <span class="glyphicon glyphicon-education" data-toggle="tooltip" data-placement="top" title="<?php echo implode("\n", $list_comp) ?>" ></span>
+                                <?php
+                            }
+                            ?>
+                            <?php
+                                /*foreach($list_comp as $comp)
+                                {
+                                    echo '<label class="comp_1 comp_'.$comp.'" data-toggle="tooltip" data-placement="top" title="'.$comp.'"></label>';
+                                }*/
+                            ?>
+                            </span><?php if($caff->enConge){ ?><span class="label label-warning pull-right users-state" >Congé <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" data-html="true" title="<div>Retour le <?php echo $dateRetour ?></div><div><?php echo $caff->conges->nbJoursCongesRestant." jour(s) ouvré(s) restant(s)</div>" ?>"></span></span><?php }else{ ?><span class="label label-success pull-right users-state">Actif</span><?php } ?></h4>
                         
                         <?php 
                         if(sizeof($caff->entraides) > 0)

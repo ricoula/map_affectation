@@ -361,8 +361,16 @@
 			array_push($destinations, $site->longitude . "," . $site->latitude);
 		}
 		$destinations = implode("|", $destinations);
+
+		$arrContextOptions=array(
+			"ssl"=>array(
+				"verify_peer"=>false,
+				"verify_peer_name"=>false,
+			),
+		);
+		
 		$url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=".$origins."&destinations=".$destinations."&key=".$key;
-		$listeDistances = json_decode(file_get_contents($url));
+		$listeDistances = json_decode(file_get_contents($url, false, stream_context_create($arrContextOptions)));
 		$duree = null;
 		$nb = 0;
 		$i = 0;
