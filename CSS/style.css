@@ -454,3 +454,9 @@ color: grey;
   transition: all 0.3s ease;
 
 }
+.btnUIBox{
+  width: 10%;
+}
+.btnUI{
+  width: 10%;
+}

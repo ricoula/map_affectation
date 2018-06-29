@@ -785,7 +785,8 @@
         $config->filtercolorimmo = 'yellow';
         $config->filtercolordissi = 'green';
         $config->filtercolorfocu = 'blue';
-        $config->filtercolorcoord = 'purple';
+		$config->filtercolorcoord = 'purple';
+		$config->filtercolorfors = 'pink';
         $config->filterdre = 1;
         $config->filtersj = array();
 		$config = json_encode($config);
@@ -1906,7 +1907,7 @@
 		}
 	}
 
-	function addListePoiSimuDomaines($nbDissi, $nbClient, $nbImmo, $nbFocu, $nbCoordi, $ui) //$ui = ft_zone (FC4, JR4...)
+	function addListePoiSimuDomaines($nbDissi, $nbClient, $nbImmo, $nbFocu, $nbCoordi, $nbFors, $ui) //$ui = ft_zone (FC4, JR4...)
 	{
 		include("connexionBddErp.php");
 		for($i = 0; $i < $nbDissi; $i++)
@@ -1932,6 +1933,11 @@
 		for($i = 0; $i < $nbCoordi; $i++)
 		{
 			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = '1', atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE id = (SELECT id from ag_poi WHERE ft_etat != '1' and atr_ui = ? AND ft_longitude is not null AND atr_domaine_id = (SELECT id FROM account_analytic_account WHERE UPPER(name) = 'COORDI' LIMIT 1)  ORDER BY RANDOM()  LIMIT 1)");
+			$req->execute(array($ui));
+		}
+		for($i = 0; $i < $nbFors; $i++)
+		{
+			$req = $bddErp->prepare("UPDATE ag_poi SET ft_etat = '1', atr_caff_traitant_id = (SELECT id FROM hr_employee WHERE UPPER(name_related) = 'AFFECTATION' LIMIT 1) WHERE id = (SELECT id from ag_poi WHERE ft_etat != '1' and atr_ui = ? AND ft_longitude is not null AND atr_domaine_id = (SELECT id FROM account_analytic_account WHERE UPPER(name) = 'FORS' LIMIT 1)  ORDER BY RANDOM()  LIMIT 1)");
 			$req->execute(array($ui));
 		}
 		

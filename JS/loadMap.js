@@ -53,6 +53,7 @@
               $("#leg_focu").css({"backgroundColor":config.filtercolorfocu});
               $("#leg_dissi").css({"backgroundColor":config.filtercolordissi});
               $("#leg_coord").css({"backgroundColor":config.filtercolorcoord});
+              $("#leg_fors").css({"backgroundColor":config.filtercolorfors});
               $("#leg_dre").css({"borderColor":config.filtercolorurgent});
               $("#leg_dre_txt").text("DRE < J+"+config.filterdre);
               if(poi.domaine == 'Client'){
@@ -69,6 +70,9 @@
               }
               else if(poi.domaine == 'Coordi'){
                 color = config.filtercolorcoord
+              }
+              else if(poi.domaine == 'FORS'){
+                color = config.filtercolorfors
               }
               else{
                 color = null;
@@ -776,7 +780,7 @@
           });
 
           $("#btnValiderModalSimulationAvance").click(function(){
-            $.post("API/addListePoiSimuDomaines.php", {nbDissi: $("#dissiSimu").val(), nbClient: $("#clientSimu").val(), nbImmo: $("#immoSimu").val(), nbFocu: $("#focuSimu").val(), nbCoordi: $("#coordiSimu").val(), ui: $("#selectUiSimuAvance").val()}, function(){
+            $.post("API/addListePoiSimuDomaines.php", {nbDissi: $("#dissiSimu").val(), nbClient: $("#clientSimu").val(), nbImmo: $("#immoSimu").val(), nbFocu: $("#focuSimu").val(), nbCoordi: $("#coordiSimu").val(), nbFors: $("#forsSimu").val(), ui: $("#selectUiSimuAvance").val()}, function(){
                 document.location.reload();
             });
         });

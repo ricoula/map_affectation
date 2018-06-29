@@ -158,6 +158,10 @@
                 color_label_poi = config.filtercolorcoord;
                 //console.log("Color: " + color_label_poi);
               }
+              else if($("#home-domaine").text() == 'FORS'){
+                color_label_poi = config.filtercolorfors;
+                //console.log("Color: " + color_label_poi);
+              }
               else{
                  color_label_poi = null;
                   //console.log("Color: " + color_label_poi);

@@ -55,6 +55,7 @@
                 <div class="list-group-item"><label>Couleur POI Dissimulation</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-dissi" value="<?php echo $config_default->filtercolordissi ?>"></div></div>
                 <div class="list-group-item"><label>Couleur POI FO & CU</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-focu" value="<?php echo $config_default->filtercolorfocu ?>"></div></div>
                 <div class="list-group-item"><label>Couleur POI Coordination</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-coord" value="<?php echo $config_default->filtercolorcoord ?>"></div></div>
+                <div class="list-group-item"><label>Couleur POI FORS</label><div class="pull-right"><input type='text' class="color-picker" id="filter-color-fors" value="<?php echo $config_default->filtercolorfors ?>"></div></div>
             </div>
         </div>
         <button class="btn btn-primary pull-right" id="filter-save">Enregister</button>
@@ -85,6 +86,7 @@
          filtercolordissi : $("#filter-color-dissi").val(),
          filtercolorfocu : $("#filter-color-focu").val(),
          filtercolorcoord : $("#filter-color-coord").val(),
+         filtercolorfors : $("#filter-color-fors").val(),
          filtersj : list_sj
         };
 

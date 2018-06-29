@@ -276,4 +276,5 @@ $(".users-formation").click(function(){
     $(".comp_Focu").css({"backgroundColor":config.filtercolorfocu});
     $(".comp_Dissi").css({"backgroundColor":config.filtercolordissi});
     $(".comp_Coordi").css({"backgroundColor":config.filtercolorcoord});
+    $(".comp_Fors").css({"backgroundColor":config.filtercolorfors});
 </script>

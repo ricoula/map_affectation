@@ -60,6 +60,7 @@
               <div class="panel-body"><span>Immo:</span><span id="leg_immo" class="leg_poi pull-right"></span></div>
               <div class="panel-body"><span>Dissi:</span><span id="leg_dissi" class="leg_poi pull-right"></span></div>
               <div class="panel-body"><span>Coordi:</span><span id="leg_coord" class="leg_poi pull-right"></span></div>
+              <div class="panel-body"><span>FORS:</span><span id="leg_fors" class="leg_poi pull-right"></span></div>
               <div class="panel-body"><span id="leg_dre_txt">DRE < à :</span><span id="leg_dre" class="pull-right"></span></div>
             </div>
           </div>
@@ -226,6 +227,14 @@
               </th>
               <td>
                 <input type="number" class="numberNegatif" name="coordiSimu" id="coordiSimu" value="0" />
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <label>FORS</label>
+              </th>
+              <td>
+                <input type="number" class="numberNegatif" name="forsSimu" id="forsSimu" value="0" />
               </td>
             </tr>
             </table>

@@ -470,6 +470,8 @@ var nonValable = false;
           break;
           case 'immo': listeDomaines.push("Immo");
           break;
+          case 'fors': listeDomaines.push("FORS");
+          break;
         }
       }
     });
