@@ -404,6 +404,48 @@
 		
 		return json_encode($closestSite);
 	}
+	
+	function getListClosestSites($poi_id)
+	{
+		$key = "AIzaSyDKM2Ymk3PwN3uZVowTr7gLvyNVmROOD0E";
+		
+		$arrContextOptions=array(
+			"ssl"=>array(
+				"verify_peer"=>false,
+				"verify_peer_name"=>false,
+			),
+		);
+		
+		$poi = json_decode(getPoiById($poi_id));
+		$listeSite = json_decode(getSitesByUi($poi->atr_ui));
+		$origins = $poi->ft_longitude.",".$poi->ft_latitude;
+		
+		foreach($listeSite as $site)
+		{
+			$destination = $site->longitude . "," . $site->latitude;
+			$url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=".$origins."&destinations=".$destination."&key=".$key;
+			$site->distance = json_decode(file_get_contents($url, false, stream_context_create($arrContextOptions)))->rows[0]->elements[0]->distance->value;
+		}
+		
+		function cmp($a, $b)
+		{
+			if($a->distance < $b->distance)
+			{
+				return -1;
+			}
+			elseif($a->distance == $b->distance)
+			{
+				return 0;
+			}
+			else{
+				return 1;
+			}
+		}
+		
+		usort($listeSite, "cmp");
+		
+		return json_encode($listeSite);
+	}
 
 	function poiProxi($latitude, $longitude, $km)
 	{
@@ -1340,10 +1382,6 @@
 								}
 							}
 						}
-						
-						
-						
-						
 					}
 				}
 					
