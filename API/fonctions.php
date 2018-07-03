@@ -1116,30 +1116,496 @@
 		return json_encode($liste);
 	}
 	
+	// function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefChargeReactive, $coefCharge, $limiteJour, $limiteSemaine, $limiteMaxCalcul, $nbJoursAvantConges, $nbJoursConges)//, $listeCaffsSimulation) // $listeCaffsSimulation (facultatif) = array en json
+	// {
+	// 	include("connexionBddErp.php");
+	// 	include("connexionBdd.php");
+	// 	include("connexionBddMailAuto.php");
+		
+	// 	$caffAuto = null;
+		
+	// 	//$listeCaffsSimulation = json_decode($listeCaffsSimulation);
+		
+	// 	/*$coefNbPoiProimite = 0.5;
+	// 	$coefNbPoiClient = 0.8;
+	// 	$coefCharge = 0.5;*/
+		
+	// 	$listePoiBleues = array();
+    //     $req = $bddMail->query("select poi from relance where date_expiration >= NOW()");
+    //     while($data = $req->fetch())
+    //     {
+    //         array_push($listePoiBleues, $data["poi"]);
+    //     }
+        
+    //     $listePoiBleues = implode(", ", $listePoiBleues);
+		
+	// 	$poi = json_decode(getPoiById($idPoi));
+	// 	if($poi->domaine == "Focu" || $poi->domaine == "FO & CU")
+	// 	{
+	// 		$competence = "Fo & Cu";
+	// 	}
+	// 	else{
+	// 		$competence = $poi->domaine;
+	// 	}
+		
+	// 	$listeSites = json_decode(getSitesByUi($poi->atr_ui));
+		
+	// 	$listeIdSites = array();
+	// 	foreach($listeSites as $site)
+	// 	{
+	// 		array_push($listeIdSites, $site->id);
+	// 	}
+	// 	$listeIdSites = implode(", ", $listeIdSites);
+		
+	// 	$listeCaffs = array();
+		
+	// 	$caffTitulaireAuto = false; //Pour savoir si un caff est affilié ou non au titulaire de la poi
+		
+	// 	$globalDebut = "select atr.atr_caff_traitant_id, atr.atr_sous_domaine_id,atr.id,atr.atr_ui,atr.partner,atr.ft_numero_oeie,atr.ft_oeie_dre,atr.name as domaine,account_analytic_account.name as sous_domaine,atr.ft_pg, CASE WHEN LENGTH(ft_sous_justification_oeie) = 2 THEN ft_sous_justification_oeie ELSE 'Pas de SJ' END AS ft_sous_justification_oeie, atr.ft_libelle_commune,atr.ft_libelle_de_voie,atr.name_related,atr.work_email,atr.mobile_phone,atr.ft_commentaire_creation_oeie from(
+    //             select ag_poi.atr_caff_traitant_id, ag_poi.atr_sous_domaine_id,ag_poi.id,ag_poi.atr_ui,res_partner.name as partner,ag_poi.ft_oeie_dre,ag_poi.ft_numero_oeie,account_analytic_account.name,ag_poi.ft_pg,ag_poi.ft_sous_justification_oeie,ag_poi.ft_libelle_commune,ag_poi.ft_libelle_de_voie,hr_employee.name_related,hr_employee.work_email,hr_employee.mobile_phone,ag_poi.ft_commentaire_creation_oeie from ag_poi
+    //             left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
+    //             left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
+    //             left join res_partner on ag_poi.res_partner_id = res_partner.id
+    //             where ft_etat = '1' and name_related is not null and ag_poi.atr_caff_traitant_id = ";
+	// 	//idCaff entre
+	// 	$globalFin = " and work_email is not null and ag_poi.ft_numero_oeie not like '%MBB%')atr
+    //             left join account_analytic_account on atr.atr_sous_domaine_id = account_analytic_account.id
+    //             order by ft_oeie_dre";
+		
+	// 	if($listePoiBleues != null && $listePoiBleues != "")
+    //     {
+    //         /*$requeteRetard = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) and id not in (".$listePoiBleues.") then 1 end as dre_ko,case when ft_oeie_dre > NOW() or id in (".$listePoiBleues.") then 1 end as dre_ok from (".$global.")dre)dre2 group by atr_caff_traitant_id)";*/
+	// 		$debRequete = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) and id not in (".$listePoiBleues.") then 1 end as dre_ko,case when ft_oeie_dre > NOW() or id in (".$listePoiBleues.") then 1 end as dre_ok from (";
+	// 		//global entre
+	// 		$finRequete = ")dre)dre2 group by atr_caff_traitant_id)";
+    //     }
+    //     else{
+    //         /*$requeteRetard = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) then 1 end as dre_ko,case when ft_oeie_dre > NOW() then 1 end as dre_ok from (".$global.")dre)dre2 group by atr_caff_traitant_id)";*/
+	// 		$debRequete = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) then 1 end as dre_ko,case when ft_oeie_dre > NOW() then 1 end as dre_ok from (";
+	// 		//global entre
+	// 		$finRequete = ")dre)dre2 group by atr_caff_traitant_id)";
+    //     }
+		
+	// 	$cesCaffs = array();
+	// 	$listeCaffsUi = json_decode(getListeIdCaffEntraideByUiAndDomaine($poi->atr_ui, $poi->domaine));
+	// 	if(sizeof($listeCaffsUi) > 0)
+	// 	{
+	// 		$listeCaffsUi = implode(",", $listeCaffsUi);
+	// 	}
+	// 	else{
+	// 		$listeCaffsUi = "0";
+	// 	}
+	// 	$listeCaffsExclure = json_decode(getListeIdCaffEntraideExclureUi($poi->atr_ui));
+	// 	if(sizeof($listeCaffsExclure) > 0)
+	// 	{
+	// 		$listeCaffsExclure = implode(",", $listeCaffsExclure);
+	// 	}
+	// 	else{
+	// 		$listeCaffsExclure = "0";
+	// 	}
+		
+	// 	$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, (((reactive * ".$coefChargeReactive.") + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement)) charge_initiale, (CASE WHEN ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") > ".$limiteMaxCalcul." THEN ".$limiteMaxCalcul." ELSE ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") END)charge_rayon, ((((reactive * ".$coefChargeReactive.") + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement))
+    //     - CASE WHEN ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") > ".$limiteMaxCalcul." THEN ".$limiteMaxCalcul." ELSE ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") END
+    //     )charge_totale 
+	// 	FROM (select id, t3.ag_coeff_traitement, t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.site_id, t3.agence,case when t3.reactive is null then 0 else t3.reactive end,
+	// 	case when t3.non_reactive is null then 0 else t3.non_reactive end from
+	// 	(
+	// 	select t2.id, t2.ag_coeff_traitement, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.site_id, t2.name as agence, sum(t2.reactive) as reactive, sum(t2.non_reactive) as non_reactive from (
+		 
+	// 	select t1.id, t1.ag_coeff_traitement, t1.name_related,t1.mobile_phone,t1.work_email,t1.site, t1.site_id,t1.name, case when account_analytic_account.name in ('Client', 'FO & CU') then count (ag_poi.id)
+	// 	end as reactive , case when account_analytic_account.name not in ('Client', 'FO & CU') then count (ag_poi.id) end as non_reactive
+	// 	from ag_poi
+	// 	left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id  
+	// 	full join
+	// 	(select hr_employee.id, hr_employee.ag_coeff_traitement, hr_employee.name_related,hr_employee.mobile_phone,hr_employee.work_email,ag_site.name as site, ag_site.id as site_id,ag_agence.name from res_users
+	// 	full join hr_employee on res_users.ag_employee_id = hr_employee.id
+	// 	full join ag_site on hr_employee.ag_site_id = ag_site.id
+	// 	full join ag_agence on hr_employee.ag_agence_id = ag_agence.id
+	// 	full join hr_job on hr_employee.job_id = hr_job.id
+	// 	FULL JOIN m2m__hr_employee__ag_competence cmp ON cmp.employee_id = hr_employee.id
+	// 	FULL JOIN ag_competence ON ag_competence.id = cmp.competence_id
+	// 	where ((res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER') and ag_competence.name = '".$competence."') OR hr_employee.id IN(".$listeCaffsUi.")) AND hr_employee.id NOT IN(".$listeCaffsExclure.")) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
+	// 	group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, t1.site_id, t1.ag_coeff_traitement) t2
+	// 	group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name, t2.site_id, t2.ag_coeff_traitement ) t3
+	// 	where ((name_related is not null AND site_id IN(".$listeIdSites.")) OR id IN(".$listeCaffsUi.")) AND id NOT IN(".$listeCaffsExclure."))caff
+	// 	ORDER BY charge_totale");
+	// 	while($data = $req->fetch())
+	// 	{
+	// 		$req2 = $bdd->prepare("SELECT id FROM cds_formation WHERE caff_id = ?");
+	// 		$req2->execute(array($data["id"]));
+	// 		if(!$data2 = $req2->fetch())
+	// 		{
+	// 			$enConges = false; // = en conges actuellement ou bientot en conges (moins de 5 jours)
+				
+	// 			if(strtoupper($poi->domaine) == "FO & CU" || strtoupper($poi->domaine) == "CLIENT")
+	// 			{
+	// 				$conges = json_decode(getProchainesConges($data["id"]));
+	// 				if($conges != null)
+	// 				{
+	// 					if($conges->temps_avant <= strtotime(60*60*24*$nbJoursAvantConges) && $conges->nbJoursCongesRestant >= $nbJoursConges) // Si le caff est en congé dans moins de 5 jours et que ces congés durent au moins 5 jours (sans compter les week_end) ou si le caff est actuellement en congés et que le nombre de jours de conges restant est d'au moins 5 jours
+	// 					{
+	// 						$enConges = true;
+	// 					}
+	// 				}
+	// 				if(!$enConges)
+	// 				{
+	// 					$enConges = false;
+	// 					if(array_search($data["id"], json_decode(getListIdEmployesConges())) != false)
+	// 					{
+	// 						$enConges = true;
+	// 					}
+	// 				}
+	// 			}
+				
+	// 			$caff = (object) array();
+	// 			$caff->name_related = $data["name_related"];
+	// 			$caff->mobile_phone = $data["mobile_phone"];
+	// 			$caff->work_email = $data["work_email"];
+	// 			$caff->site = $data["site"];
+	// 			$caff->site_id = $data["site_id"];
+	// 			$caff->agence = $data["agence"];
+	// 			$caff->reactive = $data["reactive"];
+	// 			$caff->non_reactive = $data["non_reactive"];
+	// 			$caff->charge_rayon = $data["charge_rayon"];
+	// 			$caff->charge_totale = $data["charge_totale"];
+	// 			$caff->tauxRetard = (json_decode(getStatsCaff($data["id"])) * $caff->reactive * $coefChargeReactive);
+	// 			$caff->charge_totale += $caff->tauxRetard;
+	// 			$caff->charge_initiale = $data["charge_initiale"];
+	// 			$caff->id = $data["id"];
+				
+	// 			$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
+	// 			/*$nbPoiEnRetard = 0;
+	// 			$dateAjd = new DateTime("now");
+	// 			foreach($listePoi as $lPoi)
+	// 			{
+	// 				$dre = new DateTime($lPoi->ft_oeie_dre);
+	// 				if($dateAjd > $dre)
+	// 				{
+	// 					$nbPoiEnRetard++;
+	// 				}
+	// 			}
+	// 			if(sizeof($listePoi) > 0)
+	// 			{
+	// 				$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
+	// 			}
+	// 			else{
+	// 				$tauxDre = 0;
+	// 			}
+	// 			$caff->charge_totale += ($tauxDre * $caff->reactive);*/
+
+	// 			$listeCaffsTitulaireAffectationAuto = array();
+	// 			$listeCaffsTitulaireAffectationAutoNot1 = array();
+	// 			$listeCaffsTitulaire = json_decode(getCaffsEnLienAvecPoiByTitulaire($poi->ft_titulaire_client, $poi->atr_ui));
+	// 			foreach($listeCaffsTitulaire as $caffTitulaire)
+	// 			{
+	// 				if($caffTitulaire->id == $data["id"])
+	// 				{
+	// 					$caffTitulaireAuto = true;
+
+	// 					$listePoiTitulaire = array();
+	// 					$poiTitulaireEtat1 = false;
+	// 					foreach($listePoi as $cettePoi)
+	// 					{
+	// 						if($cettePoi->ft_titulaire_client == $poi->ft_titulaire_client)
+	// 						{
+	// 							if($cettePoi->ft_etat == 1)
+	// 							{
+	// 								$poiTitulaireEtat1 = true;
+	// 							}
+	// 							array_push($listePoiTitulaire, $cettePoi);
+	// 						}
+	// 					}
+	// 					$caff->listePoiTitulaire = $listePoiTitulaire;
+	// 					array_push($listeCaffsTitulaireAffectationAutoNot1, $caff);
+	// 					if($poiTitulaireEtat1)
+	// 					{
+	// 						array_push($listeCaffsTitulaireAffectationAuto, $caff);
+	// 						if(sizeof($listeCaffsTitulaireAffectationAuto) == 1)
+	// 						{
+	// 							$caffAuto = $caff;
+	// 						}
+	// 						else{
+	// 							$poiTituCaff = null;
+	// 							foreach($listeCaffsTitulaireAffectationAuto as $caffTitulaireAffectationAuto)
+	// 							{
+	// 								foreach($caffTitulaireAffectationAuto->listePoiTitulaire as $poiTitu)
+	// 								{
+	// 									if($poiTituCaff == null)
+	// 									{
+	// 										$poiTituCaff = (object) array();
+	// 										$poiTituCaff->caff = $caffTitulaireAffectationAuto;
+	// 										$poiTituCaff->poi = $poiTitu;
+	// 									}
+	// 									else{
+	// 										if($poiTitu->ft_date_creation_oeie < $poiTituCaff->poi->ft_date_creation_oeie)
+	// 										{
+	// 											$poiTituCaff->caff = $caffTitulaireAffectationAuto;
+	// 											$poiTituCaff->poi = $poiTitu;
+	// 										}
+	// 									}
+	// 								}
+	// 							}
+	// 							$caffAuto = $poiTituCaff->caff;
+	// 						}
+	// 					}
+	// 					else{
+	// 						if(sizeof($listeCaffsTitulaireAffectationAuto) == 0)
+	// 						{
+	// 							$poiTituCaff = null;
+								
+	// 							foreach($listeCaffsTitulaireAffectationAutoNot1 as $caffTitulaireAffectationAuto)
+	// 							{
+	// 								foreach($caffTitulaireAffectationAuto->listePoiTitulaire as $poiTitu)
+	// 								{
+	// 									if($poiTituCaff == null)
+	// 									{
+											
+	// 										$poiTituCaff = (object) array();
+	// 										$poiTituCaff->caff = $caffTitulaireAffectationAuto;
+	// 										$poiTituCaff->poi = $poiTitu;
+	// 									}
+	// 									else{
+	// 										if($poiTitu->ft_date_creation_oeie < $poiTituCaff->poi->ft_date_creation_oeie)
+	// 										{
+	// 											$poiTituCaff->caff = $caffTitulaireAffectationAuto;
+	// 											$poiTituCaff->poi = $poiTitu;
+	// 										}
+	// 									}
+	// 								}
+	// 							}
+	// 							if(isset($poiTituCaff) && $poiTituCaff != null)
+	// 							{
+	// 								$caffAuto = $poiTituCaff->caff;
+	// 							}
+	// 							else{
+	// 								$caffAuto = $caff;
+	// 							}
+	// 						}
+	// 					}
+	// 				}
+	// 			}
+					
+									
+	// 				$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND (DATE_PART('day', NOW()) - DATE_PART('day', cds_affectation_date)) < 1 AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
+	// 				$req3->execute(array($data["id"]));
+	// 				if($data3 = $req3->fetch())
+	// 				{
+	// 					if($data3["nb_affectations_jour"] < $limiteJour)
+	// 					{
+	// 						$lastMonday = date("Y-m-d",strtotime("last Monday"));
+							
+	// 						$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ? AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
+	// 						$req4->execute(array($data["id"], $lastMonday));
+	// 						if($data4 = $req4->fetch())
+	// 						{
+	// 							if($data4["nb_affectations_semaine"] < $limiteSemaine)
+	// 							{
+	// 								if(!$enConges)
+	// 								{
+	// 									$ceCaff = (object) array();
+	// 									$ceCaff->id = $caff->id;
+	// 									$ceCaff->charge_initiale = $caff->charge_initiale;
+	// 									$ceCaff->name_related = $caff->name_related;
+	// 									$ceCaff->charge_totale = $caff->charge_totale;
+	// 									$ceCaff->tauxRetard = $caff->tauxRetard;
+	// 									$ceCaff->charge_rayon = $caff->charge_rayon;
+	// 									$ceCaff->limiteAtteinte = false;
+	// 									$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
+	// 									$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
+	// 									$ceCaff->enConges = $enConges;
+	// 									array_push($listeCaffs, $ceCaff);
+
+	// 									/*$caff = (object) array();
+	// 									$caff->name_related = $data["name_related"];
+	// 									$caff->mobile_phone = $data["mobile_phone"];
+	// 									$caff->work_email = $data["work_email"];
+	// 									$caff->site = $data["site"];
+	// 									$caff->site_id = $data["site_id"];
+	// 									$caff->agence = $data["agence"];
+	// 									$caff->reactive = $data["reactive"];
+	// 									$caff->non_reactive = $data["non_reactive"];
+	// 									$caff->charge_totale = $data["charge_totale"];
+	// 									$caff->charge_initiale = $data["charge_initiale"];
+	// 									$caff->id = $data["id"];
+										
+	// 									$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
+	// 									$nbPoiEnRetard = 0;
+	// 									$dateAjd = new DateTime("now");
+	// 									foreach($listePoi as $poi)
+	// 									{
+	// 										$dre = new DateTime($poi->ft_oeie_dre);
+	// 										if($dateAjd > $dre)
+	// 										{
+	// 											$nbPoiEnRetard++;
+	// 										}
+	// 									}
+	// 									if(sizeof($listePoi) > 0)
+	// 									{
+	// 										$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
+	// 									}
+	// 									else{
+	// 										$tauxDre = 0;
+	// 									}
+	// 									$caff->charge_totale += ($tauxDre * $caff->reactive);*/
+	// 									if($caffTitulaireAuto == false)
+	// 									{
+	// 										if($caffAuto == null)
+	// 										{
+	// 											$caffAuto = $caff;
+	// 										}
+	// 										elseif($caffAuto->charge_totale > $caff->charge_totale){
+	// 											$caffAuto = $caff;
+	// 										}
+	// 									}
+	// 								}
+	// 								else{
+	// 									$ceCaff = (object) array();
+	// 									$ceCaff->id = $caff->id;
+	// 									$ceCaff->charge_initiale = $caff->charge_initiale;
+	// 									$ceCaff->name_related = $caff->name_related;
+	// 									$ceCaff->charge_totale = $caff->charge_totale;
+	// 									$ceCaff->tauxRetard = $caff->tauxRetard;
+	// 									$ceCaff->charge_rayon = $caff->charge_rayon;
+	// 									$ceCaff->limiteAtteinte = true;
+	// 									$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
+	// 									$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
+	// 									$ceCaff->enConges = $enConges;
+	// 									array_push($listeCaffs, $ceCaff);
+	// 								}
+									
+	// 							}
+	// 							else{
+	// 								$ceCaff = (object) array();
+	// 								$ceCaff->id = $caff->id;
+	// 								$ceCaff->charge_initiale = $caff->charge_initiale;
+	// 								$ceCaff->name_related = $caff->name_related;
+	// 								$ceCaff->charge_totale = $caff->charge_totale;
+	// 								$ceCaff->tauxRetard = $caff->tauxRetard;
+	// 								$ceCaff->charge_rayon = $caff->charge_rayon;
+	// 								$ceCaff->limiteAtteinte = true;
+	// 								$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
+	// 								$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
+	// 								$ceCaff->enConges = $enConges;
+	// 								array_push($listeCaffs, $ceCaff);
+	// 							}
+	// 						}
+	// 					}
+	// 					else{
+	// 						$lastMonday = date("Y-m-d",strtotime("last Monday"));
+							
+	// 						$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ? AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
+	// 						$req4->execute(array($data["id"], $lastMonday));
+	// 						if($data4 = $req4->fetch())
+	// 						{
+	// 							$ceCaff = (object) array();
+	// 							$ceCaff->id = $caff->id;
+	// 							$ceCaff->charge_initiale = $caff->charge_initiale;
+	// 							$ceCaff->name_related = $caff->name_related;
+	// 							$ceCaff->charge_totale = $caff->charge_totale;
+	// 							$ceCaff->tauxRetard = $caff->tauxRetard;
+	// 							$ceCaff->charge_rayon = $caff->charge_rayon;
+	// 							$ceCaff->limiteAtteinte = true;
+	// 							$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
+	// 							$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
+	// 							$ceCaff->enConges = $enConges;
+	// 							array_push($listeCaffs, $ceCaff);
+	// 						}
+	// 					}
+	// 				}
+	// 			if($caffTitulaireAuto == false)
+	// 			{
+	// 				if($caffAuto == null)
+	// 				{
+	// 					$caffAuto = $caff;
+	// 				}
+	// 			}
+	// 		}
+			
+	// 	}
+
+		
+	// 	if($caffAuto != null)
+	// 	{
+	// 		function comparer($a, $b) {
+	// 			if($a->limiteAtteinte)
+	// 			{
+	// 				if($b->limiteAtteinte)
+	// 				{
+	// 					if($a->charge_totale < $b->charge_totale)
+	// 					{
+	// 						return -1;
+	// 					}
+	// 					elseif($a->charge_totale == $b->charge_totale)
+	// 					{
+	// 						return 0;
+	// 					}
+	// 					else{
+	// 						return 1;
+	// 					}
+	// 				}
+	// 				else{
+	// 					return 1;
+	// 				}
+	// 			}
+	// 			else{
+	// 				if($a->charge_totale < $b->charge_totale)
+	// 				{
+	// 					return -1;
+	// 				}
+	// 				elseif($a->charge_totale == $b->charge_totale)
+	// 				{
+	// 					return 0;
+	// 				}
+	// 				else{
+	// 					return 1;
+	// 				}
+	// 			}
+				
+	// 		}
+	// 		usort($listeCaffs, 'comparer');
+			
+	// 		$caffAuto->listeAutresCaffs = $listeCaffs;
+	// 	}
+		
+	// 	return json_encode($caffAuto);
+	// }
+
 	function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefChargeReactive, $coefCharge, $limiteJour, $limiteSemaine, $limiteMaxCalcul, $nbJoursAvantConges, $nbJoursConges)//, $listeCaffsSimulation) // $listeCaffsSimulation (facultatif) = array en json
 	{
 		include("connexionBddErp.php");
 		include("connexionBdd.php");
-		include("connexionBddMailAuto.php");
 		
+		//variable qui sera retournée en fin de fonction
 		$caffAuto = null;
 		
-		//$listeCaffsSimulation = json_decode($listeCaffsSimulation);
-		
-		/*$coefNbPoiProimite = 0.5;
-		$coefNbPoiClient = 0.8;
-		$coefCharge = 0.5;*/
-		
-		$listePoiBleues = array();
-        $req = $bddMail->query("select poi from relance where date_expiration >= NOW()");
-        while($data = $req->fetch())
-        {
-            array_push($listePoiBleues, $data["poi"]);
-        }
-        
-        $listePoiBleues = implode(", ", $listePoiBleues);
-		
+		//liste des caffs triés du plus probable à affecter au moins probable
+		$listeCaffs = array();
+
+		//Je récupère toutes les infos de la POI grâce à son ID passé en paramètre
 		$poi = json_decode(getPoiById($idPoi));
+
+		//Liste des sites de l'UI de la POI. Ces sites sont triés du plus proche de la POI à la plus éloignée
+		$listeSites = json_decode(getListClosestSites($poi->id));
+		//String des id des sites (chaque element est séparé par une virgule)
+		$listeIdSites = array();
+		foreach($listeSites as $site)
+		{
+			array_push($listeIdSites, $site->id);
+		}
+		$listeIdSites = implode(", ", $listeIdSites);
+
+		//liste des caffs qui ont des POI à l'état 1 dont le titulaire est identique à cette POI
+		$listeCaffsTitulaireEtat1 = array();
+		//liste des caffs qui ont des POI (hors état 1) dont le titulaire est identique à cette POI
+		$listeCaffsTitulaireNotEtat1 = array();
+		//Ce tableau représente la liste des Caffs, eux-même triés en fonction de leur site. Ainsi, la première valeur de ce tableau représente la liste des Caff du site le plus proche de la POI, la seconde valeur = liste des Caffs du second site le plus proche...
+		$listeCaffsBySite = array();
+		for($i = 0; $i < sizeof($listeSites); $i++)
+		{
+			$listeCaffsBySite[$i] = array();
+		}
+		
+		//Je récupère la compétence nécessaire à la réalisation de la POI
 		if($poi->domaine == "Focu" || $poi->domaine == "FO & CU")
 		{
 			$competence = "Fo & Cu";
@@ -1148,45 +1614,7 @@
 			$competence = $poi->domaine;
 		}
 		
-		$listeSites = json_decode(getSitesByUi($poi->atr_ui));
-		
-		$listeIdSites = array();
-		foreach($listeSites as $site)
-		{
-			array_push($listeIdSites, $site->id);
-		}
-		$listeIdSites = implode(", ", $listeIdSites);
-		
-		$listeCaffs = array();
-		
-		$caffTitulaireAuto = false; //Pour savoir si un caff est affilié ou non au titulaire de la poi
-		
-		$globalDebut = "select atr.atr_caff_traitant_id, atr.atr_sous_domaine_id,atr.id,atr.atr_ui,atr.partner,atr.ft_numero_oeie,atr.ft_oeie_dre,atr.name as domaine,account_analytic_account.name as sous_domaine,atr.ft_pg, CASE WHEN LENGTH(ft_sous_justification_oeie) = 2 THEN ft_sous_justification_oeie ELSE 'Pas de SJ' END AS ft_sous_justification_oeie, atr.ft_libelle_commune,atr.ft_libelle_de_voie,atr.name_related,atr.work_email,atr.mobile_phone,atr.ft_commentaire_creation_oeie from(
-                select ag_poi.atr_caff_traitant_id, ag_poi.atr_sous_domaine_id,ag_poi.id,ag_poi.atr_ui,res_partner.name as partner,ag_poi.ft_oeie_dre,ag_poi.ft_numero_oeie,account_analytic_account.name,ag_poi.ft_pg,ag_poi.ft_sous_justification_oeie,ag_poi.ft_libelle_commune,ag_poi.ft_libelle_de_voie,hr_employee.name_related,hr_employee.work_email,hr_employee.mobile_phone,ag_poi.ft_commentaire_creation_oeie from ag_poi
-                left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
-                left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
-                left join res_partner on ag_poi.res_partner_id = res_partner.id
-                where ft_etat = '1' and name_related is not null and ag_poi.atr_caff_traitant_id = ";
-		//idCaff entre
-		$globalFin = " and work_email is not null and ag_poi.ft_numero_oeie not like '%MBB%')atr
-                left join account_analytic_account on atr.atr_sous_domaine_id = account_analytic_account.id
-                order by ft_oeie_dre";
-		
-		if($listePoiBleues != null && $listePoiBleues != "")
-        {
-            /*$requeteRetard = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) and id not in (".$listePoiBleues.") then 1 end as dre_ko,case when ft_oeie_dre > NOW() or id in (".$listePoiBleues.") then 1 end as dre_ok from (".$global.")dre)dre2 group by atr_caff_traitant_id)";*/
-			$debRequete = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) and id not in (".$listePoiBleues.") then 1 end as dre_ko,case when ft_oeie_dre > NOW() or id in (".$listePoiBleues.") then 1 end as dre_ok from (";
-			//global entre
-			$finRequete = ")dre)dre2 group by atr_caff_traitant_id)";
-        }
-        else{
-            /*$requeteRetard = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) then 1 end as dre_ko,case when ft_oeie_dre > NOW() then 1 end as dre_ok from (".$global.")dre)dre2 group by atr_caff_traitant_id)";*/
-			$debRequete = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) then 1 end as dre_ko,case when ft_oeie_dre > NOW() then 1 end as dre_ok from (";
-			//global entre
-			$finRequete = ")dre)dre2 group by atr_caff_traitant_id)";
-        }
-		
-		$cesCaffs = array();
+		//Je récupère la liste des caffs de l'UI, afin de l'ajouter ensuite à la requête sql (c'est pour cela que je transforme cette liste en String, dont chaque valeur est séparée par une virgule. Si la liste est vide, alors le String contiendra 0, car il s'agit d'un ID affilié à aucun CAFF)
 		$listeCaffsUi = json_decode(getListeIdCaffEntraideByUiAndDomaine($poi->atr_ui, $poi->domaine));
 		if(sizeof($listeCaffsUi) > 0)
 		{
@@ -1195,6 +1623,7 @@
 		else{
 			$listeCaffsUi = "0";
 		}
+		//Je récupère la liste des caffs à exclure de l'UI, afin de l'ajouter ensuite à la requête sql (c'est pour cela que je transforme cette liste en String, dont chaque valeur est séparée par une virgule. Si la liste est vide, alors le String contiendra 0, car il s'agit d'un ID affilié à aucun CAFF)
 		$listeCaffsExclure = json_decode(getListeIdCaffEntraideExclureUi($poi->atr_ui));
 		if(sizeof($listeCaffsExclure) > 0)
 		{
@@ -1203,8 +1632,12 @@
 		else{
 			$listeCaffsExclure = "0";
 		}
-		
-		$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, (((reactive * ".$coefChargeReactive.") + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement)) charge_initiale, (CASE WHEN ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") > ".$limiteMaxCalcul." THEN ".$limiteMaxCalcul." ELSE ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") END)charge_rayon, ((((reactive * ".$coefChargeReactive.") + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement))
+
+		//J'effectue la requête
+		$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, 
+		(((reactive * ".$coefChargeReactive.") + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement)) charge_initiale, 
+		(CASE WHEN ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") > ".$limiteMaxCalcul." THEN ".$limiteMaxCalcul." ELSE ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") END)charge_rayon, 
+		((((reactive * ".$coefChargeReactive.") + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement))
         - CASE WHEN ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") > ".$limiteMaxCalcul." THEN ".$limiteMaxCalcul." ELSE ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") END
         )charge_totale 
 		FROM (select id, t3.ag_coeff_traitement, t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.site_id, t3.agence,case when t3.reactive is null then 0 else t3.reactive end,
@@ -1231,32 +1664,38 @@
 		ORDER BY charge_totale");
 		while($data = $req->fetch())
 		{
+			//liste des POI à l'état 1 du CAFF en lien avec le titulaire
+			$listePoiTitulaireEtat1 = array();
+			//liste des POI hors état 1 du CAFF en lien avec le titulaire
+			$listePoiTitulaireNotEtat1 = array();
+
+			//Je ne récupère que les CAFF qui ne sont actuellement pas en formation
 			$req2 = $bdd->prepare("SELECT id FROM cds_formation WHERE caff_id = ?");
 			$req2->execute(array($data["id"]));
 			if(!$data2 = $req2->fetch())
 			{
-				$enConges = false; // = en conges actuellement ou bientot en conges (moins de 5 jours)
-				
+				//Je vérifie maintenant si le caff est actuellement, ou bientôt en congé (cette info n'a de l'importance que si la POI est du domaine FO & CU ou Client)
+				$enConges = false;
 				if(strtoupper($poi->domaine) == "FO & CU" || strtoupper($poi->domaine) == "CLIENT")
 				{
 					$conges = json_decode(getProchainesConges($data["id"]));
 					if($conges != null)
 					{
-						if($conges->temps_avant <= strtotime(60*60*24*$nbJoursAvantConges) && $conges->nbJoursCongesRestant >= $nbJoursConges) // Si le caff est en congé dans moins de 5 jours et que ces congés durent au moins 5 jours (sans compter les week_end) ou si le caff est actuellement en congés et que le nombre de jours de conges restant est d'au moins 5 jours
+						if($conges->temps_avant <= strtotime(60*60*24*$nbJoursAvantConges) && $conges->nbJoursCongesRestant >= $nbJoursConges) // Si le caff est en congé dans moins de X jours et que ces congés durent au moins X jours (sans compter les week_end) ou si le caff est actuellement en congés et que le nombre de jours de conges restant est d'au moins X jours
 						{
 							$enConges = true;
 						}
 					}
 					if(!$enConges)
 					{
-						$enConges = false;
 						if(array_search($data["id"], json_decode(getListIdEmployesConges())) != false)
 						{
 							$enConges = true;
 						}
 					}
 				}
-				
+
+				//Je crée mon objet CAFF
 				$caff = (object) array();
 				$caff->name_related = $data["name_related"];
 				$caff->mobile_phone = $data["mobile_phone"];
@@ -1272,301 +1711,367 @@
 				$caff->charge_totale += $caff->tauxRetard;
 				$caff->charge_initiale = $data["charge_initiale"];
 				$caff->id = $data["id"];
-				
-				$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
-				/*$nbPoiEnRetard = 0;
-				$dateAjd = new DateTime("now");
-				foreach($listePoi as $lPoi)
+				$caff->enConges = $enConges;
+				$caff->listePoiTitulaire = null;
+				//Je récupère le numéro du site du caff (plus ce numéro est bas, plus le site du CAFF est proche de la POI)
+				$caff->numSite = null;
+				for($i = 0; $i < sizeof($listeSites); $i++)
 				{
-					$dre = new DateTime($lPoi->ft_oeie_dre);
-					if($dateAjd > $dre)
+					if($listeSites[$i]->id == $caff->site_id)
 					{
-						$nbPoiEnRetard++;
+						$caff->numSite = $i;
 					}
 				}
-				if(sizeof($listePoi) > 0)
+
+				//Je récupère le nombre d'affectations du caff dans la journée
+				$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND (DATE_PART('day', NOW()) - DATE_PART('day', cds_affectation_date)) < 1 AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
+				$req3->execute(array($data["id"]));
+				if($data3 = $req3->fetch())
 				{
-					$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
+					$caff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
 				}
 				else{
-					$tauxDre = 0;
+					$caff->nbAffectationsJour = null;
 				}
-				$caff->charge_totale += ($tauxDre * $caff->reactive);*/
 
-				$listeCaffsTitulaireAffectationAuto = array();
-				$listeCaffsTitulaireAffectationAutoNot1 = array();
+				//Je récupère le nombre d'affectations du caff dans la semaine
+				$lastMonday = date("Y-m-d",strtotime("last Monday")); //correspond à la date du dernier lundi
+				$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ? AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
+				$req3->execute(array($data["id"], $lastMonday));
+				if($data3 = $req3->fetch())
+				{
+					$caff->nbAffectationsSemaine = intval($data3["nb_affectations_semaine"]);
+				}
+				else{
+					$caff->nbAffectationsSemaine = null;
+				}
+
+				//variable qui permet de savoir si ce caff a atteint la limite d'affectation dans la journée/semaine
+				$caff->limiteAtteinte = false;
+				if(!$caff->nbAffectationsSemaine < $limiteSemaine || !$caff->nbAffectationsJour < $limiteJour)
+				{
+					$caff->limiteAtteinte = true;
+				}
+
+				//Je récupère la liste des POI affectées au CAFF
+				$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
+
+			//Je commence par vérifier si le CAFF est en lien avec le titulaire de la POI (car dans ce cas il sera prioritaire)
+				//Je récupère la liste des CAFF qui sont en lien avec le titulaire et l'UI de la POI
 				$listeCaffsTitulaire = json_decode(getCaffsEnLienAvecPoiByTitulaire($poi->ft_titulaire_client, $poi->atr_ui));
 				foreach($listeCaffsTitulaire as $caffTitulaire)
 				{
+					//Si le caff possède une POI en lien avec le titulaire
 					if($caffTitulaire->id == $data["id"])
 					{
-						$caffTitulaireAuto = true;
-
-						$listePoiTitulaire = array();
-						$poiTitulaireEtat1 = false;
+						//Je parcours la liste de ces POI pour voir s'il s'agit de POI à l'état 1 ou non, puis j'ajoute ces POI à la liste des POI du caff qui sont à l'état 1, ou à la liste des POI qui ne sont pas à l'état 1
 						foreach($listePoi as $cettePoi)
 						{
 							if($cettePoi->ft_titulaire_client == $poi->ft_titulaire_client)
 							{
 								if($cettePoi->ft_etat == 1)
 								{
-									$poiTitulaireEtat1 = true;
-								}
-								array_push($listePoiTitulaire, $cettePoi);
-							}
-						}
-						$caff->listePoiTitulaire = $listePoiTitulaire;
-						array_push($listeCaffsTitulaireAffectationAutoNot1, $caff);
-						if($poiTitulaireEtat1)
-						{
-							array_push($listeCaffsTitulaireAffectationAuto, $caff);
-							if(sizeof($listeCaffsTitulaireAffectationAuto) == 1)
-							{
-								$caffAuto = $caff;
-							}
-							else{
-								$poiTituCaff = null;
-								foreach($listeCaffsTitulaireAffectationAuto as $caffTitulaireAffectationAuto)
-								{
-									foreach($caffTitulaireAffectationAuto->listePoiTitulaire as $poiTitu)
-									{
-										if($poiTituCaff == null)
-										{
-											$poiTituCaff = (object) array();
-											$poiTituCaff->caff = $caffTitulaireAffectationAuto;
-											$poiTituCaff->poi = $poiTitu;
-										}
-										else{
-											if($poiTitu->ft_date_creation_oeie < $poiTituCaff->poi->ft_date_creation_oeie)
-											{
-												$poiTituCaff->caff = $caffTitulaireAffectationAuto;
-												$poiTituCaff->poi = $poiTitu;
-											}
-										}
-									}
-								}
-								$caffAuto = $poiTituCaff->caff;
-							}
-						}
-						else{
-							if(sizeof($listeCaffsTitulaireAffectationAuto) == 0)
-							{
-								$poiTituCaff = null;
-								
-								foreach($listeCaffsTitulaireAffectationAutoNot1 as $caffTitulaireAffectationAuto)
-								{
-									foreach($caffTitulaireAffectationAuto->listePoiTitulaire as $poiTitu)
-									{
-										if($poiTituCaff == null)
-										{
-											
-											$poiTituCaff = (object) array();
-											$poiTituCaff->caff = $caffTitulaireAffectationAuto;
-											$poiTituCaff->poi = $poiTitu;
-										}
-										else{
-											if($poiTitu->ft_date_creation_oeie < $poiTituCaff->poi->ft_date_creation_oeie)
-											{
-												$poiTituCaff->caff = $caffTitulaireAffectationAuto;
-												$poiTituCaff->poi = $poiTitu;
-											}
-										}
-									}
-								}
-								if(isset($poiTituCaff) && $poiTituCaff != null)
-								{
-									$caffAuto = $poiTituCaff->caff;
+									array_push($listePoiTitulaireEtat1, $cettePoi);
 								}
 								else{
-									$caffAuto = $caff;
+									array_push($listePoiTitulaireNotEtat1, $cettePoi);
 								}
 							}
+						}
+						
+						$caff->listePoiTitulaire = (object) array();
+						$caff->listePoiTitulaire->etat1 = $listePoiTitulaireEtat1;
+						$caff->listePoiTitulaire->notEtat1 = $listePoiTitulaireNotEtat1;
+						
+						if(sizeof($caff->listePoiTitulaire->etat1) > 0)
+						{
+							array_push($listeCaffsTitulaireEtat1, $caff);
+						}
+						else{
+							array_push($listeCaffsTitulaireNotEtat1, $caff);
 						}
 					}
 				}
-					
-									
-					$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND (DATE_PART('day', NOW()) - DATE_PART('day', cds_affectation_date)) < 1 AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
-					$req3->execute(array($data["id"]));
-					if($data3 = $req3->fetch())
-					{
-						if($data3["nb_affectations_jour"] < $limiteJour)
-						{
-							$lastMonday = date("Y-m-d",strtotime("last Monday"));
-							
-							$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ? AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
-							$req4->execute(array($data["id"], $lastMonday));
-							if($data4 = $req4->fetch())
-							{
-								if($data4["nb_affectations_semaine"] < $limiteSemaine)
-								{
-									if(!$enConges)
-									{
-										$ceCaff = (object) array();
-										$ceCaff->id = $caff->id;
-										$ceCaff->charge_initiale = $caff->charge_initiale;
-										$ceCaff->name_related = $caff->name_related;
-										$ceCaff->charge_totale = $caff->charge_totale;
-										$ceCaff->tauxRetard = $caff->tauxRetard;
-										$ceCaff->charge_rayon = $caff->charge_rayon;
-										$ceCaff->limiteAtteinte = false;
-										$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
-										$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
-										$ceCaff->enConges = $enConges;
-										array_push($listeCaffs, $ceCaff);
 
-										/*$caff = (object) array();
-										$caff->name_related = $data["name_related"];
-										$caff->mobile_phone = $data["mobile_phone"];
-										$caff->work_email = $data["work_email"];
-										$caff->site = $data["site"];
-										$caff->site_id = $data["site_id"];
-										$caff->agence = $data["agence"];
-										$caff->reactive = $data["reactive"];
-										$caff->non_reactive = $data["non_reactive"];
-										$caff->charge_totale = $data["charge_totale"];
-										$caff->charge_initiale = $data["charge_initiale"];
-										$caff->id = $data["id"];
-										
-										$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
-										$nbPoiEnRetard = 0;
-										$dateAjd = new DateTime("now");
-										foreach($listePoi as $poi)
-										{
-											$dre = new DateTime($poi->ft_oeie_dre);
-											if($dateAjd > $dre)
-											{
-												$nbPoiEnRetard++;
-											}
-										}
-										if(sizeof($listePoi) > 0)
-										{
-											$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
-										}
-										else{
-											$tauxDre = 0;
-										}
-										$caff->charge_totale += ($tauxDre * $caff->reactive);*/
-										if($caffTitulaireAuto == false)
-										{
-											if($caffAuto == null)
-											{
-												$caffAuto = $caff;
-											}
-											elseif($caffAuto->charge_totale > $caff->charge_totale){
-												$caffAuto = $caff;
-											}
-										}
-									}
-									else{
-										$ceCaff = (object) array();
-										$ceCaff->id = $caff->id;
-										$ceCaff->charge_initiale = $caff->charge_initiale;
-										$ceCaff->name_related = $caff->name_related;
-										$ceCaff->charge_totale = $caff->charge_totale;
-										$ceCaff->tauxRetard = $caff->tauxRetard;
-										$ceCaff->charge_rayon = $caff->charge_rayon;
-										$ceCaff->limiteAtteinte = true;
-										$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
-										$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
-										$ceCaff->enConges = $enConges;
-										array_push($listeCaffs, $ceCaff);
-									}
-									
-								}
-								else{
-									$ceCaff = (object) array();
-									$ceCaff->id = $caff->id;
-									$ceCaff->charge_initiale = $caff->charge_initiale;
-									$ceCaff->name_related = $caff->name_related;
-									$ceCaff->charge_totale = $caff->charge_totale;
-									$ceCaff->tauxRetard = $caff->tauxRetard;
-									$ceCaff->charge_rayon = $caff->charge_rayon;
-									$ceCaff->limiteAtteinte = true;
-									$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
-									$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
-									$ceCaff->enConges = $enConges;
-									array_push($listeCaffs, $ceCaff);
-								}
-							}
-						}
-						else{
-							$lastMonday = date("Y-m-d",strtotime("last Monday"));
-							
-							$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ? AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
-							$req4->execute(array($data["id"], $lastMonday));
-							if($data4 = $req4->fetch())
-							{
-								$ceCaff = (object) array();
-								$ceCaff->id = $caff->id;
-								$ceCaff->charge_initiale = $caff->charge_initiale;
-								$ceCaff->name_related = $caff->name_related;
-								$ceCaff->charge_totale = $caff->charge_totale;
-								$ceCaff->tauxRetard = $caff->tauxRetard;
-								$ceCaff->charge_rayon = $caff->charge_rayon;
-								$ceCaff->limiteAtteinte = true;
-								$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
-								$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
-								$ceCaff->enConges = $enConges;
-								array_push($listeCaffs, $ceCaff);
-							}
-						}
-					}
-				if($caffTitulaireAuto == false)
+				//Si le caff n'a aucune POI en lien avec le titulaire, alors on continue le traitement
+				if($caff->listePoiTitulaire == null)
 				{
-					if($caffAuto == null)
+					array_push($listeCaffsBySite[$caff->numSite], $caff);
+				}
+			}
+		}
+
+		//Je tri les caffs qui ont une POI à l'état 1 en lien avec le titulaire
+		function cmpEtat1($a, $b)
+		{
+			//On affecte à celui qui a le plus de POI à l'état 1 en lien avec le titulaire
+			if(sizeof($a->$caff->listePoiTitulaire->etat1) > sizeof($b->$caff->listePoiTitulaire->etat1))
+			{
+				return -1;
+			}
+			elseif(sizeof($a->$caff->listePoiTitulaire->etat1) < sizeof($b->$caff->listePoiTitulaire->etat1))
+			{
+				return 1;
+			}
+			else{
+				//S'ils ont le même nombre de POI à l'état 1 en lien avec le titulaire, on vérifie celui qui a le site le plus proche
+				if($a->numSite < $b->numSite)
+				{
+					return -1;
+				}
+				elseif($a->numSite > $b->numSite)
+				{
+					return 1;
+				}
+				else{
+					//S'ils appartiennent tous les 2 au même site, on affecte à celui qui a la plus petite charge totale
+					if($a->charge_totale < $b->charge_totale)
 					{
-						$caffAuto = $caff;
+						return -1;
+					}
+					elseif($a->charge_totale > $b->charge_totale)
+					{
+						return 1;
+					}
+					else{
+						return 0;
 					}
 				}
 			}
-			
+		}
+		usort($listeCaffsTitulaireEtat1, 'cmpEtat1');
+		foreach($listeCaffsTitulaireEtat1 as $cf)
+		{
+			array_push($listeCaffs, $cf);
 		}
 
-		
-		if($caffAuto != null)
+		//Je tri les caffs qui ont une POI (hors état 1) en lien avec le titulaire
+		function cmpNotEtat1($a, $b)
 		{
-			function comparer($a, $b) {
-				if($a->limiteAtteinte)
+			//On affecte à celui qui a le plus de POI (hors état 1) en lien avec le titulaire
+			if(sizeof($a->listePoiTitulaire->notEtat1) > sizeof($b->listePoiTitulaire->notEtat1))
+			{
+				return -1;
+			}
+			elseif(sizeof($a->listePoiTitulaire->notEtat1) < sizeof($b->listePoiTitulaire->notEtat1))
+			{
+				return 1;
+			}
+			else{
+				//S'ils ont le même nombre de POI (hors état 1) en lien avec le titulaire, on vérifie celui qui a le site le plus proche
+				if($a->numSite < $b->numSite)
 				{
-					if($b->limiteAtteinte)
+					return -1;
+				}
+				elseif($a->numSite > $b->numSite)
+				{
+					return 1;
+				}
+				else{
+					//S'ils appartiennent tous les 2 au même site, on affecte à celui qui a la plus petite charge totale
+					if($a->charge_totale < $b->charge_totale)
 					{
-						if($a->charge_totale < $b->charge_totale)
+						return -1;
+					}
+					elseif($a->charge_totale > $b->charge_totale)
+					{
+						return 1;
+					}
+					else{
+						return 0;
+					}
+				}
+			}
+		}
+		usort($listeCaffsTitulaireNotEtat1, 'cmpNotEtat1');
+		foreach($listeCaffsTitulaireNotEtat1 as $cf)
+		{
+			array_push($listeCaffs, $cf);
+		}
+
+		//Je tri les caffs restant, en fonction de leur site (d'abord ceux du site le plus proche...)
+		function cmpCaff($a, $b)
+		{
+			if($a->enConges)
+			{
+				if($b->enConges)
+				{
+					if($a->limiteAtteinte)
+					{
+						if($b->limiteAtteinte)
 						{
-							return -1;
-						}
-						elseif($a->charge_totale == $b->charge_totale)
-						{
-							return 0;
+							//On affecte à celui qui a le site le plus proche
+							if($a->numSite < $b->numSite)
+							{
+								return -1;
+							}
+							elseif($a->numSite > $b->numSite)
+							{
+								return 1;
+							}
+							else{
+								//S'ils appartiennent tous les 2 au même site, on affecte à celui qui a la plus petite charge totale
+								if($a->charge_totale < $b->charge_totale)
+								{
+									return -1;
+								}
+								elseif($a->charge_totale > $b->charge_totale)
+								{
+									return 1;
+								}
+								else{
+									return 0;
+								}
+							}
+			
 						}
 						else{
 							return 1;
 						}
 					}
 					else{
-						return 1;
+						if($b->limiteAtteinte)
+						{
+							return -1;
+						}
+						else{
+							//On affecte à celui qui a le site le plus proche
+							if($a->numSite < $b->numSite)
+							{
+								return -1;
+							}
+							elseif($a->numSite > $b->numSite)
+							{
+								return 1;
+							}
+							else{
+								//S'ils appartiennent tous les 2 au même site, on affecte à celui qui a la plus petite charge totale
+								if($a->charge_totale < $b->charge_totale)
+								{
+									return -1;
+								}
+								elseif($a->charge_totale > $b->charge_totale)
+								{
+									return 1;
+								}
+								else{
+									return 0;
+								}
+							}
+						}
 					}
 				}
 				else{
-					if($a->charge_totale < $b->charge_totale)
+					return 1;
+				}
+			}else{
+				if($b->enConges)
+				{
+					return -1;
+				}
+				else{
+					if($a->limiteAtteinte)
 					{
-						return -1;
-					}
-					elseif($a->charge_totale == $b->charge_totale)
-					{
-						return 0;
+						if($b->limiteAtteinte)
+						{
+							//On affecte à celui qui a le site le plus proche
+							if($a->numSite < $b->numSite)
+							{
+								return -1;
+							}
+							elseif($a->numSite > $b->numSite)
+							{
+								return 1;
+							}
+							else{
+								//S'ils appartiennent tous les 2 au même site, on affecte à celui qui a la plus petite charge totale
+								if($a->charge_totale < $b->charge_totale)
+								{
+									return -1;
+								}
+								elseif($a->charge_totale > $b->charge_totale)
+								{
+									return 1;
+								}
+								else{
+									return 0;
+								}
+							}
+			
+						}
+						else{
+							return 1;
+						}
 					}
 					else{
-						return 1;
+						if($b->limiteAtteinte)
+						{
+							return -1;
+						}
+						else{
+							//On affecte à celui qui a le site le plus proche
+							if($a->numSite < $b->numSite)
+							{
+								return -1;
+							}
+							elseif($a->numSite > $b->numSite)
+							{
+								return 1;
+							}
+							else{
+								//S'ils appartiennent tous les 2 au même site, on affecte à celui qui a la plus petite charge totale
+								if($a->charge_totale < $b->charge_totale)
+								{
+									return -1;
+								}
+								elseif($a->charge_totale > $b->charge_totale)
+								{
+									return 1;
+								}
+								else{
+									return 0;
+								}
+							}
+						}
 					}
 				}
-				
 			}
-			usort($listeCaffs, 'comparer');
-			
-			$caffAuto->listeAutresCaffs = $listeCaffs;
 		}
-		
+		foreach($listeCaffsBySite as $caffsBySite)
+		{
+			usort($caffsBySite, 'cmpCaff');
+			foreach($caffsBySite as $cf)
+			{
+				array_push($listeCaffs, $cf);
+			}
+		}
+
+		//Le caff à privilégier pour l'affectation est donc le premier de la liste (puisque nous venons de les trier)
+		$caffAuto = $listeCaffs[0];
+		//print(json_encode($caffAuto));
+
+		//J'utilise une autre liste contenant uniquement les infos nécessaires, car sinon le JSON plante
+		$autreListe = array();
+		foreach($listeCaffs as $ceCaff)
+		{
+			$autreCaff = (object) array();
+			$autreCaff->id = $ceCaff->id;
+			$autreCaff->charge_initiale = $ceCaff->charge_initiale;
+			$autreCaff->name_related = $ceCaff->name_related;
+			$autreCaff->charge_totale = $ceCaff->charge_totale;
+			$autreCaff->tauxRetard = $ceCaff->tauxRetard;
+			$autreCaff->charge_rayon = $ceCaff->charge_rayon;
+			$autreCaff->limiteAtteinte = $ceCaff->limiteAtteinte;
+			$autreCaff->nbAffectationsJour = $ceCaff->nbAffectationsJour;
+			$autreCaff->nbAffectationsSemaine = $ceCaff->nbAffectationsSemaine;
+			$autreCaff->enConges = $ceCaff->enConges;
+			$autreCaff->site = $ceCaff->site;
+			array_push($autreListe, $autreCaff);
+		}
+
+		//Je lui donne également la liste des autres caffs
+		$caffAuto->listeAutresCaffs = $autreListe;
+
 		return json_encode($caffAuto);
 	}
 	
