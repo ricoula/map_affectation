@@ -69,23 +69,26 @@
         <label>Date d'expiration</label>
         <input type="text" name="dateExpiration" id="dateExpiration" class="form-control" value="<?php echo date("Y-m-d")." ".date("Y-m-d") ?>" />
     </div>
+    <div class="form-group">
+          <label>Taux</label>
+          <input class="form-control" type="number" name="tauxEntraide" id="tauxEntraide" value="100" min="1" max="100" placeholder="Min: 1, max: 100" />
+    </div>
   </form>
   
   <div>
     <?php 
     if(sizeof($listeEntraides) > 0)
     {
-        $entraideEnCours = null;
+        $entraidesEnCours = array();
         foreach($listeEntraides as $entraide)
         {
             if(strtotime($entraide->date_debut) <= strtotime(date("Y-m-d")))
             {
-                $entraideEnCours = $entraide;
+                array_push($entraidesEnCours, $entraide);
             }
         }
-        if($entraideEnCours != null)
+        if(sizeof($entraidesEnCours > 0))
         {
-          $domaines = implode(", ", $entraideEnCours->domaines);
             ?>
             <div id="divTableEntraideEnCours">
               <h4>En cours</h4>
@@ -95,27 +98,39 @@
                   <th>Date Début</th>
                   <th>Date Fin</th>
                   <th>Domaines</th>
+                  <th>Taux</th>
                   <th>Annuler</th>
                 </tr>
-                <tr>
-                  <td class="siteEntraideEnCours">
-                    <?php echo $entraideEnCours->site_entraide_libelle ?>
-                  </td>
-                  <td>
-                    <?php echo $entraideEnCours->date_debut ?>
-                  </td>
-                  <td>
-                    <?php echo $entraideEnCours->date_expiration ?>
-                  </td>
-                  <td><?php echo $domaines ?></td>
-                  <td style="text-align:center">
-                    <a style="cursor:pointer" class="glyphicon glyphicon-trash supprEntraide entraideEnCours" entraideId="<?php echo $entraideEnCours->id ?>" ></a>
-                  </td>
-                </tr>
+                <?php
+                $listeIdEntraidesEnCours = array();
+                foreach($entraidesEnCours as $entraideEnCours)
+                {
+                  array_push($listeIdEntraidesEnCours, $entraideEnCours->id);
+                  $domaines = implode(", ", $entraideEnCours->domaines);
+                  ?>
+                  <tr>
+                    <td class="siteEntraideEnCours">
+                      <?php echo $entraideEnCours->site_entraide_libelle ?>
+                    </td>
+                    <td>
+                      <?php echo $entraideEnCours->date_debut ?>
+                    </td>
+                    <td>
+                      <?php echo $entraideEnCours->date_expiration ?>
+                    </td>
+                    <td><?php echo $domaines ?></td>
+                    <td><?php echo $entraideEnCours->taux.'%' ?></td>
+                    <td style="text-align:center">
+                      <a style="cursor:pointer" class="glyphicon glyphicon-trash supprEntraide entraideEnCours" entraideId="<?php echo $entraideEnCours->id ?>" ></a>
+                    </td>
+                  </tr>
+                  <?php
+                }
+                ?>
               </table>
             </div>
             <?php
-            if(sizeof($listeEntraides) > 1)
+            if(sizeof($listeEntraides) > sizeof($entraidesEnCours))
             {
               ?>
               <div id="divTableEntraideAVenir">
@@ -126,12 +141,13 @@
                   <th>Date Début</th>
                   <th>Date Fin</th>
                   <th>Domaines</th>
+                  <th>Taux</th>
                   <th>Annuler</th>
                 </tr>
                 <?php
                 foreach($listeEntraides as $entraide)
                 {
-                  if($entraide->id != $entraideEnCours->id)
+                  if(!in_array($entraide->id, $listeIdEntraidesEnCours))
                   {
                     $domaines = implode(", ", $entraide->domaines);
                     ?>
@@ -146,6 +162,7 @@
                         <?php echo $entraide->date_expiration ?>
                       </td>
                       <td><?php echo $domaines ?></td>
+                      <td><?php echo $entraide->taux.'%' ?></td>
                       <td style="text-align:center">
                         <a style="cursor:pointer" class="glyphicon glyphicon-trash supprEntraide entraidesAVenir" entraideId="<?php echo $entraide->id ?>" ></a>
                       </td>
@@ -169,6 +186,7 @@
                   <th>Date Début</th>
                   <th>Date Fin</th>
                   <th>Domaines</th>
+                  <th>Taux</th>
                   <th>Annuler</th>
                 </tr>
                 <?php
@@ -187,6 +205,7 @@
                         <?php echo $entraide->date_expiration ?>
                       </td>
                       <td><?php echo $domaines ?></td>
+                      <td><?php echo $entraide->taux.'%' ?></td>
                       <td style="text-align:center">
                         <a style="cursor:pointer" class="glyphicon glyphicon-trash supprEntraide entraidesAVenir" entraideId="<?php echo $entraide->id ?>" ></a>
                       </td>
@@ -335,96 +354,29 @@ var nonValable = false;
   }
   });*/
 
-  $("#dateExpiration").daterangepicker({locale: {format: 'DD/MM/YYYY'}, isInvalidDate: function(date){
-    var trouve = false;
-    $(".uneEntraide").each(function(){
-      var dateDeb = new Date($(this).attr("dateDeb"));
-      dateDeb = dateDeb.getTime() - (23 * 60 * 60 * 1000) - (30 * 60 * 1000); //J'enleve 23h30 à la date pour que la date de debut ne soit pas valide à la selection
-      dateDeb = new Date(dateDeb);
-      var dateFin = new Date($(this).attr("dateFin"));
-
-      if(date._d.getTime() >= dateDeb.getTime() && date._d.getTime() <= dateFin.getTime())
-      {
-        trouve = true;
-      }
-    });
-
-    if(!trouve)
+  $("#tauxEntraide").change(function(){
+    if(isNaN($(this).val()))
     {
-      return false;
+      $(this).val("100");
     }
     else{
-      
-      nonValable = true;
-      return true;
-    }
-  }});
-
-
-  $("#dateExpiration").on("apply.daterangepicker", function(ev, obj){
-    var dateDebutChoisi = obj.startDate._d;
-    var dateFinChoisi = obj.endDate._d;
-    var valActuelle = $("#dateExpiration").val();
-    var dateValide = true;
-    $(".uneEntraide").each(function(){
-      var dateDeb = new Date($(this).attr("dateDeb"));
-      var dateFin = new Date($(this).attr("dateFin"));
-      if(dateDebutChoisi.getTime() <= dateDeb.getTime() && dateFinChoisi.getTime() >= dateDeb.getTime())
+      var val = parseInt($(this).val());
+      if(isNaN(val))
       {
-        dateValide = false;
+        $(this).val("100");
       }
-      /*if((dateDebutChoisi.getTime() >= dateDeb.getTime() && dateDebutChoisi.getTime() <= dateFin.getTime()) || (dateFinChoisi.getTime() >= dateDeb.getTime() && dateFinChoisi.getTime() <= dateFin.getTime()))
+      if(val < 1)
       {
-        dateValide = false;
+        $(this).val("0");
       }
-      else{
-        console.log("non");
-      }*/
-    });
-    if(!dateValide)
-    {
-      alert("Cette période n'est pas valide car une entraide est déjà prévue");
-      $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $("#idCaffEntraide").val() + "&site=" + $("#siteEntraide").val(), function(){
-          
-        });
-    }
-    else{
-      $("#validerModaleEntraide").prop("disabled", false);
+      else if(val > 100)
+      {
+        $(this).val("100");
+      }
     }
   });
 
-  var fonctionVerifDate = function(valDate){ //prends en parametres la valeur du input daterangepicker et renvoit true si la date est valide, false sinon
-    var tabValDate = valDate.split(" - ");
-    var dateDb = tabValDate[0].split("/")[2] + "-" + tabValDate[0].split("/")[1] + "-" + tabValDate[0].split("/")[0];
-    var dateFn = tabValDate[1].split("/")[2] + "-" + tabValDate[1].split("/")[1] + "-" + tabValDate[1].split("/")[0];
-    var dateDebutChoisi = new Date(dateDb);
-    var dateFinChoisi = new Date(dateFn);
-    var dateValide = true;
-    $(".uneEntraide").each(function(){
-      var dateDeb = new Date($(this).attr("dateDeb"));
-      var dateFin = new Date($(this).attr("dateFin"));
-      //console.log(dateDebutChoisi.getTime() + " <= " + dateDeb.getTime() + " && " + dateFinChoisi.getTime() + " >= " + dateDeb.getTime() +"\n\n");
-      if(dateDebutChoisi.getTime() <= dateDeb.getTime() && dateFinChoisi.getTime() >= dateDeb.getTime())
-      {
-        dateValide = false;
-      }
-      else if(dateDebutChoisi.getTime() >= dateDeb.getTime() && dateDebutChoisi.getTime() <= dateFin.getTime())
-      {
-        dateValide = false;
-      }
-
-    });
-    return dateValide;
-  };
-
-  
-  if(!fonctionVerifDate($("#dateExpiration").val()))
-  {
-    $("#validerModaleEntraide").prop("disabled", true);
-  }
-  else{
-    $("#validerModaleEntraide").prop("disabled", false);
-  }
+  $("#dateExpiration").daterangepicker({locale: {format: 'DD/MM/YYYY'}});
 
   $(".supprEntraide").click(function(){
     var elt = $(this);
@@ -454,72 +406,78 @@ var nonValable = false;
   });
 
   $("#validerModaleEntraide").click(function(){
-    var listeDomaines = [];
-    $(".checkDomainesEntraide").each(function(){
-      if($(this).prop("checked"))
-      {
-        switch($(this).attr("id"))
-        {
-          case 'focu': listeDomaines.push("FO & CU");
-          break;
-          case 'client': listeDomaines.push("Client");
-          break;
-          case 'dissi': listeDomaines.push("Dissi");
-          break;
-          case 'coordi': listeDomaines.push("Coordi");
-          break;
-          case 'immo': listeDomaines.push("Immo");
-          break;
-          case 'fors': listeDomaines.push("FORS");
-          break;
-        }
-      }
-    });
-    if(listeDomaines.length > 0)
+    if($("#idSiteEntraide").val() == "0")
     {
-      listeDomaines = JSON.stringify(listeDomaines);
-      var dateDebut = $("#dateExpiration").val().split(" - ")[0];
-      dateDebut = dateDebut.split("/");
-      dateDebut = dateDebut[2] + "-" + dateDebut[1] + "-" + dateDebut[0];
-      var dateFin = $("#dateExpiration").val().split(" - ")[1];
-      dateFin = dateFin.split("/");
-      dateFin = dateFin[2] + "-" + dateFin[1] + "-" + dateFin[0];
-
-      /*console.log("caff_id: " + $("#idCaffEntraide").val());
-      console.log("site_entraide_id: " + $("#idSiteEntraide").val());
-      console.log("liste_domaines_json: " + listeDomaines);
-      console.log("date_expiration: " + dateFin);
-      console.log("date_debut: " + dateDebut);
-      console.log("site_defaut_id: " + $("#idSiteEntraideBase").val());*/
-
-      $.post("API/entraideCaff.php", {caff_id: $("#idCaffEntraide").val(), site_entraide_id: $("#idSiteEntraide").val(), liste_domaines_json: listeDomaines, date_expiration: dateFin, date_debut: dateDebut, site_defaut_id: $("#idSiteEntraideBase").val()}, function(data){
-        //console.log(data);
-        var reponse = JSON.parse(data);
-        if(reponse)
-        {
-          //console.log($("#siteEntraide").val());
-          $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $("#idCaffEntraide").val() + "&site=" + $("#siteEntraide").val(), function(){
-            if($(".supprEntraide").length > 0)
-            {
-              $("#btnEntraideCaff-" + $("#idCaffEntraide").val()).css("color", "orange");
-              if($(".siteEntraideEnCours").length > 0)
-              {
-                var siteEnCours = $(".siteEntraideEnCours:first").text();
-                var siteCaff = decodeURI($("#site-caff-" + $("#idCaffEntraide").val()).attr("siteCaff"));
-                siteCaff = siteCaff.split("+");
-                siteCaff = siteCaff.join(" ");
-                $("#site-caff-" + $("#idCaffEntraide").val()).html("<del>" + siteCaff + "</del> " + siteEnCours);
-              }
-            }
-          });
-        }
-        else{
-          alert("Une erreur s'est produite, veuillez réeesayer plus tard");
-        }
-      });
+      alert("Veuillez sélectionner un site d'entraide");
     }
     else{
-      alert("Veuillez sélectionner au moins un domaine");
+      var listeDomaines = [];
+      $(".checkDomainesEntraide").each(function(){
+        if($(this).prop("checked"))
+        {
+          switch($(this).attr("id"))
+          {
+            case 'focu': listeDomaines.push("FO & CU");
+            break;
+            case 'client': listeDomaines.push("Client");
+            break;
+            case 'dissi': listeDomaines.push("Dissi");
+            break;
+            case 'coordi': listeDomaines.push("Coordi");
+            break;
+            case 'immo': listeDomaines.push("Immo");
+            break;
+            case 'fors': listeDomaines.push("FORS");
+            break;
+          }
+        }
+      });
+      if(listeDomaines.length > 0)
+      {
+        listeDomaines = JSON.stringify(listeDomaines);
+        var dateDebut = $("#dateExpiration").val().split(" - ")[0];
+        dateDebut = dateDebut.split("/");
+        dateDebut = dateDebut[2] + "-" + dateDebut[1] + "-" + dateDebut[0];
+        var dateFin = $("#dateExpiration").val().split(" - ")[1];
+        dateFin = dateFin.split("/");
+        dateFin = dateFin[2] + "-" + dateFin[1] + "-" + dateFin[0];
+
+        /*console.log("caff_id: " + $("#idCaffEntraide").val());
+        console.log("site_entraide_id: " + $("#idSiteEntraide").val());
+        console.log("liste_domaines_json: " + listeDomaines);
+        console.log("date_expiration: " + dateFin);
+        console.log("date_debut: " + dateDebut);
+        console.log("site_defaut_id: " + $("#idSiteEntraideBase").val());*/
+
+        $.post("API/entraideCaff.php", {caff_id: $("#idCaffEntraide").val(), site_entraide_id: $("#idSiteEntraide").val(), liste_domaines_json: listeDomaines, date_expiration: dateFin, date_debut: dateDebut, site_defaut_id: $("#idSiteEntraideBase").val(), taux: $("#tauxEntraide").val()}, function(data){
+          //console.log(data);
+          var reponse = JSON.parse(data);
+          if(reponse)
+          {
+            //console.log($("#siteEntraide").val());
+            $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $("#idCaffEntraide").val() + "&site=" + $("#siteEntraide").val(), function(){
+              if($(".supprEntraide").length > 0)
+              {
+                $("#btnEntraideCaff-" + $("#idCaffEntraide").val()).css("color", "orange");
+                if($(".siteEntraideEnCours").length > 0)
+                {
+                  var siteEnCours = $(".siteEntraideEnCours:first").text();
+                  var siteCaff = decodeURI($("#site-caff-" + $("#idCaffEntraide").val()).attr("siteCaff"));
+                  siteCaff = siteCaff.split("+");
+                  siteCaff = siteCaff.join(" ");
+                  $("#site-caff-" + $("#idCaffEntraide").val()).html("<del>" + siteCaff + "</del> " + siteEnCours);
+                }
+              }
+            });
+          }
+          else{
+            alert("Une erreur s'est produite, veuillez réeesayer plus tard");
+          }
+        });
+      }
+      else{
+        alert("Veuillez sélectionner au moins un domaine");
+      }
     }
     
   });

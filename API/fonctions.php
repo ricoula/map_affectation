@@ -16,6 +16,7 @@
 			$entraide->domaines = json_decode($data["domaines"]);
 			$entraide->date_debut = $data["date_debut"];
 			$entraide->site_defaut_id = $data["site_defaut_id"];
+			$entraide->taux = $data["taux"];
 			array_push($entraides, $entraide);
 		}
 		return json_encode($entraides);
@@ -963,66 +964,6 @@
 		return json_encode($nbPoi);
 	}
 	
-	/*function getAffectationAuto($idPoi, $km)
-	{
-		include("connexionBddErp.php");
-		include("connexionBdd.php");
-		
-		$caffAuto = null;
-		
-		$coefNbPoiProimite = 0.5;
-		$coefNbPoiClient = 0.8;
-		
-		$poi = json_decode(getPoiById($idPoi));
-		$listeCaffs = json_decode(nbPoiCaffByRadius($poi->ft_latitude, $poi->ft_longitude, $km));
-		foreach($listeCaffs as $caff)
-		{
-			$caff = json_decode(getCaffById($caff->caff->id));
-			
-			if($caff != null)
-			{
-				$charge = json_decode(getChargeCaff(json_encode($caff)));
-			
-				$nbPoiProximite = intval(json_decode(getNbPoiProximiteByCaffByPoi($idPoi, $caff->id, $km)));
-				
-				$nbPoiClient = intval(json_decode(getNbPoiClientByCaff($caff->id, $poi->ft_titulaire_client)));
-				
-				$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
-				$nbPoiEnRetard = 0;
-				$dateAjd = new DateTime("now");
-				foreach($listePoi as $poi)
-				{
-					$dre = new DateTime($poi->ft_oeie_dre);
-					if($dateAjd > $dre)
-					{
-						$nbPoiEnRetard++;
-					}
-				}
-				if(sizeof($listePoi) > 0)
-				{
-					$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
-				}
-				else{
-					$tauxDre = 0;
-				}
-				
-				$chargeGlobale = $charge - ($nbPoiProximite * $coefNbPoiProimite) + ($tauxDre * $caff->reactive) + ($nbPoiClient * $coefNbPoiClient);
-				
-				if($caffAuto == null)
-				{
-					$caffAuto = $caff;
-					$caffAuto->chargeGlobale = $chargeGlobale;
-				}
-				elseif($caffAuto->chargeGlobale > $chargeGlobale){
-					$caffAuto = $caff;
-					$caffAuto->chargeGlobale = $chargeGlobale;
-				}
-			}
-		}
-		
-		return json_encode($caffAuto);
-	}*/
-	
 	function getCaffById($id)
 	{
 		include("connexionBddErp.php");
@@ -1082,7 +1023,7 @@
 		$liste = array();
 		$listeIdsSites = json_decode(getListeSitesByUi($ui));
 		$listeIdsSites = implode(',', $listeIdsSites);
-		$req = $bdd->query("SELECT id, caff_id FROM cds_entraide WHERE site_entraide_id IN(".$listeIdsSites.") AND date_debut <= current_date AND date_expiration >= current_date");
+		$req = $bdd->query("SELECT id, caff_id, site_entraide_id, taux FROM cds_entraide WHERE site_entraide_id IN(".$listeIdsSites.") AND date_debut <= current_date AND date_expiration >= current_date");
 		while($data = $req->fetch())
 		{
 			$req2 = $bdd->prepare("SELECT domaines FROM cds_entraide WHERE id = ?");
@@ -1094,12 +1035,32 @@
 				{
 					if(strtoupper($dom) == strtoupper($domaine))
 					{
-						array_push($liste, $data["caff_id"]);
+						$entraide = (object) array();
+						$entraide->caff_id = $data["caff_id"];
+						$entraide->site_entraide_id = $data["site_entraide_id"];
+						$entraide->taux = $data["taux"];
+						array_push($liste, $entraide);
 					}
 				}
 			}
 		}
 		return json_encode($liste);
+	}
+
+	function getTauxCaffEntraideByCaffIdAndSiteId($caff_id, $site_id)
+	{
+		include("connexionBdd.php");
+
+		$taux = null;
+
+		$req = $bdd->prepare("SELECT taux FROM cds_entraide WHERE caff_id = ? AND site_entraide_id = ? AND date_debut <= current_date AND date_expiration >= current_date");
+		$req->execute(array($caff_id, $site_id));
+		if($data = $req->fetch())
+		{
+			$taux = $data["taux"];
+		}
+
+		return json_encode($taux);
 	}
 	
 	function getListeIdCaffEntraideExclureUi($ui)
@@ -1615,9 +1576,14 @@
 		}
 		
 		//Je récupère la liste des caffs de l'UI, afin de l'ajouter ensuite à la requête sql (c'est pour cela que je transforme cette liste en String, dont chaque valeur est séparée par une virgule. Si la liste est vide, alors le String contiendra 0, car il s'agit d'un ID affilié à aucun CAFF)
-		$listeCaffsUi = json_decode(getListeIdCaffEntraideByUiAndDomaine($poi->atr_ui, $poi->domaine));
-		if(sizeof($listeCaffsUi) > 0)
+		$listeCaffsEntraide = json_decode(getListeIdCaffEntraideByUiAndDomaine($poi->atr_ui, $poi->domaine));
+		if(sizeof($listeCaffsEntraide) > 0)
 		{
+			$listeCaffsUi = array();
+			foreach($listeCaffsEntraide as $caffEntraide)
+			{
+				array_push($listeCaffsUi, $caffEntraide->caff_id);
+			}
 			$listeCaffsUi = implode(",", $listeCaffsUi);
 		}
 		else{
@@ -1700,8 +1666,6 @@
 				$caff->name_related = $data["name_related"];
 				$caff->mobile_phone = $data["mobile_phone"];
 				$caff->work_email = $data["work_email"];
-				$caff->site = $data["site"];
-				$caff->site_id = $data["site_id"];
 				$caff->agence = $data["agence"];
 				$caff->reactive = $data["reactive"];
 				$caff->non_reactive = $data["non_reactive"];
@@ -1713,6 +1677,24 @@
 				$caff->id = $data["id"];
 				$caff->enConges = $enConges;
 				$caff->listePoiTitulaire = null;
+				//Si le caff est en entraide, alors il faut lui donner les informations de son site d'entraide, et non pas de son site de base
+				if(in_array($caff->id, explode(",", $listeCaffsUi)))
+				{
+					foreach($listeCaffsEntraide as $entraide)
+					{
+						if($entraide->caff_id == $caff->id)
+						{
+							$caff->site_id = $entraide->site_entraide_id;
+							$caff->site = json_decode(getLibelleSiteById($caff->site_id));
+							$caff->enEntraide = true;
+						}
+					}
+				}
+				else{
+					$caff->site = $data["site"];
+					$caff->site_id = $data["site_id"];
+					$caff->enEntraide = false;
+				}
 				//Je récupère le numéro du site du caff (plus ce numéro est bas, plus le site du CAFF est proche de la POI)
 				$caff->numSite = null;
 				for($i = 0; $i < sizeof($listeSites); $i++)
@@ -1722,7 +1704,6 @@
 						$caff->numSite = $i;
 					}
 				}
-
 				//Je récupère le nombre d'affectations du caff dans la journée
 				$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND (DATE_PART('day', NOW()) - DATE_PART('day', cds_affectation_date)) < 1 AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
 				$req3->execute(array($data["id"]));
@@ -1733,7 +1714,6 @@
 				else{
 					$caff->nbAffectationsJour = null;
 				}
-
 				//Je récupère le nombre d'affectations du caff dans la semaine
 				$lastMonday = date("Y-m-d",strtotime("last Monday")); //correspond à la date du dernier lundi
 				$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ? AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
@@ -1745,12 +1725,20 @@
 				else{
 					$caff->nbAffectationsSemaine = null;
 				}
-
 				//variable qui permet de savoir si ce caff a atteint la limite d'affectation dans la journée/semaine
 				$caff->limiteAtteinte = false;
 				if(!$caff->nbAffectationsSemaine < $limiteSemaine || !$caff->nbAffectationsJour < $limiteJour)
 				{
 					$caff->limiteAtteinte = true;
+				}
+				//On vérifie si ce caff est en entraide, car si oui il faudra prendre en compte son taux sur ce site
+				if(in_array($caff->id, explode(",", $listeCaffsUi)))
+				{
+					$taux = json_decode(getTauxCaffEntraideByCaffIdAndSiteId($caff->id, $caff->site_id));
+					if($taux != null)
+					{
+						$caff->charge_totale *= ( 100 / $taux );
+					}
 				}
 
 				//Je récupère la liste des POI affectées au CAFF
@@ -1793,7 +1781,7 @@
 					}
 				}
 
-				//Si le caff n'a aucune POI en lien avec le titulaire, alors on continue le traitement
+				//Si le caff n'a aucune POI en lien avec le titulaire, alors on l'ajoute à la liste des caffs de son site
 				if($caff->listePoiTitulaire == null)
 				{
 					array_push($listeCaffsBySite[$caff->numSite], $caff);
@@ -2541,14 +2529,14 @@
 			return true;
 		}
 	}
-	function entraideCaff($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut, $idSiteDefaut)
+	function entraideCaff($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut, $idSiteDefaut, $taux)
 	{
 		include("connexionBdd.php");
 
 		$reponse = false;
 		try{
-			$req = $bdd->prepare("INSERT INTO cds_entraide(caff_id, site_entraide_id, domaines, date_expiration, date_debut, site_defaut_id) VALUES(?, ?, ?, ?, ?, ?)");
-			$reponse = $req->execute(array($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut, $idSiteDefaut));
+			$req = $bdd->prepare("INSERT INTO cds_entraide(caff_id, site_entraide_id, domaines, date_expiration, date_debut, site_defaut_id, taux) VALUES(?, ?, ?, ?, ?, ?, ?)");
+			$reponse = $req->execute(array($idCaff, $idSite, $listeDomaines, $dateExpiration, $dateDebut, $idSiteDefaut, $taux));
 		}catch(Exception $e){
 			$reponse = false;
 		}

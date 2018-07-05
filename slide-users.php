@@ -79,23 +79,28 @@
                         <?php 
                         if(sizeof($caff->entraides) > 0)
                         {
-                            $entraideEnCours = null;
+                            $entraidesEnCours = array();
                             foreach($caff->entraides as $entraide)
                             {
                                 if(strtotime($entraide->date_debut) <= strtotime(date("Y-m-d")))
                                 {
-                                    $entraideEnCours = $entraide;
+                                    array_push($entraidesEnCours, $entraide);
                                 }
                             }
-                            if($entraideEnCours == null)
+                            if(sizeof($entraidesEnCours) == 0)
                             {
                                 ?>
                                 <h6 class="users-site"><span id="site-caff-<?php echo $caff->id ?>" siteCaff="<?php echo urlencode($caff->site) ?>"><?php echo $caff->site ?></span> <a style="cursor:pointer;color:orange" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
                                 <?php
                             }
                             else{
+                                $title = "";
+                                foreach($entraidesEnCours as $entraideEnCours)
+                                {
+                                    $title .= $entraideEnCours->site_entraide_libelle." (".$entraideEnCours->taux."%)"."\n";
+                                }
                                 ?>
-                                <h6 class="users-site"><span id="site-caff-<?php echo $caff->id ?>" siteCaff="<?php echo urlencode($caff->site) ?>"><del><?php echo $caff->site ?></del> <?php echo $entraideEnCours->site_entraide_libelle ?></span> <a style="cursor:pointer;color:orange" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
+                                <h6 class="users-site"><span id="site-caff-<?php echo $caff->id ?>" siteCaff="<?php echo urlencode($caff->site) ?>"><del><?php echo $caff->site ?></del> <label class="label label-info">Entraide <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="<?php echo $title ?>"  ></span></label></span> <a style="cursor:pointer;color:orange" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
                                 <?php
                             }
                         }
