@@ -8,7 +8,7 @@
 	}*/
 	
 	echo getAffectationAuto($_POST["poi_id"], $_POST["km"], $_POST["coef_poi_proxi"], $_POST["coef_charge_reactive"], $_POST["coef_charge"], $_POST["limite_jour"], $_POST["limite_semaine"], $_POST["limite_max_calcul"], $_POST["nb_jours_avant_conges_max"], $_POST["nb_jours_conges_max"]);//, $_POST["liste_caffs_simulation"]);
-	//echo getAffectationAuto(186316, 20, 1, 1, 0.1, 5, 15, 30, 5, 5);
+	//echo getAffectationAuto(186677, 20, 1, 1, 0.1, 5, 15, 30, 5, 5); //LYO805508
 	
 	/*$listeCaffsSimulation = array();
 	

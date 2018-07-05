@@ -1805,11 +1805,11 @@
 		function cmpEtat1($a, $b)
 		{
 			//On affecte à celui qui a le plus de POI à l'état 1 en lien avec le titulaire
-			if(sizeof($a->$caff->listePoiTitulaire->etat1) > sizeof($b->$caff->listePoiTitulaire->etat1))
+			if(sizeof($a->listePoiTitulaire->etat1) > sizeof($b->listePoiTitulaire->etat1))
 			{
 				return -1;
 			}
-			elseif(sizeof($a->$caff->listePoiTitulaire->etat1) < sizeof($b->$caff->listePoiTitulaire->etat1))
+			elseif(sizeof($a->listePoiTitulaire->etat1) < sizeof($b->listePoiTitulaire->etat1))
 			{
 				return 1;
 			}
@@ -2066,6 +2066,22 @@
 			$autreCaff->nbAffectationsSemaine = $ceCaff->nbAffectationsSemaine;
 			$autreCaff->enConges = $ceCaff->enConges;
 			$autreCaff->site = $ceCaff->site;
+			$autreCaff->nbPoiTitulaireEtat1 = 0;
+			$autreCaff->nbPoiTitulaireNotEtat1 = 0;
+			$autreCaff->numSite = $ceCaff->numSite;
+
+			if($ceCaff->listePoiTitulaire != null)
+			{
+				if(sizeof($ceCaff->listePoiTitulaire->etat1))
+				{
+					$autreCaff->nbPoiTitulaireEtat1 = sizeof($ceCaff->listePoiTitulaire->etat1);
+				}
+				if(sizeof($ceCaff->listePoiTitulaire->notEtat1))
+				{
+					$autreCaff->nbPoiTitulaireNotEtat1 = sizeof($ceCaff->listePoiTitulaire->notEtat1);
+				}
+			}
+
 			array_push($autreListe, $autreCaff);
 		}
 
