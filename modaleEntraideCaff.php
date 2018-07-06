@@ -71,8 +71,33 @@
     </div>
     <div class="form-group">
           <label>Taux</label>
-          <input class="form-control" type="number" name="tauxEntraide" id="tauxEntraide" value="100" min="1" max="100" placeholder="Min: 1, max: 100" />
+          <input class="form-control taux" type="number" name="tauxEntraide" id="tauxEntraide" value="100" min="1" max="100" placeholder="Min: 1, max: 100" />
     </div>
+    <?php
+    if(sizeof($listeEntraides) > 0)
+    {
+      ?>
+      <div>
+          <label class="label label-default">Autres taux</label>
+          <small class="form-text text-muted">Attention: la somme des taux doit être égale à 100</small>
+      <?php
+      foreach($listeEntraides as $entraide)
+      {
+        ?>
+          <div class="form-group">
+            <label><?php echo $entraide->site_entraide_libelle ?></label>
+            <input class="form-control taux autreTaux" type="number" id="tauxEntraide-<?php echo $entraide->site_entraide_id ?>" name="tauxEntraide-<?php echo $entraide->site_entraide_id ?>" value="<?php echo $entraide->taux ?>" min="1" max="100" placeholder="Min: 1, max: 100" />
+          </div>
+        <?php
+      }
+      ?>
+      </div>
+      <?php
+    }
+    ?>
+    <hr/>
+    
+    
   </form>
   
   <div>
@@ -119,7 +144,7 @@
                       <?php echo $entraideEnCours->date_expiration ?>
                     </td>
                     <td><?php echo $domaines ?></td>
-                    <td><?php echo $entraideEnCours->taux.'%' ?></td>
+                    <td class="entraideTaux" ><?php echo $entraideEnCours->taux.'%' ?></td>
                     <td style="text-align:center">
                       <a style="cursor:pointer" class="glyphicon glyphicon-trash supprEntraide entraideEnCours" entraideId="<?php echo $entraideEnCours->id ?>" ></a>
                     </td>
@@ -354,7 +379,7 @@ var nonValable = false;
   }
   });*/
 
-  $("#tauxEntraide").change(function(){
+  $(".taux").change(function(){
     if(isNaN($(this).val()))
     {
       $(this).val("100");
@@ -411,72 +436,94 @@ var nonValable = false;
       alert("Veuillez sélectionner un site d'entraide");
     }
     else{
-      var listeDomaines = [];
-      $(".checkDomainesEntraide").each(function(){
-        if($(this).prop("checked"))
-        {
-          switch($(this).attr("id"))
-          {
-            case 'focu': listeDomaines.push("FO & CU");
-            break;
-            case 'client': listeDomaines.push("Client");
-            break;
-            case 'dissi': listeDomaines.push("Dissi");
-            break;
-            case 'coordi': listeDomaines.push("Coordi");
-            break;
-            case 'immo': listeDomaines.push("Immo");
-            break;
-            case 'fors': listeDomaines.push("FORS");
-            break;
-          }
-        }
+      var total = 0;
+      $(".taux").each(function(i, elt){
+        total += parseInt($(elt).val());
       });
-      if(listeDomaines.length > 0)
+      if(total != 100)
       {
-        listeDomaines = JSON.stringify(listeDomaines);
-        var dateDebut = $("#dateExpiration").val().split(" - ")[0];
-        dateDebut = dateDebut.split("/");
-        dateDebut = dateDebut[2] + "-" + dateDebut[1] + "-" + dateDebut[0];
-        var dateFin = $("#dateExpiration").val().split(" - ")[1];
-        dateFin = dateFin.split("/");
-        dateFin = dateFin[2] + "-" + dateFin[1] + "-" + dateFin[0];
-
-        /*console.log("caff_id: " + $("#idCaffEntraide").val());
-        console.log("site_entraide_id: " + $("#idSiteEntraide").val());
-        console.log("liste_domaines_json: " + listeDomaines);
-        console.log("date_expiration: " + dateFin);
-        console.log("date_debut: " + dateDebut);
-        console.log("site_defaut_id: " + $("#idSiteEntraideBase").val());*/
-
-        $.post("API/entraideCaff.php", {caff_id: $("#idCaffEntraide").val(), site_entraide_id: $("#idSiteEntraide").val(), liste_domaines_json: listeDomaines, date_expiration: dateFin, date_debut: dateDebut, site_defaut_id: $("#idSiteEntraideBase").val(), taux: $("#tauxEntraide").val()}, function(data){
-          //console.log(data);
-          var reponse = JSON.parse(data);
-          if(reponse)
-          {
-            //console.log($("#siteEntraide").val());
-            $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $("#idCaffEntraide").val() + "&site=" + $("#siteEntraide").val(), function(){
-              if($(".supprEntraide").length > 0)
-              {
-                $("#btnEntraideCaff-" + $("#idCaffEntraide").val()).css("color", "orange");
-                if($(".siteEntraideEnCours").length > 0)
-                {
-                  var siteEnCours = $(".siteEntraideEnCours:first").text();
-                  var siteCaff = decodeURI($("#site-caff-" + $("#idCaffEntraide").val()).attr("siteCaff"));
-                  siteCaff = siteCaff.split("+");
-                  siteCaff = siteCaff.join(" ");
-                  $("#site-caff-" + $("#idCaffEntraide").val()).html("<del>" + siteCaff + "</del> " + siteEnCours);
-                }
-              }
-            });
-          }
-          else{
-            alert("Une erreur s'est produite, veuillez réeesayer plus tard");
-          }
-        });
+        alert("Le total des taux des sites d'entraide n'est pas égal à 100. Merci de les vérifier");
       }
       else{
-        alert("Veuillez sélectionner au moins un domaine");
+        var listeDomaines = [];
+        $(".checkDomainesEntraide").each(function(){
+          if($(this).prop("checked"))
+          {
+            switch($(this).attr("id"))
+            {
+              case 'focu': listeDomaines.push("FO & CU");
+              break;
+              case 'client': listeDomaines.push("Client");
+              break;
+              case 'dissi': listeDomaines.push("Dissi");
+              break;
+              case 'coordi': listeDomaines.push("Coordi");
+              break;
+              case 'immo': listeDomaines.push("Immo");
+              break;
+              case 'fors': listeDomaines.push("FORS");
+              break;
+            }
+          }
+        });
+        if(listeDomaines.length > 0)
+        {
+          listeDomaines = JSON.stringify(listeDomaines);
+          var dateDebut = $("#dateExpiration").val().split(" - ")[0];
+          dateDebut = dateDebut.split("/");
+          dateDebut = dateDebut[2] + "-" + dateDebut[1] + "-" + dateDebut[0];
+          var dateFin = $("#dateExpiration").val().split(" - ")[1];
+          dateFin = dateFin.split("/");
+          dateFin = dateFin[2] + "-" + dateFin[1] + "-" + dateFin[0];
+
+          /*console.log("caff_id: " + $("#idCaffEntraide").val());
+          console.log("site_entraide_id: " + $("#idSiteEntraide").val());
+          console.log("liste_domaines_json: " + listeDomaines);
+          console.log("date_expiration: " + dateFin);
+          console.log("date_debut: " + dateDebut);
+          console.log("site_defaut_id: " + $("#idSiteEntraideBase").val());*/
+
+          $.post("API/entraideCaff.php", {caff_id: $("#idCaffEntraide").val(), site_entraide_id: $("#idSiteEntraide").val(), liste_domaines_json: listeDomaines, date_expiration: dateFin, date_debut: dateDebut, site_defaut_id: $("#idSiteEntraideBase").val(), taux: $("#tauxEntraide").val()}, function(data){
+            var reponse = JSON.parse(data);
+            if(reponse)
+            {
+              $("#divModaleEntraideCaff").load("modaleEntraideCaff.php?idCaff=" + $("#idCaffEntraide").val() + "&site=" + $("#siteEntraide").val(), function(){
+                if($(".supprEntraide").length > 0)
+                {
+                  $("#btnEntraideCaff-" + $("#idCaffEntraide").val()).css("color", "orange");
+                  if($(".siteEntraideEnCours").length > 0)
+                  {
+                    var title = "";
+                    $(".siteEntraideEnCours").each(function(i, elt){
+                      var taux = "";
+                      $(".entraideTaux").each(function(y, elmt){
+                        if(y == i)
+                        {
+                          taux = " (" + $.trim($(elmt).text()) + ")";
+                        }
+                      });
+                      title += $.trim($(elt).text()) + taux + "\n";
+                    });
+
+                    //var siteEnCours = $(".siteEntraideEnCours:first").text();
+                    var siteEnCours =  '<label class="label label-info">Entraide <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + title + '"  ></span></label>';
+                    var siteCaff = decodeURI($("#site-caff-" + $("#idCaffEntraide").val()).attr("siteCaff"));
+                    siteCaff = siteCaff.split("+");
+                    siteCaff = siteCaff.join(" ");
+                    $("#site-caff-" + $("#idCaffEntraide").val()).html("<del>" + siteCaff + "</del> " + siteEnCours);
+                    $('[data-toggle="tooltip"]').tooltip(); 
+                  }
+                }
+              });
+            }
+            else{
+              alert("Une erreur s'est produite, veuillez réeesayer plus tard");
+            }
+          });
+        }
+        else{
+          alert("Veuillez sélectionner au moins un domaine");
+        }
       }
     }
     
