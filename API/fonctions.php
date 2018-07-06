@@ -1062,6 +1062,18 @@
 
 		return json_encode($taux);
 	}
+
+	function updateTauxCaffEntraideByCaffIdAndSiteId($caff_id, $site_id, $taux)
+	{
+		include("connexionBdd.php");
+		
+		$reponse = false;
+
+		$req = $bdd->prepare("UPDATE cds_entraide SET taux = ? WHERE caff_id = ? AND site_entraide_id = ? AND date_debut <= current_date AND date_expiration >= current_date");
+		$reponse = $req->execute(array($taux, $caff_id, $site_id));
+
+		return json_encode($reponse);
+	}
 	
 	function getListeIdCaffEntraideExclureUi($ui)
 	{

@@ -2,8 +2,10 @@
   include("API/fonctions.php");
   $listeSites = json_decode(getSites());
   $listeEntraides = json_decode(getProchainesEntraidesCaff($_GET["idCaff"]));
+  $listeLibelleEntraides = array();
   foreach($listeEntraides as $entraide)
   {
+    array_push($listeLibelleEntraides, strtoupper($entraide->site_entraide_libelle));
     ?>
     <input type="hidden" class="uneEntraide" dateDeb="<?php echo $entraide->date_debut ?>" dateFin="<?php echo $entraide->date_expiration ?>" />
     <?php
@@ -29,7 +31,7 @@
         <?php
         foreach($listeSites as $site)
         {
-          if(strtoupper($siteBase) == strtoupper($site->libelle))
+          if( (strtoupper($siteBase) == strtoupper($site->libelle) && sizeof($listeLibelleEntraides) == 0) || in_array(strtoupper($site->libelle), $listeLibelleEntraides))
           {
             ?>
             <option disabled value="<?php echo $site->id ?>"><?php echo $site->libelle ?></option>
@@ -410,9 +412,37 @@ var nonValable = false;
        elt.closest("tr").hide();
        if(elt.hasClass("entraideEnCours"))
        {
-         $("#divTableEntraideEnCours").hide();
+        if($(".siteEntraideEnCours").length > 1)
+        {
+          var title = "";
+          var siteSupprime = $.trim($(elt).closest("tr").find("td:first").text());
+          $(".siteEntraideEnCours").each(function(i, elt){
+            if($.trim($(elt).text()) != siteSupprime)
+            {
+              var taux = "";
+              $(".entraideTaux").each(function(y, elmt){
+                if(y == i)
+                {
+                  taux = " (" + $.trim($(elmt).text()) + ")";
+                }
+              });
+              title += $.trim($(elt).text()) + taux + "\n";
+            }
+          });
+
+          //var siteEnCours = $(".siteEntraideEnCours:first").text();
+          var siteEnCours =  '<label class="label label-info">Entraide <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + title + '"  ></span></label>';
+          var siteCaff = decodeURI($("#site-caff-" + $("#idCaffEntraide").val()).attr("siteCaff"));
+          siteCaff = siteCaff.split("+");
+          siteCaff = siteCaff.join(" ");
+          $("#site-caff-" + $("#idCaffEntraide").val()).html("<del>" + siteCaff + "</del> " + siteEnCours);
+          $('[data-toggle="tooltip"]').tooltip(); 
+        }
+        else{
+          $("#divTableEntraideEnCours").hide();
          var siteCaff = decodeURI($("#site-caff-" + $("#idCaffEntraide").val()).children("del").text());
          $("#site-caff-" + $("#idCaffEntraide").val()).html(siteCaff);
+        }
        }
        if($(".entraidesAVenir").length == 0)
        {
@@ -482,6 +512,12 @@ var nonValable = false;
           console.log("date_expiration: " + dateFin);
           console.log("date_debut: " + dateDebut);
           console.log("site_defaut_id: " + $("#idSiteEntraideBase").val());*/
+          $(".autreTaux").each(function(i, elt){
+            var idSite = elt.getAttribute('id').split("-")[1];
+            var taux = $(elt).val();
+          
+            $.post("API/updateTauxCaffEntraideByCaffIdAndSiteId.php", {caff_id: $("#idCaffEntraide").val(), site_id: idSite, taux: taux});
+          });
 
           $.post("API/entraideCaff.php", {caff_id: $("#idCaffEntraide").val(), site_entraide_id: $("#idSiteEntraide").val(), liste_domaines_json: listeDomaines, date_expiration: dateFin, date_debut: dateDebut, site_defaut_id: $("#idSiteEntraideBase").val(), taux: $("#tauxEntraide").val()}, function(data){
             var reponse = JSON.parse(data);
