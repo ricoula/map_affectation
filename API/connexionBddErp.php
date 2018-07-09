@@ -1,5 +1,5 @@
 <?php
-	//@session_start();
+	@session_start();
 	
 	try{
 		if(!isset($_SESSION['simu']) || $_SESSION['simu'] == false){
