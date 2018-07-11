@@ -2612,4 +2612,78 @@
 		}
 		return json_encode($reponse);
 	}
+	
+	function getInfosAffecterA($poi) //poi en JSON
+	{
+		include("connexionBdd.php");
+		
+		$listeSites = array();
+		$req = $bdd->query("SELECT site, erp_site_id, site_longitude, site_latitude, ft_zone FROM cds_transco_ui_site ORDER BY site");
+		while($data = $req->fetch())
+		{
+			$site = (object) array();
+			$site->libelle = $data["site"];
+			$site->id = $data["erp_site_id"];
+			$site->ui = $data["ft_zone"];
+			$site->longitude = $data["site_longitude"];
+			$site->latitude = $data["site_latitude"];
+			$site->listeCaffs = json_decode(getCaffsBySite($site->libelle));
+			
+			array_push($listeSites, $site);
+		}
+		
+		$poi = json_decode($poi);
+		$origins = $poi->ft_longitude.",".$poi->ft_latitude;
+		$destinations = array();
+		foreach($listeSites as $site)
+		{
+			array_push($destinations, $site->longitude . "," . $site->latitude);
+		}
+		$destinations = implode("|", $destinations);
+
+		$arrContextOptions=array(
+			"ssl"=>array(
+				"verify_peer"=>false,
+				"verify_peer_name"=>false,
+			),
+		);
+		
+		$key = "AIzaSyDKM2Ymk3PwN3uZVowTr7gLvyNVmROOD0E";
+		$url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=".$origins."&destinations=".$destinations."&key=".$key;
+		$listeDistances = json_decode(file_get_contents($url, false, stream_context_create($arrContextOptions)));
+		$eloignement = null;
+		$nb = 0;
+		$i = 0;
+		foreach($listeDistances->rows[0]->elements as $distance)
+		{
+			if($eloignement == null)
+			{
+				$eloignement = $distance->distance->value;
+				$listeSites[$nb]->duree = $distance->duration->text;
+				$listeSites[$nb]->distance = $distance->distance->text;
+			}
+			else{
+				if($distance->distance->value < $eloignement)
+				{
+					$eloignement = $distance->distance->value;
+					$nb = $i;
+					$listeSites[$nb]->duree = $distance->duration->text;
+					$listeSites[$nb]->distance = $distance->distance->text;
+				}
+			}
+			
+			$i++;
+		}
+		$listeSites[$nb]->closest = true;
+		
+		for($i = 0; $i < sizeof($listeSites); $i++)
+		{
+			if($i != $nb)
+			{
+				$listeSites[$i]->closest = false;
+			}
+		}
+		
+		return json_encode($listeSites);
+	}
 ?>

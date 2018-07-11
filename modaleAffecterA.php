@@ -1,10 +1,35 @@
 <?php
     include("API/fonctions.php");
     $poi = json_decode(getPoiById($_GET["poi_id"]));
-    $closestSite = json_decode(getClosestSite($poi->id));
-    $sitesUi = json_decode(getSitesByUi($poi->atr_ui));
-    $caffs = json_decode(getInfosCaff());
-    $tabPoiLien = json_decode(getPoiLienByTitulaire(json_encode($poi)));
+    $poi_json = json_encode($poi);
+    $listeSites = json_decode(getInfosAffecterA($poi_json));
+    $sitesUi = array();
+    $caffs = array();
+    foreach($listeSites as $site)
+    {
+      if($site->closest)
+      {
+        $closestSite = $site;
+      }
+
+      if($site->ui == $poi->atr_ui)
+      {
+        array_push($sitesUi, $site);
+      }
+
+      foreach($site->listeCaffs as $caff)
+      {
+        array_push($caffs, $caff);
+      }
+    }
+
+    function cmp($a, $b)
+    {
+      return strcmp($a->name_related, $b->name_related);
+    }
+    usort($caffs, "cmp");
+
+    $tabPoiLien = json_decode(getPoiLienByTitulaire($poi_json));
     if(sizeof($tabPoiLien) > 0)
     {
         $tab = array();
@@ -19,7 +44,7 @@
       $listePoiLien = "";
     }
 ?>
-<input type="hidden" id="poiModaleAffecterA" name="poiModaleAffecterA" value="<?php echo urlencode(json_encode($poi)) ?>" />
+<input type="hidden" id="poiModaleAffecterA" name="poiModaleAffecterA" value="<?php echo urlencode($poi_json) ?>" />
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal">&times;</button>
   <h1>Affectation de la POI: <?php echo $poi->ft_numero_oeie.$listePoiLien ?></h1>
@@ -29,13 +54,12 @@
     <select type="search" id="searchCaff" class="form-control" >
       <option>Rechercher un caff</option>
       <?php
-      $listeSites = json_decode(getSites());
       foreach($listeSites as $site)
       {
         ?>
         <optgroup label="<?php echo $site->libelle ?>">
           <?php
-          $listeCaffs = json_decode(getCaffsBySite($site->libelle));
+          $listeCaffs = $site->listeCaffs;
           foreach($listeCaffs as $caff)
           {
             ?>
@@ -61,14 +85,11 @@
       <h3 style="text-align: center"><?php echo $closestSite->libelle ?></h3>
       <div class="list-group">
         <?php
-        foreach($caffs as $caff)
+        foreach($closestSite->listeCaffs as $caff)
         {
-          if($caff->site == $closestSite->libelle)
-          {
             ?>
             <a href="#" id="caffClosestSite_<?php echo $caff->id ?>" class="list-group-item caffAffectation"><?php echo $caff->name_related ?><input type="hidden" class="caffjson" value="<?php echo urlencode(json_encode($caff)) ?>" /></a>
             <?php
-          }
         }
         ?>
       </div>
@@ -92,14 +113,11 @@
               <div class="panel-body">
               <div class="list-group">
               <?php
-              foreach($caffs as $caff)
+              foreach($site->listeCaffs as $caff)
               {
-                if($caff->site == $site->libelle)
-                {
-                  ?>
-                  <a href="#" class="list-group-item caffAffectation" id="caffSiteUi_<?php echo $caff->id ?>"><?php echo $caff->name_related ?><input type="hidden" class="caffjson" value="<?php echo urlencode(json_encode($caff)) ?>" /></a>
-                  <?php
-                }
+                ?>
+                <a href="#" class="list-group-item caffAffectation" id="caffSiteUi_<?php echo $caff->id ?>"><?php echo $caff->name_related ?><input type="hidden" class="caffjson" value="<?php echo urlencode(json_encode($caff)) ?>" /></a>
+                <?php
               }
               ?>
               </div>
@@ -146,39 +164,5 @@
       });
     }
   });
-
-  /*objetAC = [];
-  $.post("API/getSites.php", function(data){
-    var sites = JSON.parse(data);
-    var i = 0;
-    sites.forEach(function(site){
-      i++;
-      $.post("API/getCaffsBySite.php", {site: site}, function(data2){
-        var caffs = JSON.parse(data2);
-        var listeNomsCaffs = [];
-        caffs.forEach(function(caff){
-          listeNomsCaffs.push(caff.name_related);
-        });
-        objetAC[site] = listeNomsCaffs;
-      });
-    });
-  });*/
-  /*$.post("API/getInfosCaff.php", function(data){
-    var caffs = JSON.parse(data);
-    var options = {
-    data: caffs,
-    getValue: "name_related",
-    list: {
-      onChooseEvent: function() {
-      var caff = encodeURI(JSON.stringify($("#searchCaff").getSelectedItemData()));
-      $("#divInfosCaffAffectation").load("modaleInfosCaffAffectation.php?caff=" + caff, function(){
-          $('#modaleInfosCaffAffectation').modal('show');
-      });
-		}	
-	}
-};
-
-$("#searchCaff").easyAutocomplete(options);
-  });*/
 </script>
 
