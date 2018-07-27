@@ -1,4 +1,52 @@
 <html>
+    <head>
+        <style>
+            .material-switch > input[type="checkbox"] {
+                display: none;   
+            }
+
+            .material-switch > label {
+                cursor: pointer;
+                height: 0px;
+                position: relative; 
+                width: 40px;  
+            }
+
+            .material-switch > label::before {
+                background: rgb(0, 0, 0);
+                box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.5);
+                border-radius: 8px;
+                content: '';
+                height: 16px;
+                margin-top: -8px;
+                position:absolute;
+                opacity: 0.3;
+                transition: all 0.4s ease-in-out;
+                width: 40px;
+            }
+            .material-switch > label::after {
+                background: rgb(255, 255, 255);
+                border-radius: 16px;
+                box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+                content: '';
+                height: 24px;
+                left: -4px;
+                margin-top: -8px;
+                position: absolute;
+                top: -4px;
+                transition: all 0.3s ease-in-out;
+                width: 24px;
+            }
+            .material-switch > input[type="checkbox"]:checked + label::before {
+                background: inherit;
+                opacity: 0.5;
+            }
+            .material-switch > input[type="checkbox"]:checked + label::after {
+                background: inherit;
+                left: 20px;
+            }
+        </style>
+    </head>
     <body>
     <?php
     include("API/fonctions.php");
@@ -21,6 +69,7 @@
     <?php
         foreach($poiNa as $poi)
         {
+
             ?>
             <div id="cardBox-<?php echo $poi->id ?>" class="card-box well cardBox-<?php echo $poi->atr_ui ?>">
                 <input type="hidden" class="longitude" value="<?php echo $poi->ft_longitude ?>" />
@@ -30,6 +79,14 @@
                     <h4 class="card-title"><?php echo $poi->ft_numero_oeie ?><span class="label label-primary pull-right"><?php echo $poi->domaine ?></span></h4>
                     <h6 class="card-subtitle mb-2 text-muted">DRE: <span><?php echo $poi->ft_oeie_dre ?></span></h6>
                     <h6 class="card-subtitle mb-2 text-muted">Commune: <span><?php echo $poi->ft_libelle_commune ?></span></h6>
+                    <hr/>
+                    <div>
+                        Valid. Affect.
+                        <div class="material-switch pull-right">
+                            <input id="validAffect-<?php echo $poi->id ?>" name="validAffect-<?php echo $poi->id ?>" type="checkbox"/>
+                            <label for="validAffect-<?php echo $poi->id ?>" class="label-success"></label>
+                        </div>
+                    </div>
                 </div>
             </div>
             <?php

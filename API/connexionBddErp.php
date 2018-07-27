@@ -1,6 +1,6 @@
 <?php
 	@session_start();
-	
+	session_write_close();
 	try{
 		if(!isset($_SESSION['simu']) || $_SESSION['simu'] == false){
 			$bddErp = new PDO('pgsql:host=192.168.30.240;dbname=ambigroup_prod8', 'admambigroup', '13jkgaUM8Um');

@@ -91,7 +91,14 @@
             </div>
           </div>
         </div>
-       
+       <div>
+          <button data-toggle="modal" href="#modalPoiAffectees" class="btn btn-info">POI affectées</button>
+       </div>
+       <br/>
+       <div>
+          <button class="btn btn-info">POI entrantes</button>
+       </div>
+       <br/>
        
         <button id="simu" class="btn btn-primary"><?php if($_SESSION['simu'] == true){echo "Passer en Production";}else{echo "Passer en Simulation";} ?></button></br></br>
         <?php if($_SESSION['simu'] == true){
@@ -408,6 +415,35 @@
       </div>
     </div>
 
+    <div id="modalPoiAffectees" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">POI Affectées</h4>
+          </div>
+          <div class="modal-body">
+            <form class="form">
+              <div class="form-group">
+                <label>Date: </label>
+                <input type="text" name="datePoiAffectees" id="datePoiAffectees" class="form-control" />
+              </div>
+              <button class="btn btn-success" id="validationDatePoiAffectees">Valider</button>         
+            </form>
+            <br/>
+            <div id="divTablePoiAffectees">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   <?php include("footer.php") ?>
   </body>
   <script>
@@ -416,6 +452,50 @@
       
       document.location.reload();
     })
-  })
+  });
+
+  $("#datePoiAffectees").daterangepicker({locale: {format: 'DD/MM/YYYY'}});
+
+  $("#validationDatePoiAffectees").click(function(e){
+    e.preventDefault();
+
+    var dateDebut = $("#datePoiAffectees").val().split(" - ")[0].split("/");
+    dateDebut = dateDebut[2] + "-" + dateDebut[1] + "-" + dateDebut[0] + " 00:00:00";
+    var dateFin = $("#datePoiAffectees").val().split(" - ")[1].split("/");
+    dateFin = dateFin[2] + "-" + dateFin[1] + "-" + dateFin[0] + " 23:59:59";
+
+    $.post("API/getPoiAffecteByDate.php", {"date_debut": dateDebut, "date_fin": dateFin}, function(data){
+      var listePoi = JSON.parse(data);
+      
+      var tableString = "<table id='tablePoiAffectees' class='table table-striped table-bordered table-condensed'><tr><th>POI</th><th>CAFF affecté</th><th>Domaine</th><th>Sous-Justif</th><th>Date d'affectation</th</tr>";
+      listePoi.forEach(function(poi){
+        tableString += "<tr>";
+        tableString += "<td>" + poi.ft_numero_oeie + "</td>";
+        tableString += "<td>" + poi.caffName + "</td>";
+        tableString += "<td>" + poi.domaine + "</td>";
+        tableString += "<td>" + poi.ft_sous_justification_oeie + "</td>";
+        tableString += "<td>" + poi.dateAffectation + "</td>";
+        tableString += "</tr>";
+      });
+      tableString += "</table><br/>";
+      tableString += "<button class='btn btn-danger' id='btnExportExcel'>Export Excel</button>";
+      $("#divTablePoiAffectees").html(tableString);
+      $("#btnExportExcel").click(function(){
+        $("#tablePoiAffectees").tableExport();
+        TableExport(document.getElementById("tablePoiAffectees"), {
+            headers: true,                              // (Boolean), display table headers (th or td elements) in the <thead>, (default: true)
+            footers: true,                              // (Boolean), display table footers (th or td elements) in the <tfoot>, (default: false)
+            formats: ['xlsx'],                          // (String[]), filetype(s) for the export, (default: ['xls', 'csv', 'txt'])
+            filename: 'id',                             // (id, String), filename for the downloaded file, (default: 'id')
+            bootstrap: false,                           // (Boolean), style buttons using bootstrap, (default: true)
+            exportButtons: true,                        // (Boolean), automatically generate the built-in export buttons for each of the specified formats (default: true)
+            position: 'bottom',                         // (top, bottom), position of the caption element relative to table, (default: 'bottom')
+            ignoreRows: null,                           // (Number, Number[]), row indices to exclude from the exported file(s) (default: null)
+            ignoreCols: null,                           // (Number, Number[]), column indices to exclude from the exported file(s) (default: null)
+            trimWhitespace: true                        // (Boolean), remove all leading/trailing newlines, spaces, and tabs from cell text in the exported file(s) (default: false)
+        });
+      });
+    });
+  });
   </script>
 </html>

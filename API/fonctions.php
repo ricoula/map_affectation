@@ -1,4 +1,5 @@
 <?php
+
 	function getProchainesEntraidesCaff($idCaff)
 	{
 		include("connexionBdd.php");
@@ -52,7 +53,7 @@
 		
 		$listePoi = array();
 		
-		$req = $bddErp->query("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.\"ft_numero_demande_42C\" numero_demande, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
+		$req = $bddErp->query("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.\"ft_numero_demande_42C\" numero_demande, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date, ag_poi.is_reactive from ag_poi
 		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
 		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1'".$listePoiAffect);
@@ -76,12 +77,79 @@
 			$poi->ft_date_limite_realisation = $data["ft_date_limite_realisation"];
 			$poi->create_date = $data["create_date"];
 			$poi->id = $data["id"];
-			if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
+			if($data["is_reactive"] != null)
 			{
-				$poi->reactive = true;
+				$poi->reactive = $data["is_reactive"];
 			}
 			else{
-				$poi->reactive = false;
+				if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
+				{
+					$poi->reactive = true;
+				}
+				else{
+					$poi->reactive = false;
+				}
+			}
+			
+			array_push($listePoi, $poi);
+		}
+		
+		return json_encode($listePoi);
+	}
+	
+	function getPoiNAATR()
+	{
+		include("connexionBddErp.php");
+		
+		$listePoiAffect = json_decode(getPoiAffect());
+		if(sizeof($listePoiAffect) > 0)
+		{
+			$listePoiAffect = implode(",", $listePoiAffect);
+			$listePoiAffect = " AND ag_poi.id NOT IN(".$listePoiAffect.")";
+		}
+		else{
+			$listePoiAffect = "";
+		}
+		
+		
+		$listePoi = array();
+		
+		$req = $bddErp->query("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.\"ft_numero_demande_42C\" numero_demande, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date, ag_poi.is_reactive from ag_poi
+		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
+		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
+		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1'".$listePoiAffect." AND ag_poi.mail_affectation = TRUE");
+		
+		while($data = $req->fetch())
+		{
+			$poi = (object) array();
+			$poi->atr_ui = $data["atr_ui"];
+			$poi->ft_numero_oeie = $data["ft_numero_oeie"];
+			$poi->domaine = $data["domaine"];
+			$poi->ft_titulaire_client = $data["numero_demande"];
+			$poi->ft_libelle_commune = $data["ft_libelle_commune"];
+			$poi->ft_libelle_de_voie = $data["ft_libelle_de_voie"];
+			$poi->ft_pg = $data["ft_pg"];
+			$poi->ft_sous_justification_oeie = $data["ft_sous_justification_oeie"];
+			$poi->ft_oeie_dre = $data["ft_oeie_dre"];
+			$poi->ft_latitude = $data["ft_latitude"];
+			$poi->insee_code = $data["insee_code"];
+			$poi->ft_longitude = $data["ft_longitude"];
+			$poi->ft_libelle_affaire = $data["ft_libelle_affaire"];
+			$poi->ft_date_limite_realisation = $data["ft_date_limite_realisation"];
+			$poi->create_date = $data["create_date"];
+			$poi->id = $data["id"];
+			if($data["is_reactive"] != null)
+			{
+				$poi->reactive = $data["is_reactive"];
+			}
+			else{
+				if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
+				{
+					$poi->reactive = true;
+				}
+				else{
+					$poi->reactive = false;
+				}
 			}
 			
 			array_push($listePoi, $poi);
@@ -142,8 +210,8 @@
 		(
 		select t2.ag_coeff_traitement, t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name as agence, sum(t2.reactive) as reactive, sum(t2.non_reactive) as non_reactive from (
 		 
-		select t1.ag_coeff_traitement, t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, case when account_analytic_account.name in ('Client', 'FO & CU') then count (ag_poi.id)
-		end as reactive , case when account_analytic_account.name not in ('Client', 'FO & CU') then count (ag_poi.id) end as non_reactive
+		select t1.ag_coeff_traitement, t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, ag_poi.is_reactive, case when (account_analytic_account.name in ('Client', 'FO & CU') or ag_poi.is_reactive = True) then count (ag_poi.id)
+		end as reactive , case when (account_analytic_account.name not in ('Client', 'FO & CU') or ag_poi.is_reactive = False) then count (ag_poi.id) end as non_reactive
 		from ag_poi
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id  
 		full join
@@ -153,8 +221,8 @@
 		full join ag_agence on hr_employee.ag_agence_id = ag_agence.id
 		full join hr_job on hr_employee.job_id = hr_job.id
 		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
-		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, t1.ag_coeff_traitement) t2
-		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name, t2.ag_coeff_traitement ) t3
+		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, t1.ag_coeff_traitement, ag_poi.is_reactive) t2
+		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name, t2.ag_coeff_traitement) t3
 		where name_related is not null ORDER BY name_related");
 		while($data = $req->fetch())
 		{
@@ -196,8 +264,8 @@
 		(
 		select t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name as agence, sum(t2.reactive) as reactive, sum(t2.non_reactive) as non_reactive from (
 		 
-		select t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, case when account_analytic_account.name in ('Client', 'FO & CU') then count (ag_poi.id)
-		end as reactive , case when account_analytic_account.name not in ('Client', 'FO & CU') then count (ag_poi.id) end as non_reactive
+		select t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, ag_poi.is_reactive, case when (account_analytic_account.name in ('Client', 'FO & CU') or ag_poi.is_reactive = True) then count (ag_poi.id)
+		end as reactive , case when (account_analytic_account.name not in ('Client', 'FO & CU') or ag_poi.is_reactive = False) then count (ag_poi.id) end as non_reactive
 		from ag_poi
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id  
 		full join
@@ -207,8 +275,8 @@
 		full join ag_agence on hr_employee.ag_agence_id = ag_agence.id
 		full join hr_job on hr_employee.job_id = hr_job.id
 		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
-		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name) t2
-		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name ) t3
+		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, ag_poi.is_reactive) t2
+		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name) t3
 		where name_related is not null AND site = ?");
 		$req->execute(array($site));
 		while($data = $req->fetch())
@@ -245,6 +313,24 @@
 		return json_encode($listePoi);
 	}
 	
+	function getPoiAffecteByDate($dateDebut, $dateFin)
+	{
+		include("connexionBdd.php");
+		
+		$listePoi = array();
+		
+		$req = $bdd->prepare("SELECT erp_poi_id, erp_caff_name, TO_CHAR(cds_affectation_date :: DATE, 'dd/mm/yyyy') cds_affectation_date FROM cds_affectation WHERE cds_affectation_date >= ? AND cds_affectation_date <= ? ORDER BY cds_affectation_date");
+		$req->execute(array($dateDebut, $dateFin));
+		while($data = $req->fetch())
+		{
+			$poi = json_decode(getPoiById($data["erp_poi_id"]));
+			$poi->caffName = $data["erp_caff_name"];
+			$poi->dateAffectation = $data["cds_affectation_date"];
+			array_push($listePoi, $poi);
+		}
+		return json_encode($listePoi);
+	}
+	
 	function getPoiById($id)
 	{
 		include("connexionBddErp.php");
@@ -273,7 +359,8 @@
 			ag_poi.ft_numero_as,
 			ag_poi.ft_date_creation_as,
 			ag_poi.ft_commentaire_creation_as,
-			ag_poi.ft_zone_as
+			ag_poi.ft_zone_as,
+			ag_poi.is_reactive
 			from ag_poi
 		 
 			left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
@@ -306,12 +393,18 @@
 			$poi->ft_date_creation_as = $data["ft_date_creation_as"];
 			$poi->ft_commentaire_creation_as = $data["ft_commentaire_creation_as"];
 			$poi->ft_zone_as = $data["ft_zone_as"];
-			if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
+			if($data["is_reactive"] != null)
 			{
-				$poi->reactive = true;
+				$poi->reactive = $data["is_reactive"];
 			}
 			else{
-				$poi->reactive = false;
+				if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
+				{
+					$poi->reactive = true;
+				}
+				else{
+					$poi->reactive = false;
+				}
 			}
 		}
 		
@@ -974,8 +1067,8 @@
 		(
 		select t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name as agence, sum(t2.reactive) as reactive, sum(t2.non_reactive) as non_reactive from (
 		 
-		select t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, case when account_analytic_account.name in ('Client', 'FO & CU') then count (ag_poi.id)
-		end as reactive , case when account_analytic_account.name not in ('Client', 'FO & CU') then count (ag_poi.id) end as non_reactive
+		select t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, ag_poi.is_reactive, case when (account_analytic_account.name in ('Client', 'FO & CU') or ag_poi.is_reactive = True) then count (ag_poi.id)
+		end as reactive , case when (account_analytic_account.name not in ('Client', 'FO & CU') or ag_poi.is_reactive = False) then count (ag_poi.id) end as non_reactive
 		from ag_poi
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id  
 		full join
@@ -985,8 +1078,8 @@
 		full join ag_agence on hr_employee.ag_agence_id = ag_agence.id
 		full join hr_job on hr_employee.job_id = hr_job.id
 		where res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER')) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
-		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name) t2
-		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name ) t3
+		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, ag_poi.is_reactive) t2
+		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name) t3
 		WHERE id = ?");
 		$req->execute(array($id));
 		if($data = $req->fetch())
@@ -1088,460 +1181,6 @@
 		}
 		return json_encode($liste);
 	}
-	
-	// function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefChargeReactive, $coefCharge, $limiteJour, $limiteSemaine, $limiteMaxCalcul, $nbJoursAvantConges, $nbJoursConges)//, $listeCaffsSimulation) // $listeCaffsSimulation (facultatif) = array en json
-	// {
-	// 	include("connexionBddErp.php");
-	// 	include("connexionBdd.php");
-	// 	include("connexionBddMailAuto.php");
-		
-	// 	$caffAuto = null;
-		
-	// 	//$listeCaffsSimulation = json_decode($listeCaffsSimulation);
-		
-	// 	/*$coefNbPoiProimite = 0.5;
-	// 	$coefNbPoiClient = 0.8;
-	// 	$coefCharge = 0.5;*/
-		
-	// 	$listePoiBleues = array();
-    //     $req = $bddMail->query("select poi from relance where date_expiration >= NOW()");
-    //     while($data = $req->fetch())
-    //     {
-    //         array_push($listePoiBleues, $data["poi"]);
-    //     }
-        
-    //     $listePoiBleues = implode(", ", $listePoiBleues);
-		
-	// 	$poi = json_decode(getPoiById($idPoi));
-	// 	if($poi->domaine == "Focu" || $poi->domaine == "FO & CU")
-	// 	{
-	// 		$competence = "Fo & Cu";
-	// 	}
-	// 	else{
-	// 		$competence = $poi->domaine;
-	// 	}
-		
-	// 	$listeSites = json_decode(getSitesByUi($poi->atr_ui));
-		
-	// 	$listeIdSites = array();
-	// 	foreach($listeSites as $site)
-	// 	{
-	// 		array_push($listeIdSites, $site->id);
-	// 	}
-	// 	$listeIdSites = implode(", ", $listeIdSites);
-		
-	// 	$listeCaffs = array();
-		
-	// 	$caffTitulaireAuto = false; //Pour savoir si un caff est affilié ou non au titulaire de la poi
-		
-	// 	$globalDebut = "select atr.atr_caff_traitant_id, atr.atr_sous_domaine_id,atr.id,atr.atr_ui,atr.partner,atr.ft_numero_oeie,atr.ft_oeie_dre,atr.name as domaine,account_analytic_account.name as sous_domaine,atr.ft_pg, CASE WHEN LENGTH(ft_sous_justification_oeie) = 2 THEN ft_sous_justification_oeie ELSE 'Pas de SJ' END AS ft_sous_justification_oeie, atr.ft_libelle_commune,atr.ft_libelle_de_voie,atr.name_related,atr.work_email,atr.mobile_phone,atr.ft_commentaire_creation_oeie from(
-    //             select ag_poi.atr_caff_traitant_id, ag_poi.atr_sous_domaine_id,ag_poi.id,ag_poi.atr_ui,res_partner.name as partner,ag_poi.ft_oeie_dre,ag_poi.ft_numero_oeie,account_analytic_account.name,ag_poi.ft_pg,ag_poi.ft_sous_justification_oeie,ag_poi.ft_libelle_commune,ag_poi.ft_libelle_de_voie,hr_employee.name_related,hr_employee.work_email,hr_employee.mobile_phone,ag_poi.ft_commentaire_creation_oeie from ag_poi
-    //             left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
-    //             left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
-    //             left join res_partner on ag_poi.res_partner_id = res_partner.id
-    //             where ft_etat = '1' and name_related is not null and ag_poi.atr_caff_traitant_id = ";
-	// 	//idCaff entre
-	// 	$globalFin = " and work_email is not null and ag_poi.ft_numero_oeie not like '%MBB%')atr
-    //             left join account_analytic_account on atr.atr_sous_domaine_id = account_analytic_account.id
-    //             order by ft_oeie_dre";
-		
-	// 	if($listePoiBleues != null && $listePoiBleues != "")
-    //     {
-    //         /*$requeteRetard = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) and id not in (".$listePoiBleues.") then 1 end as dre_ko,case when ft_oeie_dre > NOW() or id in (".$listePoiBleues.") then 1 end as dre_ok from (".$global.")dre)dre2 group by atr_caff_traitant_id)";*/
-	// 		$debRequete = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) and id not in (".$listePoiBleues.") then 1 end as dre_ko,case when ft_oeie_dre > NOW() or id in (".$listePoiBleues.") then 1 end as dre_ok from (";
-	// 		//global entre
-	// 		$finRequete = ")dre)dre2 group by atr_caff_traitant_id)";
-    //     }
-    //     else{
-    //         /*$requeteRetard = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) then 1 end as dre_ko,case when ft_oeie_dre > NOW() then 1 end as dre_ok from (".$global.")dre)dre2 group by atr_caff_traitant_id)";*/
-	// 		$debRequete = "SELECT (dre_ko / (dre_ko + dre_ok)) retard (select atr_caff_traitant_id,count(dre_ko) as dre_ko,count(dre_ok) as dre_ok from(select atr_caff_traitant_id,ft_oeie_dre,case when (ft_oeie_dre IS NULL OR ft_oeie_dre <= NOW()) then 1 end as dre_ko,case when ft_oeie_dre > NOW() then 1 end as dre_ok from (";
-	// 		//global entre
-	// 		$finRequete = ")dre)dre2 group by atr_caff_traitant_id)";
-    //     }
-		
-	// 	$cesCaffs = array();
-	// 	$listeCaffsUi = json_decode(getListeIdCaffEntraideByUiAndDomaine($poi->atr_ui, $poi->domaine));
-	// 	if(sizeof($listeCaffsUi) > 0)
-	// 	{
-	// 		$listeCaffsUi = implode(",", $listeCaffsUi);
-	// 	}
-	// 	else{
-	// 		$listeCaffsUi = "0";
-	// 	}
-	// 	$listeCaffsExclure = json_decode(getListeIdCaffEntraideExclureUi($poi->atr_ui));
-	// 	if(sizeof($listeCaffsExclure) > 0)
-	// 	{
-	// 		$listeCaffsExclure = implode(",", $listeCaffsExclure);
-	// 	}
-	// 	else{
-	// 		$listeCaffsExclure = "0";
-	// 	}
-		
-	// 	$req = $bddErp->query("SELECT id, name_related, mobile_phone, work_email, site, site_id, agence, reactive, non_reactive, (((reactive * ".$coefChargeReactive.") + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement)) charge_initiale, (CASE WHEN ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") > ".$limiteMaxCalcul." THEN ".$limiteMaxCalcul." ELSE ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") END)charge_rayon, ((((reactive * ".$coefChargeReactive.") + (non_reactive * ".$coefCharge.")) * (1 / caff.ag_coeff_traitement))
-    //     - CASE WHEN ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") > ".$limiteMaxCalcul." THEN ".$limiteMaxCalcul." ELSE ((SELECT COUNT(*) nb FROM ag_poi WHERE atr_caff_traitant_id = caff.id AND sqrt(power((ft_longitude - ".$poi->ft_longitude.")/0.0090808,2)+power((ft_latitude - ".$poi->ft_latitude.")/0.01339266,2)) < ".$km." AND ft_etat = '1') * ".$coefNbPoiProimite.") END
-    //     )charge_totale 
-	// 	FROM (select id, t3.ag_coeff_traitement, t3.name_related, t3.mobile_phone, t3.work_email, t3.site, t3.site_id, t3.agence,case when t3.reactive is null then 0 else t3.reactive end,
-	// 	case when t3.non_reactive is null then 0 else t3.non_reactive end from
-	// 	(
-	// 	select t2.id, t2.ag_coeff_traitement, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.site_id, t2.name as agence, sum(t2.reactive) as reactive, sum(t2.non_reactive) as non_reactive from (
-		 
-	// 	select t1.id, t1.ag_coeff_traitement, t1.name_related,t1.mobile_phone,t1.work_email,t1.site, t1.site_id,t1.name, case when account_analytic_account.name in ('Client', 'FO & CU') then count (ag_poi.id)
-	// 	end as reactive , case when account_analytic_account.name not in ('Client', 'FO & CU') then count (ag_poi.id) end as non_reactive
-	// 	from ag_poi
-	// 	left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id  
-	// 	full join
-	// 	(select hr_employee.id, hr_employee.ag_coeff_traitement, hr_employee.name_related,hr_employee.mobile_phone,hr_employee.work_email,ag_site.name as site, ag_site.id as site_id,ag_agence.name from res_users
-	// 	full join hr_employee on res_users.ag_employee_id = hr_employee.id
-	// 	full join ag_site on hr_employee.ag_site_id = ag_site.id
-	// 	full join ag_agence on hr_employee.ag_agence_id = ag_agence.id
-	// 	full join hr_job on hr_employee.job_id = hr_job.id
-	// 	FULL JOIN m2m__hr_employee__ag_competence cmp ON cmp.employee_id = hr_employee.id
-	// 	FULL JOIN ag_competence ON ag_competence.id = cmp.competence_id
-	// 	where ((res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER') and ag_competence.name = '".$competence."') OR hr_employee.id IN(".$listeCaffsUi.")) AND hr_employee.id NOT IN(".$listeCaffsExclure.")) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
-	// 	group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, t1.site_id, t1.ag_coeff_traitement) t2
-	// 	group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name, t2.site_id, t2.ag_coeff_traitement ) t3
-	// 	where ((name_related is not null AND site_id IN(".$listeIdSites.")) OR id IN(".$listeCaffsUi.")) AND id NOT IN(".$listeCaffsExclure."))caff
-	// 	ORDER BY charge_totale");
-	// 	while($data = $req->fetch())
-	// 	{
-	// 		$req2 = $bdd->prepare("SELECT id FROM cds_formation WHERE caff_id = ?");
-	// 		$req2->execute(array($data["id"]));
-	// 		if(!$data2 = $req2->fetch())
-	// 		{
-	// 			$enConges = false; // = en conges actuellement ou bientot en conges (moins de 5 jours)
-				
-	// 			if(strtoupper($poi->domaine) == "FO & CU" || strtoupper($poi->domaine) == "CLIENT")
-	// 			{
-	// 				$conges = json_decode(getProchainesConges($data["id"]));
-	// 				if($conges != null)
-	// 				{
-	// 					if($conges->temps_avant <= strtotime(60*60*24*$nbJoursAvantConges) && $conges->nbJoursCongesRestant >= $nbJoursConges) // Si le caff est en congé dans moins de 5 jours et que ces congés durent au moins 5 jours (sans compter les week_end) ou si le caff est actuellement en congés et que le nombre de jours de conges restant est d'au moins 5 jours
-	// 					{
-	// 						$enConges = true;
-	// 					}
-	// 				}
-	// 				if(!$enConges)
-	// 				{
-	// 					$enConges = false;
-	// 					if(array_search($data["id"], json_decode(getListIdEmployesConges())) != false)
-	// 					{
-	// 						$enConges = true;
-	// 					}
-	// 				}
-	// 			}
-				
-	// 			$caff = (object) array();
-	// 			$caff->name_related = $data["name_related"];
-	// 			$caff->mobile_phone = $data["mobile_phone"];
-	// 			$caff->work_email = $data["work_email"];
-	// 			$caff->site = $data["site"];
-	// 			$caff->site_id = $data["site_id"];
-	// 			$caff->agence = $data["agence"];
-	// 			$caff->reactive = $data["reactive"];
-	// 			$caff->non_reactive = $data["non_reactive"];
-	// 			$caff->charge_rayon = $data["charge_rayon"];
-	// 			$caff->charge_totale = $data["charge_totale"];
-	// 			$caff->tauxRetard = (json_decode(getStatsCaff($data["id"])) * $caff->reactive * $coefChargeReactive);
-	// 			$caff->charge_totale += $caff->tauxRetard;
-	// 			$caff->charge_initiale = $data["charge_initiale"];
-	// 			$caff->id = $data["id"];
-				
-	// 			$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
-	// 			/*$nbPoiEnRetard = 0;
-	// 			$dateAjd = new DateTime("now");
-	// 			foreach($listePoi as $lPoi)
-	// 			{
-	// 				$dre = new DateTime($lPoi->ft_oeie_dre);
-	// 				if($dateAjd > $dre)
-	// 				{
-	// 					$nbPoiEnRetard++;
-	// 				}
-	// 			}
-	// 			if(sizeof($listePoi) > 0)
-	// 			{
-	// 				$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
-	// 			}
-	// 			else{
-	// 				$tauxDre = 0;
-	// 			}
-	// 			$caff->charge_totale += ($tauxDre * $caff->reactive);*/
-
-	// 			$listeCaffsTitulaireAffectationAuto = array();
-	// 			$listeCaffsTitulaireAffectationAutoNot1 = array();
-	// 			$listeCaffsTitulaire = json_decode(getCaffsEnLienAvecPoiByTitulaire($poi->ft_titulaire_client, $poi->atr_ui));
-	// 			foreach($listeCaffsTitulaire as $caffTitulaire)
-	// 			{
-	// 				if($caffTitulaire->id == $data["id"])
-	// 				{
-	// 					$caffTitulaireAuto = true;
-
-	// 					$listePoiTitulaire = array();
-	// 					$poiTitulaireEtat1 = false;
-	// 					foreach($listePoi as $cettePoi)
-	// 					{
-	// 						if($cettePoi->ft_titulaire_client == $poi->ft_titulaire_client)
-	// 						{
-	// 							if($cettePoi->ft_etat == 1)
-	// 							{
-	// 								$poiTitulaireEtat1 = true;
-	// 							}
-	// 							array_push($listePoiTitulaire, $cettePoi);
-	// 						}
-	// 					}
-	// 					$caff->listePoiTitulaire = $listePoiTitulaire;
-	// 					array_push($listeCaffsTitulaireAffectationAutoNot1, $caff);
-	// 					if($poiTitulaireEtat1)
-	// 					{
-	// 						array_push($listeCaffsTitulaireAffectationAuto, $caff);
-	// 						if(sizeof($listeCaffsTitulaireAffectationAuto) == 1)
-	// 						{
-	// 							$caffAuto = $caff;
-	// 						}
-	// 						else{
-	// 							$poiTituCaff = null;
-	// 							foreach($listeCaffsTitulaireAffectationAuto as $caffTitulaireAffectationAuto)
-	// 							{
-	// 								foreach($caffTitulaireAffectationAuto->listePoiTitulaire as $poiTitu)
-	// 								{
-	// 									if($poiTituCaff == null)
-	// 									{
-	// 										$poiTituCaff = (object) array();
-	// 										$poiTituCaff->caff = $caffTitulaireAffectationAuto;
-	// 										$poiTituCaff->poi = $poiTitu;
-	// 									}
-	// 									else{
-	// 										if($poiTitu->ft_date_creation_oeie < $poiTituCaff->poi->ft_date_creation_oeie)
-	// 										{
-	// 											$poiTituCaff->caff = $caffTitulaireAffectationAuto;
-	// 											$poiTituCaff->poi = $poiTitu;
-	// 										}
-	// 									}
-	// 								}
-	// 							}
-	// 							$caffAuto = $poiTituCaff->caff;
-	// 						}
-	// 					}
-	// 					else{
-	// 						if(sizeof($listeCaffsTitulaireAffectationAuto) == 0)
-	// 						{
-	// 							$poiTituCaff = null;
-								
-	// 							foreach($listeCaffsTitulaireAffectationAutoNot1 as $caffTitulaireAffectationAuto)
-	// 							{
-	// 								foreach($caffTitulaireAffectationAuto->listePoiTitulaire as $poiTitu)
-	// 								{
-	// 									if($poiTituCaff == null)
-	// 									{
-											
-	// 										$poiTituCaff = (object) array();
-	// 										$poiTituCaff->caff = $caffTitulaireAffectationAuto;
-	// 										$poiTituCaff->poi = $poiTitu;
-	// 									}
-	// 									else{
-	// 										if($poiTitu->ft_date_creation_oeie < $poiTituCaff->poi->ft_date_creation_oeie)
-	// 										{
-	// 											$poiTituCaff->caff = $caffTitulaireAffectationAuto;
-	// 											$poiTituCaff->poi = $poiTitu;
-	// 										}
-	// 									}
-	// 								}
-	// 							}
-	// 							if(isset($poiTituCaff) && $poiTituCaff != null)
-	// 							{
-	// 								$caffAuto = $poiTituCaff->caff;
-	// 							}
-	// 							else{
-	// 								$caffAuto = $caff;
-	// 							}
-	// 						}
-	// 					}
-	// 				}
-	// 			}
-					
-									
-	// 				$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND (DATE_PART('day', NOW()) - DATE_PART('day', cds_affectation_date)) < 1 AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
-	// 				$req3->execute(array($data["id"]));
-	// 				if($data3 = $req3->fetch())
-	// 				{
-	// 					if($data3["nb_affectations_jour"] < $limiteJour)
-	// 					{
-	// 						$lastMonday = date("Y-m-d",strtotime("last Monday"));
-							
-	// 						$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ? AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
-	// 						$req4->execute(array($data["id"], $lastMonday));
-	// 						if($data4 = $req4->fetch())
-	// 						{
-	// 							if($data4["nb_affectations_semaine"] < $limiteSemaine)
-	// 							{
-	// 								if(!$enConges)
-	// 								{
-	// 									$ceCaff = (object) array();
-	// 									$ceCaff->id = $caff->id;
-	// 									$ceCaff->charge_initiale = $caff->charge_initiale;
-	// 									$ceCaff->name_related = $caff->name_related;
-	// 									$ceCaff->charge_totale = $caff->charge_totale;
-	// 									$ceCaff->tauxRetard = $caff->tauxRetard;
-	// 									$ceCaff->charge_rayon = $caff->charge_rayon;
-	// 									$ceCaff->limiteAtteinte = false;
-	// 									$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
-	// 									$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
-	// 									$ceCaff->enConges = $enConges;
-	// 									array_push($listeCaffs, $ceCaff);
-
-	// 									/*$caff = (object) array();
-	// 									$caff->name_related = $data["name_related"];
-	// 									$caff->mobile_phone = $data["mobile_phone"];
-	// 									$caff->work_email = $data["work_email"];
-	// 									$caff->site = $data["site"];
-	// 									$caff->site_id = $data["site_id"];
-	// 									$caff->agence = $data["agence"];
-	// 									$caff->reactive = $data["reactive"];
-	// 									$caff->non_reactive = $data["non_reactive"];
-	// 									$caff->charge_totale = $data["charge_totale"];
-	// 									$caff->charge_initiale = $data["charge_initiale"];
-	// 									$caff->id = $data["id"];
-										
-	// 									$listePoi = json_decode(getPoiAffecteByCaff($caff->name_related));
-	// 									$nbPoiEnRetard = 0;
-	// 									$dateAjd = new DateTime("now");
-	// 									foreach($listePoi as $poi)
-	// 									{
-	// 										$dre = new DateTime($poi->ft_oeie_dre);
-	// 										if($dateAjd > $dre)
-	// 										{
-	// 											$nbPoiEnRetard++;
-	// 										}
-	// 									}
-	// 									if(sizeof($listePoi) > 0)
-	// 									{
-	// 										$tauxDre = $nbPoiEnRetard / sizeof($listePoi);
-	// 									}
-	// 									else{
-	// 										$tauxDre = 0;
-	// 									}
-	// 									$caff->charge_totale += ($tauxDre * $caff->reactive);*/
-	// 									if($caffTitulaireAuto == false)
-	// 									{
-	// 										if($caffAuto == null)
-	// 										{
-	// 											$caffAuto = $caff;
-	// 										}
-	// 										elseif($caffAuto->charge_totale > $caff->charge_totale){
-	// 											$caffAuto = $caff;
-	// 										}
-	// 									}
-	// 								}
-	// 								else{
-	// 									$ceCaff = (object) array();
-	// 									$ceCaff->id = $caff->id;
-	// 									$ceCaff->charge_initiale = $caff->charge_initiale;
-	// 									$ceCaff->name_related = $caff->name_related;
-	// 									$ceCaff->charge_totale = $caff->charge_totale;
-	// 									$ceCaff->tauxRetard = $caff->tauxRetard;
-	// 									$ceCaff->charge_rayon = $caff->charge_rayon;
-	// 									$ceCaff->limiteAtteinte = true;
-	// 									$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
-	// 									$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
-	// 									$ceCaff->enConges = $enConges;
-	// 									array_push($listeCaffs, $ceCaff);
-	// 								}
-									
-	// 							}
-	// 							else{
-	// 								$ceCaff = (object) array();
-	// 								$ceCaff->id = $caff->id;
-	// 								$ceCaff->charge_initiale = $caff->charge_initiale;
-	// 								$ceCaff->name_related = $caff->name_related;
-	// 								$ceCaff->charge_totale = $caff->charge_totale;
-	// 								$ceCaff->tauxRetard = $caff->tauxRetard;
-	// 								$ceCaff->charge_rayon = $caff->charge_rayon;
-	// 								$ceCaff->limiteAtteinte = true;
-	// 								$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
-	// 								$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
-	// 								$ceCaff->enConges = $enConges;
-	// 								array_push($listeCaffs, $ceCaff);
-	// 							}
-	// 						}
-	// 					}
-	// 					else{
-	// 						$lastMonday = date("Y-m-d",strtotime("last Monday"));
-							
-	// 						$req4 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ? AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
-	// 						$req4->execute(array($data["id"], $lastMonday));
-	// 						if($data4 = $req4->fetch())
-	// 						{
-	// 							$ceCaff = (object) array();
-	// 							$ceCaff->id = $caff->id;
-	// 							$ceCaff->charge_initiale = $caff->charge_initiale;
-	// 							$ceCaff->name_related = $caff->name_related;
-	// 							$ceCaff->charge_totale = $caff->charge_totale;
-	// 							$ceCaff->tauxRetard = $caff->tauxRetard;
-	// 							$ceCaff->charge_rayon = $caff->charge_rayon;
-	// 							$ceCaff->limiteAtteinte = true;
-	// 							$ceCaff->nbAffectationsJour = intval($data3["nb_affectations_jour"]);
-	// 							$ceCaff->nbAffectationsSemaine = intval($data4["nb_affectations_semaine"]);
-	// 							$ceCaff->enConges = $enConges;
-	// 							array_push($listeCaffs, $ceCaff);
-	// 						}
-	// 					}
-	// 				}
-	// 			if($caffTitulaireAuto == false)
-	// 			{
-	// 				if($caffAuto == null)
-	// 				{
-	// 					$caffAuto = $caff;
-	// 				}
-	// 			}
-	// 		}
-			
-	// 	}
-
-		
-	// 	if($caffAuto != null)
-	// 	{
-	// 		function comparer($a, $b) {
-	// 			if($a->limiteAtteinte)
-	// 			{
-	// 				if($b->limiteAtteinte)
-	// 				{
-	// 					if($a->charge_totale < $b->charge_totale)
-	// 					{
-	// 						return -1;
-	// 					}
-	// 					elseif($a->charge_totale == $b->charge_totale)
-	// 					{
-	// 						return 0;
-	// 					}
-	// 					else{
-	// 						return 1;
-	// 					}
-	// 				}
-	// 				else{
-	// 					return 1;
-	// 				}
-	// 			}
-	// 			else{
-	// 				if($a->charge_totale < $b->charge_totale)
-	// 				{
-	// 					return -1;
-	// 				}
-	// 				elseif($a->charge_totale == $b->charge_totale)
-	// 				{
-	// 					return 0;
-	// 				}
-	// 				else{
-	// 					return 1;
-	// 				}
-	// 			}
-				
-	// 		}
-	// 		usort($listeCaffs, 'comparer');
-			
-	// 		$caffAuto->listeAutresCaffs = $listeCaffs;
-	// 	}
-		
-	// 	return json_encode($caffAuto);
-	// }
 
 	function getAffectationAuto($idPoi, $km, $coefNbPoiProimite, $coefChargeReactive, $coefCharge, $limiteJour, $limiteSemaine, $limiteMaxCalcul, $nbJoursAvantConges, $nbJoursConges)//, $listeCaffsSimulation) // $listeCaffsSimulation (facultatif) = array en json
 	{
@@ -1623,8 +1262,8 @@
 		(
 		select t2.id, t2.ag_coeff_traitement, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.site_id, t2.name as agence, sum(t2.reactive) as reactive, sum(t2.non_reactive) as non_reactive from (
 		 
-		select t1.id, t1.ag_coeff_traitement, t1.name_related,t1.mobile_phone,t1.work_email,t1.site, t1.site_id,t1.name, case when account_analytic_account.name in ('Client', 'FO & CU') then count (ag_poi.id)
-		end as reactive , case when account_analytic_account.name not in ('Client', 'FO & CU') then count (ag_poi.id) end as non_reactive
+		select t1.id, t1.ag_coeff_traitement, t1.name_related,t1.mobile_phone,t1.work_email,t1.site, t1.site_id,t1.name, ag_poi.is_reactive, case when (account_analytic_account.name in ('Client', 'FO & CU') or ag_poi.is_reactive = True) then count (ag_poi.id)
+		end as reactive , case when (account_analytic_account.name not in ('Client', 'FO & CU') or ag_poi.is_reactive = False) then count (ag_poi.id) end as non_reactive
 		from ag_poi
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id  
 		full join
@@ -1636,8 +1275,8 @@
 		FULL JOIN m2m__hr_employee__ag_competence cmp ON cmp.employee_id = hr_employee.id
 		FULL JOIN ag_competence ON ag_competence.id = cmp.competence_id
 		where ((res_users.active = true and hr_job.name in ('CAFF FT','CAFF MIXTE','ASSISTANT MANAGER') and ag_competence.name = '".$competence."') OR hr_employee.id IN(".$listeCaffsUi.")) AND hr_employee.id NOT IN(".$listeCaffsExclure.")) t1 on ag_poi.atr_caff_traitant_id = t1.id and ft_etat in ('1','5') and ag_poi.ft_numero_oeie not like '%MBB%'
-		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, t1.site_id, t1.ag_coeff_traitement) t2
-		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name, t2.site_id, t2.ag_coeff_traitement ) t3
+		group by t1.id, t1.name_related,t1.mobile_phone,t1.work_email,t1.site,t1.name, account_analytic_account.name, t1.site_id, t1.ag_coeff_traitement, ag_poi.is_reactive) t2
+		group by t2.id, t2.name_related, t2.mobile_phone, t2.work_email, t2.site, t2.name, t2.site_id, t2.ag_coeff_traitement) t3
 		where ((name_related is not null AND site_id IN(".$listeIdSites.")) OR id IN(".$listeCaffsUi.")) AND id NOT IN(".$listeCaffsExclure."))caff
 		ORDER BY charge_totale");
 		while($data = $req->fetch())
@@ -1654,7 +1293,7 @@
 			{
 				//Je vérifie maintenant si le caff est actuellement, ou bientôt en congé (cette info n'a de l'importance que si la POI est du domaine FO & CU ou Client)
 				$enConges = false;
-				if(strtoupper($poi->domaine) == "FO & CU" || strtoupper($poi->domaine) == "CLIENT")
+				if($poi->reactive)
 				{
 					$conges = json_decode(getProchainesConges($data["id"]));
 					if($conges != null)
@@ -1717,7 +1356,7 @@
 					}
 				}
 				//Je récupère le nombre d'affectations du caff dans la journée
-				$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND (DATE_PART('day', NOW()) - DATE_PART('day', cds_affectation_date)) < 1 AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
+				$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_jour FROM cds_affectation WHERE caff_id = ? AND (DATE_PART('day', NOW()) - DATE_PART('day', cds_affectation_date)) < 1 AND (UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU') OR is_reactive = True)");
 				$req3->execute(array($data["id"]));
 				if($data3 = $req3->fetch())
 				{
@@ -1728,7 +1367,7 @@
 				}
 				//Je récupère le nombre d'affectations du caff dans la semaine
 				$lastMonday = date("Y-m-d",strtotime("last Monday")); //correspond à la date du dernier lundi
-				$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ? AND UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU')");
+				$req3 = $bdd->prepare("SELECT COUNT(*) nb_affectations_semaine FROM cds_affectation WHERE caff_id = ? AND cds_affectation_date >= ? AND (UPPER(erp_poi_domaine) IN('CLIENT', 'FO & CU') OR is_reactive = True)");
 				$req3->execute(array($data["id"], $lastMonday));
 				if($data3 = $req3->fetch())
 				{
@@ -2131,7 +1770,7 @@
 		
 		$listePoi = array();
 		
-		$req = $bddErp->prepare("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.\"ft_numero_demande_42C\" numero_demande, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date from ag_poi
+		$req = $bddErp->prepare("select ag_poi.id,ag_poi.ft_sous_justification_oeie, ag_poi.atr_ui, ag_poi.ft_numero_oeie, account_analytic_account.name as domaine, ag_poi.\"ft_numero_demande_42C\" numero_demande, ft_libelle_commune, ft_libelle_de_voie, ft_pg,ft_oeie_dre,ft_latitude,insee_code,ft_longitude,ft_libelle_affaire,ft_date_limite_realisation,ag_poi.create_date, ag_poi.is_reactive from ag_poi
 		left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
 		left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
 		where hr_employee.name_related in ('MATHIASIN Celine','AFFECTATION') and ft_etat = '1' AND ag_poi.atr_ui = ?".$listePoiAffect);
@@ -2156,12 +1795,18 @@
 			$poi->create_date = $data["create_date"];
 			$poi->id = $data["id"];
 
-			if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
+			if($data["is_reactive"] != null)
 			{
-				$poi->reactive = true;
+				$poi->reactive = $data["is_reactive"];
 			}
 			else{
-				$poi->reactive = false;
+				if($poi->domaine == 'Client' || $poi->domaine == 'FO & CU')
+				{
+					$poi->reactive = true;
+				}
+				else{
+					$poi->reactive = false;
+				}
 			}
 			
 			array_push($listePoi, $poi);
@@ -2225,7 +1870,7 @@
                 left join account_analytic_account on ag_poi.atr_domaine_id = account_analytic_account.id
                 left join hr_employee on ag_poi.atr_caff_traitant_id = hr_employee.id
                 left join res_partner on ag_poi.res_partner_id = res_partner.id
-                where ft_etat = '1' and name_related is not null and ag_poi.atr_caff_traitant_id = ".$idCaff." and work_email is not null and ag_poi.ft_numero_oeie not like '%MBB%' AND account_analytic_account.name IN ('Client', 'FO & CU'))atr
+                where ft_etat = '1' and name_related is not null and ag_poi.atr_caff_traitant_id = ".$idCaff." and work_email is not null and ag_poi.ft_numero_oeie not like '%MBB%' AND (account_analytic_account.name IN ('Client', 'FO & CU') OR ag_poi.is_reactive = True))atr
                 left join account_analytic_account on atr.atr_sous_domaine_id = account_analytic_account.id
                 order by ft_oeie_dre";
         
@@ -2431,15 +2076,34 @@
 		}
 		return json_encode($liste_poi);
 	}
+	
+	function getReactiveByPoiId($poi_id)
+	{
+		include("connexionBddErp.php");
+		$is_reactive = null;
+		$req = $bddErp->prepare("SELECT is_reactive FROM ag_poi WHERE id = ?");
+		$req->execute(array($poi_id));
+		if($data = $req->fetch())
+		{
+			$is_reactive = $data["is_reactive"];
+		}
+		return json_encode($is_reactive);
+	}
 
 	function addPoiAffect($poi_id,$poi_num,$poi_domaine,$caff_id,$caff_name, $ui){
 		
 		$state = 1;
 		$pilote = 'unknow';
 		include("connexionBdd.php");
-		$req = $bdd->prepare("INSERT INTO cds_affectation (erp_poi_id,erp_caff_name,erp_pilote_name,cds_affectation_date,cds_affectation_state_id,erp_poi,caff_id,erp_poi_domaine, erp_ui) VALUES (?,?,?,NOW(),?,?,?,?, ?)");
-		$req->execute(array($poi_id,$caff_name,$pilote,$state,$poi_num,$caff_id,$poi_domaine, $ui));
 		
+		$is_reactive = json_decode(getReactiveByPoiId($poi_id));
+		
+		$req = $bdd->prepare("INSERT INTO cds_affectation (erp_poi_id,erp_caff_name,erp_pilote_name,cds_affectation_date,cds_affectation_state_id,erp_poi,caff_id,erp_poi_domaine, erp_ui, is_reactive) VALUES (?,?,?,NOW(),?,?,?,?,?,?)");
+		$req->execute(array($poi_id,$caff_name,$pilote,$state,$poi_num,$caff_id,$poi_domaine, $ui, $is_reactive));
+		
+		/*include("odoo/odoo.php");
+		$models->execute_kw($db, $uid, $password, 'ag.poi', 'write',
+			array(array($poi_id), array('atr_caff_traitant_id'=>$caff_id, 'atr_caff_designe_atr'=>true)));*/
 	}
 	
 	function addPoiSimu($ft_sous_justification_oeie, $atr_ui, $ft_numero_oeie, $ft_numero_demande_42C, $ft_libelle_commune, $ft_libelle_de_voie, $ft_pg, $ft_oeie_dre, $ft_latitude, $insee_code, $ft_longitude, $ft_libelle_affaire, $ft_date_limite_realisation, $create_date, $ft_etat, $atr_domaine_id, $atr_caff_traitant_id)

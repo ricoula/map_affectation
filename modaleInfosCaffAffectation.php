@@ -8,6 +8,7 @@
 <input type="hidden" name="idPoiModaleInfosCaffAffectation" id="idPoiModaleInfosCaffAffectation" value="<?php echo $poi->id ?>" />
 <input type="hidden" name="domainePoiModaleInfosCaffAffectation" id="domainePoiModaleInfosCaffAffectation" value="<?php echo $poi->domaine ?>" />
 <input type="hidden" name="numPoiModaleInfosCaffAffectation" id="numPoiModaleInfosCaffAffectation" value="<?php echo $poi->ft_numero_oeie ?>" />
+<input type="hidden" name="poiReactiveModaleInfosCaffAffectation" id="poiReactiveModaleInfosCaffAffectation" value="<?php echo $poi->reactive ?>" />
 
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -52,6 +53,12 @@
 <script>
     $(function(){
         $("#btnAffectationCaff").click(function(){
+            var isReactive = false;
+            if($("#poiReactiveModaleInfosCaffAffectation").val() == "1")
+            {
+                isReactive = true;
+            }
+
             $.post("API/addPoiAffect.php", {poi_id: $("#idPoiModaleInfosCaffAffectation").val(), poi_num: $("#numPoiModaleInfosCaffAffectation").val(), poi_domaine: $("#domainePoiModaleInfosCaffAffectation").val(), caff_id: $("#idCaffModaleInfosCaffAffectation").val(), caff_name: $("#idCaffModaleInfosCaffAffectation").val(), ui: $("#uiPoiModaleInfosCaffAffectation").val()}, function(data2){
                 window.location.reload();
             });

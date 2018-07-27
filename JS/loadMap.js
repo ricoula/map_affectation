@@ -405,10 +405,12 @@
                                                     return 1;
                                                 }
                                                 else{
+                                                    //On vérifie ensuite les congés
                                                     if(a.enConges)
                                                     {
                                                         if(b.enConges)
                                                         {
+                                                            //On vérifie si les Caffs ont atteint leur limite de charge
                                                             if(a.limiteAtteinte)
                                                             {
                                                                 if(b.limiteAtteinte)
@@ -684,7 +686,7 @@
                                             caffDansListeCaffsSimulation = true;
 
                                             //Si le domaine de la POI est FO & CU ou client, alors il faut incrémenter le nombre de POI du CAFF affectées au jour et à la semaine
-                                            if(poi.domaine.toUpperCase() == "FO & CU" || poi.domaine.toUpperCase() == "CLIENT")
+                                            if(poi.reactive)
                                             {
                                                 caff.nbAffectationsJour++;
                                                 caff.nbAffectationsSemaine++;
@@ -722,7 +724,7 @@
                                     if(!caffDansListeCaffsSimulation)
                                     {
                                         //Si le domaine de la POI est FO & CU ou client, alors il faut incrémenter le nombre de POI du CAFF affectées au jour et à la semaine
-                                        if(poi.domaine.toUpperCase() == "FO & CU" || poi.domaine.toUpperCase() == "CLIENT")
+                                        if(poi.reactive)
                                         {
                                             caffAffecter.nbAffectationsJour++;
                                             caffAffecter.nbAffectationsSemaine++;
