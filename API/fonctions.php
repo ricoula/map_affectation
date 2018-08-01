@@ -312,6 +312,15 @@
 		}
 		return json_encode($listePoi);
 	}
+
+	function getPoiEntrantesByDate($dateDebut, $dateFin)
+	{
+		include("connexionBddErp.php");
+
+		$listePoi = array();
+
+		$req = $bdd->prepare("SELECT id, ft_numero_oeie, ft_pg, ft_sous_justification_oeie, atr_domaine_id, atr_sous_domaine_id WHERE ft_date_envoi_etude_ste >= ? AND ft_date_envoi_etude_ste <= ?");
+	}
 	
 	function getPoiAffecteByDate($dateDebut, $dateFin)
 	{
@@ -2350,4 +2359,5 @@
 		
 		return json_encode($listeSites);
 	}
+
 ?>
