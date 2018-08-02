@@ -95,12 +95,24 @@
                             }
                             else{
                                 $title = "";
+                                $tauxSiteBase = 100;
                                 foreach($entraidesEnCours as $entraideEnCours)
                                 {
                                     $title .= $entraideEnCours->site_entraide_libelle." (".$entraideEnCours->taux."%)"."\n";
+                                    $tauxSiteBase -= $entraideEnCours->taux;
+                                    if($tauxSiteBase < 0)
+                                    {
+                                        $tauxSiteBase = 0;
+                                    }
+                                    elseif($tauxSiteBase > 100)
+                                    {
+                                        $tauxSiteBase = 100;
+                                    }
                                 }
+                                $title .= $caff->site." (".$tauxSiteBase."%)"."\n";
+
                                 ?>
-                                <h6 class="users-site"><span id="site-caff-<?php echo $caff->id ?>" siteCaff="<?php echo urlencode($caff->site) ?>"><del><?php echo $caff->site ?></del> <label class="label label-info">Entraide <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="<?php echo $title ?>"  ></span></label></span> <a style="cursor:pointer;color:orange" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
+                                <h6 class="users-site"><span id="site-caff-<?php echo $caff->id ?>" siteCaff="<?php echo urlencode($caff->site) ?>"><label class="label label-info">Entraide <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="<?php echo $title ?>"  ></span></label></span> <a style="cursor:pointer;color:orange" idCaff="<?php echo $caff->id ?>" id="btnEntraideCaff-<?php echo $caff->id ?>" class="glyphicon glyphicon-plus-sign btnEntraideCaff"></a><span class="pull-right">Formation : <span class="label label-<?php if($formation == "OUI"){ echo "warning"; }else{ echo "default"; } ?> users-formation" caff_id ="<?php echo $caff->id ?>"><?php echo $formation; ?></span></span></h6>
                                 <?php
                             }
                         }

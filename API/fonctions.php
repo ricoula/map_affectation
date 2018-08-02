@@ -27,8 +27,8 @@
 	{
 		include("connexionBdd.php");
 		$id = null;
-		$req = $bdd->prepare("SELECT erp_site_id FROM cds_transco_ui_site WHERE LOWER(site) = ? LIMIT 1");
-		$req->execute(array(strtolower($site)));
+		$req = $bdd->prepare("SELECT erp_site_id FROM cds_transco_ui_site WHERE site = ? LIMIT 1");
+		$req->execute(array($site));
 		if($data = $req->fetch())
 		{
 			$id = $data["erp_site_id"];

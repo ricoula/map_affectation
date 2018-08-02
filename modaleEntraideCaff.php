@@ -11,8 +11,39 @@
     <?php
   }
 
+  $entraidesEnCours = array();
+  if(sizeof($listeEntraides) > 0)
+  {
+    foreach($listeEntraides as $entraide)
+    {
+        if(strtotime($entraide->date_debut) <= strtotime(date("Y-m-d")))
+        {
+            array_push($entraidesEnCours, $entraide);
+        }
+    }
+  }
   $siteBase = urldecode($_GET["site"]);
   $idSiteBase = json_decode(getIdFromSite($siteBase));
+  if(sizeof($entraidesEnCours) == 0)
+  {
+    $tauxSiteBase = 100;
+  }
+  else{
+    $tauxSiteBase = 100;
+    foreach($entraidesEnCours as $siteEntraide)
+    {
+      $tauxSiteBase -= $siteEntraide->taux;
+      if($tauxSiteBase < 0)
+      {
+        $tauxSiteBase = 0;
+      }
+      if($tauxSiteBase > 100)
+      {
+        $tauxSiteBase = 100;
+      }
+    }
+  }
+
   $competences = json_decode(getCompetenceByCaffId($_GET["idCaff"]));
 ?>
 
@@ -73,7 +104,13 @@
     </div>
     <div class="form-group">
           <label>Taux</label>
-          <input class="form-control taux" type="number" name="tauxEntraide" id="tauxEntraide" value="100" min="1" max="100" placeholder="Min: 1, max: 100" />
+          <input class="form-control taux" type="number" name="tauxEntraide" id="tauxEntraide" value="0" min="1" max="100" placeholder="Min: 1, max: 100" />
+    </div>
+    <div>
+      <div class="form-group">
+        <label id="labelSiteBase"><?php echo $siteBase ?></label>
+        <input class="form-control" type="number" id="tauxSiteBase" name="tauxSiteBase" min="1" max="100" placeholder="Min: 1, max: 100" value="<?php echo $tauxSiteBase ?>" disabled />
+      </div>
     </div>
     <?php
     if(sizeof($listeEntraides) > 0)
@@ -106,14 +143,6 @@
     <?php 
     if(sizeof($listeEntraides) > 0)
     {
-        $entraidesEnCours = array();
-        foreach($listeEntraides as $entraide)
-        {
-            if(strtotime($entraide->date_debut) <= strtotime(date("Y-m-d")))
-            {
-                array_push($entraidesEnCours, $entraide);
-            }
-        }
         if(sizeof($entraidesEnCours > 0))
         {
             ?>
@@ -255,131 +284,6 @@
 </div>
 
 <script>
-/*var w = 0;
-var v = 0;
-var premiere_date = null;
-var compteur = 0;
-premiere_date_comp = null;
-var nbEvent = 0;
-var event = false;
-$("#dateExpiration").on("showCalendar.daterangepicker", function(){
-  if(nbEvent > 0)
-  {
-    event = true;
-    console.log("ghthtezhezqe");
-  }
-  nbEvent++;
-});
-  $("#dateExpiration").daterangepicker({locale: {format: 'DD/MM/YYYY'}, isInvalidDate: function(date){
-    
-    w++;
-    premiere_date = date._d;
-    if(w == 1)
-    {
-      console.log("CLICK");
-      if(premiere_date_comp == null){
-        premiere_date_comp = premiere_date;
-      }else if(new Date(premiere_date_comp).getTime() == new Date(premiere_date).getTime() || event == true){ // || ev = true
-
-        event = false;
-        if(compteur == 0){
-          compteur++;
-          console.log("premier click");
-        }else
-        {
-          compteur = 0; 
-          console.log("second click");
-        }
-      }else{
-        premiere_date_comp = premiere_date;
-      }
-console.log(compteur);
-
-
-     
-    }else if(w == 84)
-    {
-    w=0;
-  
-    }
-    var trouve = false;
-   //console.log(date.length);
-    
-   
-    $(".uneEntraide").each(function(){
-      var dateDeb = new Date($(this).attr("dateDeb"));
-      var dateFin = new Date($(this).attr("dateFin"));
-
-      if(date._d.getTime() >= dateDeb.getTime() && date._d.getTime() <= dateFin.getTime())
-      {
-        trouve = true;
-      }
-    });
-    if(!trouve)
-    {
-      return false;
-    }
-    else{
-      return true;
-    }
-  } }, function(start, end, label) {
-
-});*/
-
-/* var w = 1;
-var v = 0;
-var nonValable = false;
-  $("#dateExpiration").daterangepicker({locale: {format: 'DD/MM/YYYY'}, isInvalidDate: function(date){
-    // if(v >= 84)
-    //   {
-    //     w = 1;
-    //     v = 0;
-    //   }
-    var trouve = false;
-      v++;
-      if(v == 84)
-      {
-        v = 0;
-      }
-    //if($(".start-date").length > 0 && w == 1 && v == 84)
-    if($(".start-date").length > 0 && v == 0)
-    {
-      //w++;
-      v = 0;
-      var jour = parseInt($(".start-date").text()) + 1;
-      var monthYear = $(".start-date").closest("table").children("thead").children("tr").children(".month").text();
-      var tabMonth = monthYear.split(" ");
-      var annee = tabMonth[1];
-      var mois = tabMonth[0];
-      var dateDebutChoisie = new Date(mois + " " + jour + ", " + annee)
-      if(date._d.getTime() >= dateDebutChoisie.getTime() && nonValable)
-      {
-        trouve = true;
-      }
-    }
-    $(".uneEntraide").each(function(){
-      var dateDeb = new Date($(this).attr("dateDeb"));
-      var dateFin = new Date($(this).attr("dateFin"));
-
-      if(date._d.getTime() >= dateDeb.getTime() && date._d.getTime() <= dateFin.getTime() && trouve == false)
-      {
-        console.log("FFFFFFFFFFF");
-        trouve = true;
-        return true;
-      }
-    });
-
-    if(!trouve)
-    {
-      return false;
-    }
-    else{
-      
-      nonValable = true;
-      return true;
-    }
-  }
-  });*/
 
   $(".taux").change(function(){
     if(isNaN($(this).val()))
@@ -401,6 +305,19 @@ var nonValable = false;
         $(this).val("100");
       }
     }
+    var tauxSiteBase = 100;
+    $(".taux").each(function(i, elt){
+      tauxSiteBase -= $(elt).val();
+      if(tauxSiteBase < 0)
+      {
+        tauxSiteBase = 0;
+      }
+      else if(tauxSiteBase > 100)
+      {
+        tauxSiteBase = 100;
+      }
+    });
+    $("#tauxSiteBase").val(tauxSiteBase);
   });
 
   $("#dateExpiration").daterangepicker({locale: {format: 'DD/MM/YYYY'}});
@@ -429,18 +346,19 @@ var nonValable = false;
               title += $.trim($(elt).text()) + taux + "\n";
             }
           });
+          title += $("#labelSiteBase").text() + " (" + $("#tauxSiteBase").val() + "%)\n";
 
           //var siteEnCours = $(".siteEntraideEnCours:first").text();
           var siteEnCours =  '<label class="label label-info">Entraide <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + title + '"  ></span></label>';
           var siteCaff = decodeURI($("#site-caff-" + $("#idCaffEntraide").val()).attr("siteCaff"));
           siteCaff = siteCaff.split("+");
           siteCaff = siteCaff.join(" ");
-          $("#site-caff-" + $("#idCaffEntraide").val()).html("<del>" + siteCaff + "</del> " + siteEnCours);
+          $("#site-caff-" + $("#idCaffEntraide").val()).html(siteEnCours);
           $('[data-toggle="tooltip"]').tooltip(); 
         }
         else{
           $("#divTableEntraideEnCours").hide();
-         var siteCaff = decodeURI($("#site-caff-" + $("#idCaffEntraide").val()).children("del").text());
+         var siteCaff = $("#labelSiteBase").text();
          $("#site-caff-" + $("#idCaffEntraide").val()).html(siteCaff);
         }
        }
@@ -470,6 +388,7 @@ var nonValable = false;
       $(".taux").each(function(i, elt){
         total += parseInt($(elt).val());
       });
+      total += parseInt($("#tauxSiteBase").val());
       if(total != 100)
       {
         alert("Le total des taux des sites d'entraide n'est pas égal à 100. Merci de les vérifier");
@@ -518,7 +437,7 @@ var nonValable = false;
           
             $.post("API/updateTauxCaffEntraideByCaffIdAndSiteId.php", {caff_id: $("#idCaffEntraide").val(), site_id: idSite, taux: taux});
           });
-
+          
           $.post("API/entraideCaff.php", {caff_id: $("#idCaffEntraide").val(), site_entraide_id: $("#idSiteEntraide").val(), liste_domaines_json: listeDomaines, date_expiration: dateFin, date_debut: dateDebut, site_defaut_id: $("#idSiteEntraideBase").val(), taux: $("#tauxEntraide").val()}, function(data){
             var reponse = JSON.parse(data);
             if(reponse)
@@ -540,14 +459,15 @@ var nonValable = false;
                       });
                       title += $.trim($(elt).text()) + taux + "\n";
                     });
+                    title += $("#labelSiteBase").text() + " (" + $("#tauxSiteBase").val() + "%)\n";
 
                     //var siteEnCours = $(".siteEntraideEnCours:first").text();
                     var siteEnCours =  '<label class="label label-info">Entraide <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + title + '"  ></span></label>';
                     var siteCaff = decodeURI($("#site-caff-" + $("#idCaffEntraide").val()).attr("siteCaff"));
                     siteCaff = siteCaff.split("+");
                     siteCaff = siteCaff.join(" ");
-                    $("#site-caff-" + $("#idCaffEntraide").val()).html("<del>" + siteCaff + "</del> " + siteEnCours);
-                    $('[data-toggle="tooltip"]').tooltip(); 
+                    $("#site-caff-" + $("#idCaffEntraide").val()).html(siteEnCours);
+                    $('[data-toggle="tooltip"]').tooltip();
                   }
                 }
               });
